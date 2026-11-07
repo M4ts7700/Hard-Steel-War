@@ -229,7 +229,28 @@ body.in-battle .topbar{display:none}
 .zone-hud>div.blue{border-color:var(--blue);background:#327181c9}
 .zone-hud>div.red{border-color:var(--red);background:#9b4b3cc9}
 .zone-hud>div.contested{animation:pulse .7s infinite}
-.battle-map-label{
+.zone-hud>div{overflow:hidden}
+.zone-hud>div>b{position:absolute;inset:0;background:linear-gradient(to top left,var(--c,transparent) var(--p,0%),transparent var(--p,0%));opacity:.9;pointer-events:none}
+.zone-hud>div>span{position:relative;z-index:1;text-shadow:0 1px 2px #000a}
+.zone-hud>div.capturing{animation:zoneTick 1s ease-in-out infinite}
+.zone-hud>div.flash{animation:zoneFlash .9s ease-out}
+@keyframes zoneTick{50%{box-shadow:0 0 12px var(--c);transform:rotate(45deg) scale(1.12)}}
+@keyframes zoneFlash{0%{transform:rotate(45deg) scale(1.75);box-shadow:0 0 30px #fff;filter:brightness(2)}100%{transform:rotate(45deg) scale(1)}}
+#capture-banner{position:fixed;left:50%;top:146px;transform:translateX(-50%) translateY(-6px);min-width:250px;padding:8px 16px 9px;background:#152326e0;
+  border:1px solid #e4ecdb45;border-left:3px solid var(--c,#e4ecdb);color:#eef2e6;font-size:11px;font-weight:700;letter-spacing:2px;text-align:center;
+  pointer-events:none;opacity:0;transition:opacity .25s,transform .25s;z-index:6}
+#capture-banner.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#capture-banner .cb-text em{font-style:normal;opacity:.75;margin-left:10px;font-size:10px}
+#capture-banner .bar{position:relative;height:5px;margin-top:7px;background:#ffffff1c;overflow:hidden}
+#capture-banner .bar i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--c,#e4ecdb);transition:width .2s linear;overflow:hidden}
+#capture-banner .bar i::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,#ffffff8c,transparent);animation:captureSweep 1.1s linear infinite}
+#capture-banner.contested{border-color:#e07b62;animation:contestBlink .6s ease-in-out infinite}
+#capture-banner.threat .cb-text span{color:#ffb19d}
+#capture-banner.done{box-shadow:0 0 22px var(--c);animation:bannerPop .5s ease-out}
+#capture-banner.done .bar i::after{animation:none}
+@keyframes captureSweep{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+@keyframes contestBlink{50%{background:#4a2420e8}}
+@keyframes bannerPop{0%{transform:translateX(-50%) scale(1.3)}100%{transform:translateX(-50%) scale(1)}}.battle-map-label{
   font-size:9px;letter-spacing:1.5px;color:#e6ecda;text-shadow:0 1px 4px #000;padding-top:15px;width:110px;text-align:right;
 }
 .battle-bottom{position:absolute;bottom:23px;left:25px;right:25px;justify-content:space-between;pointer-events:none}
@@ -430,6 +451,7 @@ body.in-battle .topbar{display:none}
   .zone-hud{margin-top:14px;gap:14px}
   .zone-hud>div{width:23px;height:23px}
   .zone-hud>div>span{font-size:9px}
+  #capture-banner{top:118px;min-width:210px;font-size:10px}
   #respawn-panel{width:90%;padding:24px}
   #respawn-panel h2{font-size:23px}
 }
@@ -1482,8 +1504,12 @@ const CONTENT_TRANSLATIONS=[
  ['Použij /wifi název sítě nebo /wifi off.','Use /wifi network name or /wifi off.'],['Síť nastavena pro tuto relaci.','Network set for this session.'],['DEV MAUS · aktivován','DEV MAUS · activated'],['Tady nelze vývojářský tank nasadit.','Developer tank unavailable here.'],
  ['Lokální konzole: /wifi název sítě nebo /wifi off, pak den × měsíc a název sítě.','Local console: /wifi network name or /wifi off, then day × month and network name.'],
  ['Dunová pole · oáza · ruiny','Dune fields · oasis · ruins'],['Průsmyk · nádraží · bunkry','Mountain pass · railway yard · bunkers'],
- ['Pole nízkých dun ukrývá oázu u A. U C se bojuje mezi pískovcovými ruinami.','An oasis shelters behind low dunes at A. Fight among sandstone ruins at C.'],
- ['U A obsadíš zasněžené nákladové nádraží. Průsmyk mezi hřebeny vede k opevněné stanici u C.','Capture the snowy freight yard at A. A mountain pass leads to the fortified station at C.'],
+ ['Meandrující řeka obtéká mlýnský ostrov u B. Kamenné mosty vedou k vesnicím, na křídlech jsou brody.','A winding river flows around the mill island at B. Stone bridges lead to the villages; fords cover the flanks.'],
+ ['Vyschlá koryta, dunová moře a stolové hory. Oáza u A, karavanseraj u B, ruiny chrámu u C.','Dry riverbeds, dune seas and mesas. An oasis at A, a caravanserai at B, temple ruins at C.'],
+ ['Horské údolí dělí skalnatý hřbet. Západem vede trať k nákladovému nádraží u A, východem silnice k opevněné stanici u C.','A rocky ridge splits the mountain valley. The railway runs west to the freight yard at A, the road east to the fortified station at C.'],
+ ['Staré město kolem hlavního náměstí: okružní bulvár, radiální ulice a úzké průjezdy. Nádraží u A, tržnice u C.','An old town around the main square: a ring boulevard, radial streets and narrow passages. The station at A, the market hall at C.'],
+ ['Montážní haly, sila u vlečky a nádrže. Obvodové a servisní silnice obcházejí hlavní dvůr.','Assembly halls, silos by the rail spur and storage tanks. Perimeter and service roads bypass the main yard.'],
+ ['Mírně zvlněná pole, remízky a aleje. Statek u A, kaple na křižovatce u B a osada u C.','Gently rolling fields, copses and tree-lined roads. A farmstead at A, a wayside chapel at the B crossroads and a hamlet at C.'],
  ['Tempomat vpřed / vzad. W nebo S jej zruší.','Cruise forward / reverse. W or S cancels it.'],
  ['TEMPOMAT VPŘED · W/S ZRUŠÍ','CRUISE FORWARD · W/S CANCELS'],
  ['TEMPOMAT VZAD · W/S ZRUŠÍ','CRUISE REVERSE · W/S CANCELS'],
@@ -1889,6 +1915,37 @@ Hluboký sníh	Deep snow
 Sníh	Snow
 Bahno	Mud
 Tráva	Grass
+Louka	Meadow
+ZÓNA OBSAZENA	ZONE CAPTURED
+ZÓNA ZTRACENA	ZONE LOST
+BOJ O ZÓNU	ZONE CONTESTED
+NEPŘÍTEL OBSAZUJE ZÓNU	ENEMY CAPTURING ZONE
+VSTUP DO ZÓNY	ENTERING ZONE
+OBSAZUJEŠ ZÓNU	CAPTURING ZONE
+TANK SE TOPÍ · VYJEĎ Z VODY	TANK IS DROWNING · GET OUT OF THE WATER
+Tank utonul	Tank drowned
+Lesní půda	Forest floor
+Brod	Ford
+Rybník	Pond
+Štěrková pláň	Gravel flat
+Vyschlé koryto	Dry riverbed
+Skalní stěna	Rock face
+Skalní plošina	Mesa top
+Oáza	Oasis
+Pramen oázy	Oasis spring
+Zamrzlé jezero	Frozen lake
+Kolejiště	Rail yard
+Skály	Rocks
+Chodník	Pavement
+Náměstí	Square
+Silnice	Road
+Betonová plocha	Concrete apron
+Prašný dvůr	Dusty yard
+Halda	Slag heap
+Obilné pole	Wheat field
+Oranice	Ploughed field
+Řepkové pole	Rapeseed field
+Pastvina	Pasture
 BODY	POINTS
 ÚDER ZA	STRIKE IN
 JADERNÝ ÚDER	NUCLEAR STRIKE
@@ -2222,316 +2279,1075 @@ const TANKS = [
 const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
 const smooth = t => {t=clamp(t,0,1);return t*t*(3-2*t);};
 const mix = (a,b,t) => a+(b-a)*t;
-const hill = (x,z,cx,cz,rx,rz,height) => height*1.65*Math.exp(-(((x-cx)/rx)**2+((z-cz)/rz)**2));
-const building = (x,z,w,d,h=8,rotation=0) => ({x,z,w,d,h,type:'building',rotation});
+const TAU = Math.PI*2;
+const building = (x,z,w,d,h=8,rotation=0,extra) => extra?{x,z,w,d,h,type:'building',rotation,...extra}:{x,z,w,d,h,type:'building',rotation};
+const landmark = (kind,x,z,w,d,h,rotation=0,extra) => ({x,z,w,d,h,type:'building',rotation,landmark:kind,...extra});
 const rock = (x,z,w=6,d=5,h=3) => ({x,z,w,d,h,type:'rock',rotation:x*.07+z*.03});
-const tree = (x,z,h=11) => ({x,z,w:1.2,d:1.2,h,type:'tree',rotation:0});
+const tree = (x,z,h=11,kind) => kind?{x,z,w:1.2,d:1.2,h,type:'tree',rotation:0,kind}:{x,z,w:1.2,d:1.2,h,type:'tree',rotation:0};
 
-// A continuous river runs west to east. Bridges cross north/south and are
-// explicit surfaces: a shell can travel underneath a bridge, a tank cannot.
-function riverCenter(mapId,x) {
-  mapId=mapId.split(':')[0];
-  if(mapId==='desert')return Math.sin(x*.006)*14+Math.sin(x*.016)*8;
-  if(mapId==='winter')return Math.sin(x*.005+.4)*24+Math.sin(x*.013)*8;
-  return Math.sin(x*.008)*16+Math.sin(x*.002+.3)*10;
+// ---------------------------------------------------------------------------
+// Battlefield toolkit. Maps are built from a relief function, terrain features
+// (hills, ridges, mesas), flattened pads, water (rivers with fords and islands,
+// ponds, frozen lakes), surface networks (roads, rails, streets) and placed
+// props. Everything is deterministic: multiplayer peers rebuild the identical
+// world from the map id and seed alone.
+// ---------------------------------------------------------------------------
+function lattice(i,j,s){
+  let h=Math.imul(i,0x27d4eb2d)^Math.imul(j,0x165667b1)^Math.imul(s+0x3c6ef372|0,0x9e3779b1);
+  h=Math.imul(h^h>>>15,0x2c1b3c6d);h=Math.imul(h^h>>>12,0x297a2d39);
+  return ((h^h>>>15)>>>0)/4294967296;
 }
-
-const MAP_SPECS = {
-  valley:{water:{level:2,width:44},bridgeWidth:34,span:90,deck:12,ramp:220},
-  desert:{water:{level:2,width:32},bridgeWidth:32,span:100,deck:18,ramp:220},
-  winter:{water:{level:2,width:48},bridgeWidth:36,span:96,deck:14,ramp:220},
-};
-for(const [id,spec] of Object.entries(MAP_SPECS)) {
-  spec.bridges=[-720,-220,0,220,720].map(x=>({x,z:riverCenter(id,x),w:spec.bridgeWidth,d:spec.span,height:spec.deck,ramp:spec.ramp}));
+function vnoise(x,z,s=0){
+  const i=Math.floor(x),j=Math.floor(z),fx=x-i,fz=z-j,u=fx*fx*(3-2*fx),v=fz*fz*(3-2*fz);
+  const a=lattice(i,j,s),b=lattice(i+1,j,s),c=lattice(i,j+1,s),d=lattice(i+1,j+1,s);
+  return (a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v)*2-1;
 }
-const variants=new Map();
-MAP_SPECS.city={urban:true,roadStep:120,roadHalf:12,water:{level:-20,width:0},bridges:[]};
-MAP_SPECS.works={urban:true,roadStep:90,roadHalf:11,water:{level:-20,width:0},bridges:[]};
-MAP_SPECS.plains={flat:true,water:{level:-20,width:0},bridges:[]};
-const specFor = id => variants.get(id)?.spec||MAP_SPECS[id]||MAP_SPECS.valley;
+function fbm(x,z,s=0,octaves=3){
+  let sum=0,amp=1,norm=0;
+  for(let o=0;o<octaves;o++){sum+=amp*vnoise(x,z,s+o*101);norm+=amp;x=x*2.07+31.7;z=z*2.07-17.3;amp*=.5;}
+  return sum/norm;
+}
+function ridged(x,z,s=0,octaves=3){
+  let sum=0,amp=1,norm=0;
+  for(let o=0;o<octaves;o++){const n=1-Math.abs(vnoise(x,z,s+o*101));sum+=amp*n*n;norm+=amp;x=x*2.11+11.3;z=z*2.11+5.9;amp*=.5;}
+  return sum/norm;
+}
+function seeded(seed){let state=(seed>>>0)||1;return ()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;};}
+// Obstacle convention: local = (dx*c-dz*s, dx*s+dz*c), rendered with rotation.y.
+function oriented(o){const r=o.rot||0;o.c=Math.cos(r);o.s=Math.sin(r);return o;}
+function ellipseRho(e,x,z){const dx=x-e.x,dz=z-e.z,lx=(dx*e.c-dz*e.s)/e.rx,lz=(dx*e.s+dz*e.c)/e.rz;return Math.sqrt(lx*lx+lz*lz);}
+function rectDistance(r,x,z){
+  const dx=x-r.x,dz=z-r.z,lx=Math.abs(dx*r.c-dz*r.s)-r.w*.5,lz=Math.abs(dx*r.s+dz*r.c)-r.d*.5;
+  return lx>0||lz>0?Math.hypot(Math.max(lx,0),Math.max(lz,0)):Math.max(lx,lz);
+}
+const area=(x,z,w,d,rot=0,extra)=>oriented({x,z,w,d,rot,...extra});
+// A local z axis that points along (dx,dz): the game's own heading convention.
+const heading=(dx,dz)=>Math.atan2(dx,dz);
 
-function groundHeight(mapId,x,z) {
-  const context=specFor(mapId);if(context.urban)return 7;
-  if(context.flat)return 7+Math.sin(x*.006)*.5+Math.cos(z*.005)*.4;
-  const biome=context.base||mapId;
-  if(biome==='desert'||biome==='winter'){
-    const phase=((context.seed||17)%787)/93,desert=biome==='desert';
-    const crest=x*.053+z*.027+1.9*Math.sin(z*.008+phase)+.9*Math.sin(x*.012-phase)+phase;
-    const dune=(1+Math.sin(crest))*.5;
-    let land=desert?9+13*dune*dune+5*Math.sin(x*.019-z*.033+phase)+3*Math.cos(z*.067+phase)
-      :13+Math.max(76*Math.exp(-((x-260*Math.sin(z*.005+phase))**2)/14500),58*Math.exp(-((x+420-85*Math.sin(z*.009))**2)/22000))+8*Math.cos(z*.023+x*.011+phase);
-    // A pass through the ridge links the frozen rail yard and signal station.
-    if(!desert)land=mix(11,land,smooth(Math.abs(z-170*Math.sin(x*.004))/85));
-    for(const [cx,cz] of [[-320,-180],[320,180]])land=mix((desert?12:18)+3.6*Math.sin((x-cx)*.04)*(1-smooth((Math.hypot(x-cx,z-cz)-16)/14)),land,smooth((Math.hypot(x-cx,z-cz)-77)/54));
-    if(Math.abs(Math.abs(z)-590)<90)land=mix(9,land,smooth((Math.abs(Math.abs(z)-590)-24)/66));
-    const bank=Math.abs(z-riverCenter(mapId,x))-context.water.width/2;
-    if(bank<0)return context.water.level-7+7*((bank+context.water.width/2)/(context.water.width/2))**2;
-    return mix(context.water.level,land,smooth(bank/58));
-  }
-  if(context.hills){
-    let land=9+Math.sin(x*.006+context.seed)*2+Math.cos(z*.007)*2;
-    for(const h of context.hills){
-      const dx=(x-h[0])/h[2],dz=(z-h[1])/h[3],q=dx*dx+dz*dz;
-      if(q<12)land+=h[4]*1.65*Math.exp(-q)*(q>9?smooth((12-q)/3):1);
+// Polylines (rivers, roads, rails, streets). Points may carry a width as a
+// third value; curves are sampled as Catmull-Rom splines and indexed on a grid.
+function catmull(points,step,closed){
+  const n=points.length,at=i=>closed?points[(i%n+n)%n]:points[clamp(i,0,n-1)],out=[];
+  for(let i=0;i<(closed?n:n-1);i++){
+    const p0=at(i-1),p1=at(i),p2=at(i+1),p3=at(i+2),pieces=Math.max(1,Math.ceil(Math.hypot(p2[0]-p1[0],p2[1]-p1[1])/step));
+    for(let k=0;k<pieces;k++){
+      const t=k/pieces,t2=t*t,t3=t2*t,f=(a,b,c,d)=>.5*(2*b+(c-a)*t+(2*a-5*b+4*c-d)*t2+(3*b-a-3*c+d)*t3);
+      out.push([f(p0[0],p1[0],p2[0],p3[0]),f(p0[1],p1[1],p2[1],p3[1]),mix(p1[2],p2[2],t)]);
     }
-    // Random hills must not spawn a tank on a steep face with its gun already
-    // at an elevation stop. Blend level deployment areas into the landscape.
-    const spawnDelta=Math.abs(z)-(context.spawnZ||590);
-    if(Math.abs(spawnDelta)<140){
-      let nearest=Infinity;
-      for(const b of context.bridges)nearest=Math.min(nearest,(x-b.x)**2+spawnDelta**2);
-      if(nearest<140**2)land=mix(9,land,smooth((Math.sqrt(nearest)-70)/70));
-    }
-    const distance=Math.abs(z-riverCenter(mapId,x)),half=context.water.width*.5;
-    if(distance<half)return context.water.level-7+7*(distance/half)**2;
-    return mix(context.water.level,land,smooth((distance-half)/100));
   }
-  let land;
-  if(mapId==='desert') {
-    // Broad dune crests descend into a river canyon. The northern and southern
-    // plateaus provide long firing lines, with low roads down to the bridges.
-    land=18+Math.sin(x*.015+z*.008)*6+Math.sin(z*.022-x*.004)*3.8;
-    land+=hill(x,z,-310,-250,150,165,39)+hill(x,z,300,240,160,145,45);
-    land+=hill(x,z,-350,250,110,165,22)+hill(x,z,330,-270,120,150,24);
-  } else if(mapId==='winter') {
-    // Long, offset ridges and a sheltered wooded basin are distinct from dunes.
-    land=8+Math.cos(x*.010)*Math.cos(z*.013)*3.5+Math.sin(z*.018+x*.005)*1.6;
-    land+=hill(x,z,-350,-170,90,235,51)+hill(x,z,300,310,165,110,54);
-    land+=hill(x,z,-180,300,210,85,38)+hill(x,z,300,-320,150,100,30);
-    land+=hill(x,z,-30,-240,220,80,21);
-  } else {
-    land=7+Math.sin(x*.011+z*.004)*2.6+Math.cos(z*.014-x*.005)*2.0;
-    land+=hill(x,z,-330,-250,140,150,48)+hill(x,z,310,230,160,140,55);
-    land+=hill(x,z,-300,260,150,145,34)+hill(x,z,310,-290,140,150,38);
-  }
-  land+=hill(x,z,-590,440,240,210,58)+hill(x,z,590,-440,240,210,65);
-  land+=hill(x,z,-320,-180,200,200,24)+hill(x,z,320,180,200,200,24);
-  const spec=specFor(mapId),distance=Math.abs(z-riverCenter(mapId,x)),half=spec.water.width*.5;
-  if(distance<half)return spec.water.level-7+7*(distance/half)**2;
-  // Flat water edges blend into the basin over a driveable bank, not a cliff.
-  return mix(spec.water.level,land,smooth((distance-half)/(mapId==='desert'?60:75)));
+  const last=closed?points[0]:points[n-1];out.push([last[0],last[1],last[2]]);
+  return out;
 }
-
-function rampHeight(mapId,x,z,b) {
-  const t=(Math.abs(z-b.z)-b.d*.5)/b.ramp;
-  const endZ=b.z+Math.sign(z-b.z)*(b.d*.5+b.ramp);
-  return mix(b.height,groundHeight(mapId,x,endZ),smooth(t));
-}
-
-function terrainHeight(mapId,x,z) {
-  let y=groundHeight(mapId,x,z);
-  // Earth approach embankments end at the abutments. The span itself remains
-  // open above the riverbed and is supplied separately by surfaceHeight.
-  for(const b of specFor(mapId).bridges) {
-    const dx=Math.abs(x-b.x),dz=Math.abs(z-b.z);
-    if(dx<b.w*.5+10 && dz>=b.d*.5-1e-6 && dz<=b.d*.5+b.ramp+1e-6) {
-      const shoulder=1-smooth((dx-b.w*.5)/10);
-      y=mix(y,rampHeight(mapId,x,z,b),shoulder);
+const LINE_CELL=50,lineKey=(cx,cz)=>(cx+4096)*8192+cz+4096;
+function makeLines(list,{reach=0,step=10}={}){
+  const segs=[],paths=[],cells=new Map();let widest=0;
+  for(const item of list){
+    const width=item.width??10,source=item.points.map(p=>[p[0],p[1],p[2]??width]);
+    const pts=item.smooth!==false&&source.length>2?catmull(source,item.step||step,item.closed):item.closed?[...source,source[0]]:source;
+    const path={pts,width,kind:item.kind,front:item.front!==false,index:paths.length};paths.push(path);
+    let length=0;
+    for(let i=0;i<pts.length-1;i++){
+      const [ax,az,wa]=pts[i],[bx,bz,wb]=pts[i+1],dx=bx-ax,dz=bz-az,len2=dx*dx+dz*dz;
+      if(len2<1e-6)continue;
+      const len=Math.sqrt(len2);segs.push({ax,az,dx,dz,len2,len,wa,wb,start:length,path:path.index});length+=len;widest=Math.max(widest,wa,wb);
     }
+    path.length=length;
+  }
+  const pad=widest/2+reach;
+  segs.forEach((s,i)=>{
+    const x0=Math.floor((Math.min(s.ax,s.ax+s.dx)-pad)/LINE_CELL),x1=Math.floor((Math.max(s.ax,s.ax+s.dx)+pad)/LINE_CELL),
+      z0=Math.floor((Math.min(s.az,s.az+s.dz)-pad)/LINE_CELL),z1=Math.floor((Math.max(s.az,s.az+s.dz)+pad)/LINE_CELL);
+    for(let cx=x0;cx<=x1;cx++)for(let cz=z0;cz<=z1;cz++){const k=lineKey(cx,cz);let cell=cells.get(k);if(!cell)cells.set(k,cell=[]);cell.push(i);}
+  });
+  return {segs,paths,cells,pad};
+}
+// Nearest centreline (lineNear) or nearest edge (lineEdge: distance minus half
+// width, negative inside). Details of the winning segment land in NEAR.
+const NEAR={d:Infinity,w:0,s:0,i:-1,t:0,path:-1};
+function lineNear(lines,x,z){
+  const list=lines.cells.get(lineKey(Math.floor(x/LINE_CELL),Math.floor(z/LINE_CELL)));
+  NEAR.d=Infinity;if(!list)return Infinity;
+  let best=Infinity,bi=0,bt=0;
+  for(let k=0;k<list.length;k++){
+    const s=lines.segs[list[k]];let t=((x-s.ax)*s.dx+(z-s.az)*s.dz)/s.len2;t=t<0?0:t>1?1:t;
+    const ex=x-s.ax-s.dx*t,ez=z-s.az-s.dz*t,d2=ex*ex+ez*ez;if(d2<best){best=d2;bi=list[k];bt=t;}
+  }
+  const s=lines.segs[bi];NEAR.d=Math.sqrt(best);NEAR.i=bi;NEAR.t=bt;NEAR.w=s.wa+(s.wb-s.wa)*bt;NEAR.s=s.start+s.len*bt;NEAR.path=s.path;
+  return NEAR.d;
+}
+function lineEdge(lines,x,z){
+  const list=lines.cells.get(lineKey(Math.floor(x/LINE_CELL),Math.floor(z/LINE_CELL)));
+  if(!list)return Infinity;
+  let best=Infinity,bi=0,bt=0;
+  for(let k=0;k<list.length;k++){
+    const s=lines.segs[list[k]];let t=((x-s.ax)*s.dx+(z-s.az)*s.dz)/s.len2;t=t<0?0:t>1?1:t;
+    const ex=x-s.ax-s.dx*t,ez=z-s.az-s.dz*t,e=Math.sqrt(ex*ex+ez*ez)-(s.wa+(s.wb-s.wa)*t)*.5;if(e<best){best=e;bi=list[k];bt=t;}
+  }
+  const s=lines.segs[bi];NEAR.i=bi;NEAR.t=bt;NEAR.w=s.wa+(s.wb-s.wa)*bt;NEAR.d=best+NEAR.w*.5;NEAR.s=s.start+s.len*bt;NEAR.path=s.path;
+  return best;
+}
+// Where the first path of a line set crosses x (bridge and ford sites).
+function zAtX(lines,x){
+  for(const s of lines.segs){if(s.path!==0||!s.dx)continue;const t=(x-s.ax)/s.dx;if(t>=0&&t<=1)return s.az+s.dz*t;}
+  return 0;
+}
+const NO_LINES=makeLines([]);
+
+const TERRAIN=(()=>{
+  const t=(name,speed,color,extra)=>Object.freeze({name,speed,color,passable:true,...extra});
+  return {
+    grass:t('Tráva',.93,'#7c8961'),meadow:t('Louka',.95,'#86955f'),mud:t('Bahno',.68,'#74694f'),forest:t('Lesní půda',.86,'#5c6843'),
+    dirt:t('Polní cesta',1.1,'#9c9272'),bank:t('Říční břeh',.48,'#7d8571'),icyBank:t('Zledovatělý břeh',.48,'#a8bdc2'),
+    river:t('Hluboká řeka · použij most',.42,'#496e78',{passable:false,water:true}),ford:t('Brod',.5,'#62827a',{water:true}),
+    pond:t('Rybník',.42,'#4d7173',{passable:false,water:true}),
+    bridge:t('Most',1.08,'#8e8b7d',{bridge:true}),approach:t('Nájezd na most',1.08,'#8e8b7d',{bridge:true}),
+    sand:t('Písek',.87,'#d1b98b'),deepSand:t('Hluboký písek',.69,'#c5a779'),gravel:t('Štěrková pláň',.98,'#b29b78'),
+    wadi:t('Vyschlé koryto',1,'#bea47c'),cliff:t('Skalní stěna',.6,'#a47e5b'),mesaTop:t('Skalní plošina',.9,'#b48f69'),
+    oasis:t('Oáza',.9,'#8d9459'),spring:t('Pramen oázy',.42,'#597d7b',{passable:false,water:true}),firm:t('Pevná cesta',1.1,'#ab9978'),
+    snow:t('Sníh',.85,'#cdd5d0'),deepSnow:t('Hluboký sníh',.65,'#eef1ea'),ice:t('Zamrzlé jezero',1.04,'#b2c7cf'),
+    packed:t('Ujetá cesta',1.1,'#9caaa9'),rail:t('Kolejiště',1,'#807c73'),rock:t('Skály',.7,'#8b9192'),
+    street:t('Městská ulice',1.12,'#505957'),sidewalk:t('Chodník',1.05,'#a39e8c'),square:t('Náměstí',1.08,'#9d9684'),
+    park:t('Park',.95,'#6f8458'),yard:t('Dvůr',1,'#8c8c78'),sandYard:t('Dvůr',1,'#b8a47f'),
+    asphalt:t('Silnice',1.12,'#55585a'),concrete:t('Betonová plocha',1.1,'#9a958a'),dust:t('Prašný dvůr',1,'#a89776'),slag:t('Halda',.8,'#57524b'),
+    wheat:t('Obilné pole',.9,'#b9a661'),plowed:t('Oranice',.8,'#7b6a4f'),rape:t('Řepkové pole',.9,'#a3a54f'),pasture:t('Pastvina',.95,'#7e9461'),
+  };
+})();
+
+// ---------------------------------------------------------------------------
+// Height pipeline: relief + features (+ seeded knolls) -> pads -> water.
+// ---------------------------------------------------------------------------
+function rawHeight(s,x,z){
+  let h=s.relief(x,z);
+  for(const f of s.hills){
+    const dx=x-f.x,dz=z-f.z;if(dx>f.m||dx<-f.m||dz>f.m||dz<-f.m)continue;
+    const lx=(dx*f.c-dz*f.s)/f.rx,lz=(dx*f.s+dz*f.c)/f.rz;h+=f.h*Math.exp(-(lx*lx+lz*lz));
+  }
+  for(const f of s.knolls){
+    const dx=x-f.x,dz=z-f.z;if(dx>f.m||dx<-f.m||dz>f.m||dz<-f.m)continue;
+    const lx=(dx*f.c-dz*f.s)/f.rx,lz=(dx*f.s+dz*f.c)/f.rz;h+=f.h*Math.exp(-(lx*lx+lz*lz));
+  }
+  for(const f of s.ridges){
+    if(x<f.x0||x>f.x1||z<f.z0||z>f.z1)continue;
+    let t=((x-f.ax)*f.dx+(z-f.az)*f.dz)/f.len2;t=t<0?0:t>1?1:t;
+    const ex=x-f.ax-f.dx*t,ez=z-f.az-f.dz*t;h+=(f.h+(f.hb-f.h)*t)*Math.exp(-(ex*ex+ez*ez)/f.r2);
+  }
+  for(const f of s.mesas){
+    const dx=x-f.x,dz=z-f.z;if(dx>f.m||dx<-f.m||dz>f.m||dz<-f.m)continue;
+    const lx=(dx*f.c-dz*f.s)/f.rx,lz=(dx*f.s+dz*f.c)/f.rz,rho=Math.sqrt(lx*lx+lz*lz)+f.wob*vnoise(x/34,z/34,f.seed);
+    const mask=1-smooth((rho-1)*f.R/f.edge+.5);if(mask>0)h=mix(h,Math.max(h,f.top),mask);
+  }
+  for(const w of s.wadis){
+    const e=lineEdge(w.lines,x,z);if(e>=w.bank)continue;
+    h=mix(Math.min(h,w.level+1.2*vnoise(x/90,z/90,9)),h,smooth(e/w.bank));
+  }
+  const out=Math.max(Math.abs(x),Math.abs(z))-s.half;
+  if(out>0&&s.edge)h=s.edge(x,z,out,h);
+  return h;
+}
+function padHeight(s,x,z){
+  let h=rawHeight(s,x,z);
+  for(const p of s.pads){
+    const dx=x-p.x,dz=z-p.z;if(dx>p.m||dx<-p.m||dz>p.m||dz<-p.m)continue;
+    let d;
+    if(p.w){const lx=Math.abs(dx*p.c-dz*p.s)-p.w*.5,lz=Math.abs(dx*p.s+dz*p.c)-p.d*.5;d=lx>0||lz>0?Math.hypot(Math.max(lx,0),Math.max(lz,0)):0;}
+    else d=Math.sqrt(dx*dx+dz*dz)-p.r;
+    if(d<p.blend)h=mix(p.level,h,smooth(d/p.blend));
+  }
+  return h;
+}
+function carveRiver(r,x,z,h){
+  const d=lineNear(r.lines,x,z);if(d>=r.lines.pad)return h;
+  const half=NEAR.w*.5;let depth=r.depth;
+  for(const f of r.fords){const q=Math.hypot(x-f.x,z-f.z);if(q<f.r+60)depth=Math.min(depth,mix(.9,r.depth,smooth((q-f.r)/60)));}
+  // The bed meets the bank at the same height, so tanks can always climb out.
+  let y=d<half?r.level+.3-(depth+.3)*(1-(d/half)**2):mix(r.level+.3,Math.max(h,r.level+.3),smooth((d-half)/r.bank));
+  for(const is of r.islands){
+    const rho=ellipseRho(is,x,z);
+    if(rho<1)y=r.level+is.h*(1-rho*rho);else if(rho<1.3&&d<half)y=mix(r.level-.25,y,smooth((rho-1)/.3));
   }
   return y;
 }
+function landHeight(s,x,z){
+  if(s.plain)return s.flat;
+  let h=padHeight(s,x,z);
+  for(const r of s.rivers)h=carveRiver(r,x,z,h);
+  for(const L of s.lakes){
+    const rho=ellipseRho(L,x,z);if(rho>L.m)continue;
+    if(rho<1)h=L.ice?L.level:L.level+.3-(L.depth+.3)*(1-rho*rho);
+    else h=mix(L.level+(L.ice?0:.3),Math.max(h,L.level+.3),smooth((rho-1)/(L.m-1)));
+  }
+  return h;
+}
+// Open water, a ford or a river bank; null on dry land or ice.
+function waterAt(s,x,z){
+  for(const r of s.rivers){
+    const d=lineNear(r.lines,x,z);if(d>=r.lines.pad)continue;
+    const half=NEAR.w*.5;if(d>half+5)continue;
+    let island=false;for(const is of r.islands)if(ellipseRho(is,x,z)<1)island=true;
+    if(island)continue;
+    if(d>half-2)return r.bankType;
+    for(const f of r.fords)if(Math.hypot(x-f.x,z-f.z)<f.r)return TERRAIN.ford;
+    return r.type;
+  }
+  for(const L of s.lakes)if(!L.ice&&ellipseRho(L,x,z)<1)return L.type;
+  return null;
+}
+function waterNear(s,x,z,m){
+  for(const r of s.rivers){
+    const d=lineNear(r.lines,x,z);if(d>=r.lines.pad||d-NEAR.w*.5>=m)continue;
+    let inside=false;for(const is of r.islands)if(ellipseRho(is,x,z)<1-m/is.rz)inside=true;
+    if(!inside)return true;
+  }
+  for(const L of s.lakes)if(ellipseRho(L,x,z)<1+m/L.R)return true;
+  return false;
+}
 
+// Bridges span along their local v axis: z for axis 'z', x for axis 'x'.
+let BU=0,BV=0;
+function bridgeLocal(b,x,z){if(b.axis==='x'){BU=z-b.z;BV=x-b.x;}else{BU=x-b.x;BV=z-b.z;}}
+function rampHeight(mapId,b,u,v){
+  const t=(Math.abs(v)-b.d*.5)/b.ramp,end=Math.sign(v)*(b.d*.5+b.ramp);
+  return mix(b.height,groundHeight(mapId,b.axis==='x'?b.x+end:b.x+u,b.axis==='x'?b.z+u:b.z+end),smooth(t));
+}
+
+const MAP_SPECS={};
+const variants=new Map();
+const specFor=id=>variants.get(id)?.spec||MAP_SPECS[id]||MAP_SPECS[String(id).split(':')[0]]||MAP_SPECS.valley;
+function groundHeight(mapId,x,z){return landHeight(specFor(mapId),x,z);}
+function terrainHeight(mapId,x,z) {
+  const s=specFor(mapId);let y=landHeight(s,x,z);
+  // Earth approach embankments end at the abutments. The span itself remains
+  // open above the riverbed and is supplied separately by surfaceHeight.
+  for(const b of s.bridges){
+    bridgeLocal(b,x,z);const u=BU,v=BV,du=Math.abs(u),dv=Math.abs(v);
+    if(du<b.w*.5+10&&dv>=b.d*.5-1e-6&&dv<=b.d*.5+b.ramp+1e-6)y=mix(y,rampHeight(mapId,b,u,v),1-smooth((du-b.w*.5)/10));
+  }
+  return y;
+}
 function surfaceHeight(mapId,x,z) {
-  for(const b of specFor(mapId).bridges) {
-    if(Math.abs(x-b.x)>b.w*.5)continue;
-    const dz=Math.abs(z-b.z);
-    if(dz<=b.d*.5)return specFor(mapId).missingDecks?.has(b.x)?terrainHeight(mapId,x,z):b.height;
-    if(dz<=b.d*.5+b.ramp)return rampHeight(mapId,x,z,b);
+  const s=specFor(mapId);
+  for(const b of s.bridges){
+    bridgeLocal(b,x,z);if(Math.abs(BU)>b.w*.5)continue;
+    const u=BU,v=BV,dv=Math.abs(v);
+    if(dv<=b.d*.5)return s.missingDecks?.has(b.id)?terrainHeight(mapId,x,z):b.height;
+    if(dv<=b.d*.5+b.ramp)return rampHeight(mapId,b,u,v);
   }
   return terrainHeight(mapId,x,z);
 }
-
-function onRoad(mapId,x,z) {
-  const nearLane=specFor(mapId).bridges.some(b=>Math.abs(x-b.x)<9);
-  return nearLane || Math.abs(Math.abs(z)-240-Math.sin(x*.007)*10)<9;
-}
-
 function terrainAt(mapId,x,z) {
-  const spec=specFor(mapId),baseId=spec.base||mapId;
-  if(spec.urban){
-    const street=Math.abs(x-Math.round(x/spec.roadStep)*spec.roadStep)<spec.roadHalf||Math.abs(z-Math.round(z/spec.roadStep)*spec.roadStep)<spec.roadHalf;
-    return {name:street?'Městská ulice':'Dvůr',speed:street?1.12:1,color:street?'#505957':'#8c8c78',passable:true};
+  const s=specFor(mapId);
+  for(const b of s.bridges){
+    bridgeLocal(b,x,z);if(Math.abs(BU)>b.w*.5)continue;
+    const dv=Math.abs(BV);if(dv<=b.d*.5&&s.missingDecks?.has(b.id))continue;
+    if(dv<=b.d*.5+b.ramp)return dv<=b.d*.5?TERRAIN.bridge:TERRAIN.approach;
   }
-  if(spec.flat)return {name:'Rovina',speed:1,color:'#87916c',passable:true};
-  mapId=baseId;
-  for(const b of spec.bridges) {
-    if(!(spec.missingDecks?.has(b.x)&&Math.abs(z-b.z)<=b.d*.5)&&Math.abs(x-b.x)<=b.w*.5 && Math.abs(z-b.z)<=b.d*.5+b.ramp)
-      return {name:Math.abs(z-b.z)<=b.d*.5?'Most':'Nájezd na most',speed:1.08,color:'#8e8b7d',bridge:true,passable:true};
+  return waterAt(s,x,z)||s.surface(x,z);
+}
+// Only open water ever blocks a tank, so movement checks skip the surface types.
+function blockedAt(mapId,x,z){
+  const s=specFor(mapId);if(!s.rivers.length&&!s.lakes.length)return false;
+  for(const b of s.bridges){
+    bridgeLocal(b,x,z);if(Math.abs(BU)>b.w*.5)continue;
+    const dv=Math.abs(BV);if(dv<=b.d*.5+b.ramp&&!(dv<=b.d*.5&&s.missingDecks?.has(b.id)))return false;
   }
-  const shore=Math.abs(z-riverCenter(mapId,x))-spec.water.width*.5;
-  if(shore<-2)return {name:'Hluboká řeka · použij most',speed:0,color:mapId==='desert'?'#597d7b':'#496e78',passable:false,water:true};
-  if(shore<5)return {name:mapId==='winter'?'Zledovatělý břeh':'Říční břeh',speed:.48,color:mapId==='winter'?'#a8bdc2':'#7d8571',passable:true};
-  if(onRoad(mapId,x,z))return {name:mapId==='winter'?'Ujetá cesta':mapId==='desert'?'Pevná cesta':'Polní cesta',speed:1.10,color:mapId==='winter'?'#9caaa9':mapId==='desert'?'#ab9978':'#9c9272',passable:true};
-  if(mapId==='desert') {
-    if(Math.sin(x*.032+z*.016)>.56)return {name:'Hluboký písek',speed:.69,color:'#c5a779',passable:true};
-    return {name:'Písek',speed:.87,color:'#d1b98b',passable:true};
+  const w=waterAt(s,x,z);return !!w&&w.passable===false;
+}
+function pointSegGap(px,pz,ax,az,bx,bz){
+  const dx=bx-ax,dz=bz-az,l=dx*dx+dz*dz;let t=l?((px-ax)*dx+(pz-az)*dz)/l:0;t=t<0?0:t>1?1:t;
+  return Math.hypot(px-ax-dx*t,pz-az-dz*t);
+}
+const turnSign=(ax,az,bx,bz,cx,cz)=>(bx-ax)*(cz-az)-(bz-az)*(cx-ax)>0;
+function segmentGap(ax,az,bx,bz,cx,cz,dx,dz){
+  if(turnSign(ax,az,bx,bz,cx,cz)!==turnSign(ax,az,bx,bz,dx,dz)&&turnSign(cx,cz,dx,dz,ax,az)!==turnSign(cx,cz,dx,dz,bx,bz))return 0;
+  return Math.min(pointSegGap(ax,az,cx,cz,dx,dz),pointSegGap(bx,bz,cx,cz,dx,dz),pointSegGap(cx,cz,ax,az,bx,bz),pointSegGap(dx,dz,ax,az,bx,bz));
+}
+// False only when no open water lies within pad of segment a-b (islands and
+// bridges ignored), so callers can skip per-sample water tests on dry ground.
+function waterNearSegment(mapId,ax,az,bx,bz,pad){
+  const s=specFor(mapId);
+  for(const r of s.rivers)for(const g of r.lines.segs)
+    if(segmentGap(ax,az,bx,bz,g.ax,g.az,g.ax+g.dx,g.az+g.dz)<Math.max(g.wa,g.wb)*.5+pad)return true;
+  for(const L of s.lakes)if(!L.ice&&pointSegGap(L.x,L.z,ax,az,bx,bz)<Math.max(L.rx,L.rz)+pad)return true;
+  return false;
+}
+// Water surface height for shells and the chase camera (-Infinity on land).
+function waterLevel(mapId,x,z){
+  const s=specFor(mapId);
+  for(const r of s.rivers){
+    const d=lineNear(r.lines,x,z);if(d>=r.lines.pad||d>=NEAR.w*.5)continue;
+    let island=false;for(const is of r.islands)if(ellipseRho(is,x,z)<1)island=true;
+    if(!island)return r.level;
   }
-  if(mapId==='winter') {
-    if(Math.sin(x*.031)*Math.cos(z*.027)>.45)return {name:'Hluboký sníh',speed:.65,color:'#f0f2e9',passable:true};
-    return {name:'Sníh',speed:.85,color:'#cdd5d0',passable:true};
-  }
-  if(Math.sin(x*.037)*Math.sin(z*.026)>.63)return {name:'Bahno',speed:.68,color:'#74694f',passable:true};
-  return {name:'Tráva',speed:.93,color:'#7c8961',passable:true};
+  for(const L of s.lakes)if(!L.ice&&ellipseRho(L,x,z)<1)return L.level;
+  return -Infinity;
+}
+// True when a straight drive from a to b would cross impassable water.
+function waterBetween(mapId,a,b){
+  const s=specFor(mapId);if(!s.rivers.length&&!s.lakes.length)return false;
+  const steps=Math.ceil(Math.hypot(b.x-a.x,b.z-a.z)/12);
+  for(let i=1;i<steps;i++){const t=i/steps,w=waterAt(s,mix(a.x,b.x,t),mix(a.z,b.z,t));if(w&&w.passable===false)return true;}
+  return false;
 }
 
-function makeObstacles(mapId) {
-  const obstacles=[],spec=specFor(mapId);
-  const baseId=spec.base||mapId;
-  let seed=spec.seed||(baseId==='valley'?18421:baseId==='desert'?83217:31039);
-  const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
-  const clear=(x,z,radius)=>{
-    if([[-320,-180],[320,180]].some(([cx,cz])=>Math.hypot(x-cx,z-cz)<radius+35))return false;
-    if(Math.abs(z-riverCenter(mapId,x))<spec.water.width*.5+radius+15)return false;
-    if(spec.bridges.some(b=>Math.abs(x-b.x)<b.w*.5+radius+9 && Math.abs(z-b.z)<b.d*.5+b.ramp+radius+12))return false;
-    if(spec.bridges.some(b=>Math.hypot(x-b.x,z-b.z)<radius+43))return false;
-    if(onRoad(mapId,x,z)||spec.bridges.some(b=>Math.abs(x-b.x)<radius+17))return false;
-    if(Math.abs(Math.abs(z)-240-Math.sin(x*.007)*10)<radius+16)return false;
-    if(Math.abs(z)>480&&Math.abs(x)<145)return false;
-    return !obstacles.some(o=>Math.hypot(o.x-x,o.z-z)<Math.max(o.w,o.d)*.65+radius+7);
-  };
-  // Inspect the rotated footprint, not just its centre. Never place a house
-  // across a ridge; look for a nearby level plot while preserving clear roads.
-  const placeBuilding=(cx,cz,w,d,h,rotation=0)=>{
-    const radius=Math.hypot(w,d)*.5,c=Math.cos(rotation),s=Math.sin(rotation);
-    for(let ring=0;ring<=10;ring++)for(let step=0;step<(ring?16:1);step++){
-      const angle=step*Math.PI/8,x=cx+Math.cos(angle)*ring*22,z=cz+Math.sin(angle)*ring*22;
-      if(Math.abs(x)+radius>1080||Math.abs(z)+radius>1080||!clear(x,z,radius))continue;
-      let low=Infinity,high=-Infinity;
-      for(let ix=0;ix<=4;ix++)for(let iz=0;iz<=4;iz++){
-        const px=(ix/4-.5)*(w+2),pz=(iz/4-.5)*(d+2);
-        const y=terrainHeight(mapId,x+px*c+pz*s,z-px*s+pz*c);
-        low=Math.min(low,y);high=Math.max(high,y);
-      }
-      if(high-low>1.4)continue;
-      obstacles.push(building(x,z,w,d,h,rotation));return;
-    }
-  };
-  if(baseId==='desert'||baseId==='winter'){
-    const sand=baseId==='desert';
-    for(const [cx,cz] of [[-320,-180],[320,180]]){
-      if(sand&&cx<0){
-        for(let i=0;i<14;i++){const a=i*.45;obstacles.push(tree(cx+Math.cos(a)*48,cz+Math.sin(a)*48,9+i%4));}
-      }
-      else if(sand){
-        for(const dx of [-46,46])for(const dz of [-34,0,34])obstacles.push({...building(cx+dx,cz+dz,9,16,7,0),landmark:'ruin'});
-      }
-      else if(cx<0){
-        for(const dx of [-50,50])for(const dz of [-35,0,35])obstacles.push({...building(cx+dx,cz+dz,9,25,5,0),landmark:'wagon'});
-      }
-      else {for(const dx of [-46,46])obstacles.push({...building(cx+dx,cz,22,30,6,0),landmark:'bunker'});}
-    }
-  }else
-  // Two dense, permeable blocks around the hillside objectives. Cross streets
-  // and courtyards leave multiple approaches instead of a single firing lane.
-  for(const [cx,cz] of [[-320,-180],[320,180]])for(const dx of [-66,-36,36,66])for(const dz of [-62,-32,32,62]){
-    const x=cx+dx,z=cz+dz;placeBuilding(x,z,18,18,8+random()*5);
-  }
-  // Outer bridge approaches form two additional flanking routes on either side.
-  for(const cx of [-740,740])for(const cz of [-280,280])for(const dx of [-35,35]){
-    const x=cx+dx;
-    if(mapId==='desert'){if(clear(x,cz,14))obstacles.push(rock(x,cz,22,18,10));}else placeBuilding(x,cz,22,18,12);
-  }
-  // Scattered hamlets occupy both river banks rather than a tiny central block.
-  const centers=mapId==='valley'?[[-280,-160],[280,160],[-80,280],[90,-280]]:
-    mapId==='winter'?[[-285,-170],[285,175],[-85,290],[80,-290]]:[[-295,-175],[285,175],[70,-285]];
-  for(const [cx,cz] of centers)for(let i=0;i<(mapId==='valley'?5:4);i++) {
-    const x=cx+(i%3-1)*33+(random()-.5)*7,z=cz+(Math.floor(i/3)-.5)*38+(random()-.5)*6;
-    placeBuilding(x,z,13+random()*7,15+random()*7,6+random()*5,(random()-.5)*.16);
-  }
-  const rockCount=mapId==='desert'?85:65;
-  for(let i=0,placed=0;i<400&&placed<rockCount;i++) {
-    const x=(random()-.5)*2050,z=(random()-.5)*2050,w=8+random()*11,d=7+random()*9;
-    if(clear(x,z,Math.max(w,d)*.7)){obstacles.push(rock(x,z,w,d,3+random()*(mapId==='desert'?10:5)));placed++;}
-  }
-  const trees=mapId==='desert'?25:mapId==='winter'?240:200;
-  for(let i=0,placed=0;i<2400&&placed<trees;i++) {
-    const x=(random()-.5)*2050,z=(random()-.5)*2050;
-    if(clear(x,z,3)){obstacles.push(tree(x,z,9+random()*8));placed++;}
-  }
-  return obstacles;
+// Derived values: feature bounds, pad and lake levels (these depend on the
+// seeded knolls, so each battle variant computes its own).
+// Features are rebuilt as objects of one fixed shape per kind, so the hot
+// height loops stay monomorphic (mixed literal shapes cost several times more).
+const hillShape=f=>{const rot=f.rot||0;return {x:f.x,z:f.z,rx:f.rx,rz:f.rz,rot,h:f.h,c:Math.cos(rot),s:Math.sin(rot),m:3*Math.max(f.rx,f.rz)};};
+function ridgeShape(f){
+  const dx=f.bx-f.ax,dz=f.bz-f.az,m=f.r*3;
+  return {ax:f.ax,az:f.az,bx:f.bx,bz:f.bz,r:f.r,h:f.h,hb:f.hb??f.h,dx,dz,len2:dx*dx+dz*dz||1,r2:f.r*f.r,
+    x0:Math.min(f.ax,f.bx)-m,x1:Math.max(f.ax,f.bx)+m,z0:Math.min(f.az,f.bz)-m,z1:Math.max(f.az,f.bz)+m};
+}
+function mesaShape(f){
+  const rot=f.rot||0,wob=f.wob||0;
+  return {x:f.x,z:f.z,rx:f.rx,rz:f.rz,rot,top:f.top,edge:f.edge,wob,seed:f.seed??7,c:Math.cos(rot),s:Math.sin(rot),
+    R:Math.min(f.rx,f.rz),m:Math.max(f.rx,f.rz)*(1.2+wob)+f.edge*2};
+}
+function padShape(p){
+  const rot=p.rot||0,w=p.w||0,d=p.d||0;
+  return {x:p.x,z:p.z,r:p.r||0,w,d,rot,c:Math.cos(rot),s:Math.sin(rot),blend:p.blend,m:(w?Math.hypot(w,d)/2:p.r)+p.blend,
+    fixed:p.fixed,offset:p.offset||0,level:0};
+}
+function lakeShape(L){
+  const rot=L.rot||0,R=Math.min(L.rx,L.rz);
+  return {x:L.x,z:L.z,rx:L.rx,rz:L.rz,rot,c:Math.cos(rot),s:Math.sin(rot),R,m:1+(L.bank||20)/R,bank:L.bank||20,depth:L.depth??3,
+    drop:L.drop??1.2,fixed:L.fixed,ice:!!L.ice,type:L.type||TERRAIN.pond,level:0};
+}
+// Every spec (base maps, seeded variants, damaged copies) shares one shape too.
+const SPEC_KEYS=['id','kind','biome','theme','size','half','spawnZ','lanes','zones','relief','edge','surface','plain','flat',
+  'hills','knolls','ridges','mesas','wadis','pads','rivers','lakes','bridges','roads','rails','streets','areas','forests',
+  'variantKnolls','build','base','seed','missingDecks'];
+function specShape(src){const s={};for(const k of SPEC_KEYS)s[k]=src[k]===undefined?null:src[k];return s;}
+function prepareSpec(src){
+  const s=specShape(src);
+  s.half=s.size/2;
+  s.hills=s.hills.map(hillShape);s.knolls=s.knolls.map(hillShape);
+  s.ridges=s.ridges.map(ridgeShape);s.mesas=s.mesas.map(mesaShape);
+  s.pads=s.pads.map(padShape);
+  for(const p of s.pads)p.level=p.fixed??rawHeight(s,p.x,p.z)+p.offset;
+  s.lakes=s.lakes.map(lakeShape);
+  for(const L of s.lakes)L.level=L.fixed??padHeight(s,L.x,L.z)-L.drop;
+  return s;
+}
+function defineMap(def){
+  const s=prepareSpec({hills:[],knolls:[],ridges:[],mesas:[],wadis:[],pads:[],rivers:[],lakes:[],bridges:[],roads:NO_LINES,rails:NO_LINES,
+    streets:NO_LINES,areas:[],forests:[],plain:false,...def});
+  MAP_SPECS[s.id]=s;return s;
 }
 
-const MAPS = [
-  {id:'valley',name:'Zelené údolí',subtitle:'Kopce · říční mosty · vesnice',biome:'summer',
-    description:'Rozsáhlou hornatou krajinu rozděluje hluboká řeka. Získej mosty, kryj se za hřebeny a obcházej vesnice.'},
-  {id:'desert',name:'Písečná bouře',subtitle:'Dunová pole · oáza · ruiny',biome:'desert',
-    description:'Pole nízkých dun ukrývá oázu u A. U C se bojuje mezi pískovcovými ruinami.'},
-  {id:'winter',name:'Zimní průlom',subtitle:'Průsmyk · nádraží · bunkry',biome:'winter',
-    description:'U A obsadíš zasněžené nákladové nádraží. Průsmyk mezi hřebeny vede k opevněné stanici u C.'},
-].map(map=>{
-  const spec=specFor(map.id);
-  return {...map,size:2200,spawnZ:590,water:{...spec.water},bridges:spec.bridges.map(b=>({...b})),
-    zones:[{id:'A',x:-320,z:-180},{id:'B',x:0,z:spec.bridges[2].z},{id:'C',x:320,z:180}],obstacles:makeObstacles(map.id)};
+// Prop placement with spacing, road, water and bridge clearance.
+class Placer{
+  constructor(spec,random){this.s=spec;this.r=random;this.list=[];this.cells=new Map();this.keep=[];}
+  keepOut(x,z,r){this.keep.push([x,z,r]);return this;}
+  *around(x,z,r){
+    for(let cx=Math.floor((x-r)/40);cx<=Math.floor((x+r)/40);cx++)for(let cz=Math.floor((z-r)/40);cz<=Math.floor((z+r)/40);cz++)
+      for(const o of this.cells.get(cx*100003+cz)||[])yield o;
+  }
+  free(x,z,r,{road=5,water=6,gap=5,keep=true}={}){
+    const s=this.s;if(Math.abs(x)>s.half-r-8||Math.abs(z)>s.half-r-8)return false;
+    if(keep)for(const [kx,kz,kr] of this.keep)if((x-kx)**2+(z-kz)**2<(kr+r)**2)return false;
+    if(road!==null&&(lineEdge(s.roads,x,z)<r+road||lineEdge(s.rails,x,z)<r+road||lineEdge(s.streets,x,z)<r+road))return false;
+    if(water!==null&&waterNear(s,x,z,r+water))return false;
+    for(const b of s.bridges){bridgeLocal(b,x,z);if(Math.abs(BU)<b.w*.5+r+10&&Math.abs(BV)<b.d*.5+b.ramp+r+12)return false;}
+    for(const o of this.around(x,z,r+30))if(Math.hypot(o.x-x,o.z-z)<Math.max(o.w,o.d)*.55+r+gap)return false;
+    return true;
+  }
+  level(x,z,w,d,rot,tolerance=1.4){
+    const c=Math.cos(rot),s=Math.sin(rot);let low=Infinity,high=-Infinity;
+    for(let ix=0;ix<=4;ix++)for(let iz=0;iz<=4;iz++){
+      const px=(ix/4-.5)*(w+2),pz=(iz/4-.5)*(d+2),y=landHeight(this.s,x+px*c+pz*s,z-px*s+pz*c);
+      low=Math.min(low,y);high=Math.max(high,y);
+    }
+    return high-low<=tolerance;
+  }
+  add(o){
+    this.list.push(o);
+    const r=Math.hypot(o.w,o.d)/2;
+    for(let cx=Math.floor((o.x-r)/40);cx<=Math.floor((o.x+r)/40);cx++)for(let cz=Math.floor((o.z-r)/40);cz<=Math.floor((o.z+r)/40);cz++){
+      const k=cx*100003+cz;let cell=this.cells.get(k);if(!cell)this.cells.set(k,cell=[]);if(!cell.includes(o))cell.push(o);
+    }
+    return o;
+  }
+  // Exact placement for designed landmarks (only checked against water).
+  put(o){return this.add(o);}
+  // Never put a house across a ridge: search nearby for a level plot.
+  building(x,z,w,d,h,rot=0,extra,{search=5,step=14,gap=4,road=4,tolerance=1.4}={}){
+    const r=Math.hypot(w,d)/2;
+    for(let ring=0;ring<=search;ring++)for(let k=0;k<(ring?12:1);k++){
+      const a=k*TAU/12+ring*.4,px=x+Math.cos(a)*ring*step,pz=z+Math.sin(a)*ring*step;
+      if(!this.free(px,pz,r,{gap,road})||!this.level(px,pz,w,d,rot,tolerance))continue;
+      return this.add(extra?.landmark?landmark(extra.landmark,px,pz,w,d,h,rot,extra):building(px,pz,w,d,h,rot,extra));
+    }
+    return null;
+  }
+  trees({x,z,r,n,kind,h=[9,16],gap=4.2,road=3}){
+    let placed=0;
+    for(let tries=0;placed<n&&tries<n*7;tries++){
+      const a=this.r()*TAU,d=Math.sqrt(this.r())*r,px=x+Math.cos(a)*d,pz=z+Math.sin(a)*d;
+      if(!this.free(px,pz,1.4,{road,water:3,gap}))continue;
+      this.add(tree(px,pz,h[0]+this.r()*(h[1]-h[0]),kind));placed++;
+    }
+  }
+  rocks(n,{x=0,z=0,r=this.s.half,size=[6,16],height=[2,6],gap=6}={}){
+    let placed=0;
+    for(let tries=0;placed<n&&tries<n*8;tries++){
+      const a=this.r()*TAU,d=Math.sqrt(this.r())*r,px=x+Math.cos(a)*d,pz=z+Math.sin(a)*d,w=size[0]+this.r()*(size[1]-size[0]),dd=w*(.7+this.r()*.4);
+      if(!this.free(px,pz,Math.max(w,dd)*.6,{gap}))continue;
+      this.add(rock(px,pz,w,dd,height[0]+this.r()*(height[1]-height[0])));placed++;
+    }
+  }
+}
+// Rotated rectangles: separating-axis overlap test for street frontage.
+function boxesOverlap(a,b,margin=0){
+  const ac=Math.cos(a.rotation||0),as=Math.sin(a.rotation||0),bc=Math.cos(b.rotation||0),bs=Math.sin(b.rotation||0),dx=b.x-a.x,dz=b.z-a.z;
+  for(const [nx,nz] of [[ac,-as],[as,ac],[bc,-bs],[bs,bc]]){
+    const ra=a.w*.5*Math.abs(ac*nx-as*nz)+a.d*.5*Math.abs(as*nx+ac*nz),rb=b.w*.5*Math.abs(bc*nx-bs*nz)+b.d*.5*Math.abs(bs*nx+bc*nz);
+    if(Math.abs(dx*nx+dz*nz)>=ra+rb-margin)return false;
+  }
+  return true;
+}
+function footprint(o,inset=0){
+  const c=Math.cos(o.rotation||0),s=Math.sin(o.rotation||0),pts=[];
+  for(const fx of [-.5,0,.5])for(const fz of [-.5,0,.5]){const px=fx*(o.w-inset*2),pz=fz*(o.d-inset*2);pts.push([o.x+px*c+pz*s,o.z-px*s+pz*c]);}
+  return pts;
+}
+const flipPoints=points=>points.map(p=>[-p[0],-p[1],...p.slice(2)]);
+const flipHill=f=>({...f,x:-f.x,z:-f.z});
+const flipRidge=f=>({...f,ax:-f.ax,az:-f.az,bx:-f.bx,bz:-f.bz});
+const both=(list,flip)=>list.flatMap(f=>[f,flip(f)]);
+// Spawn pads and lanes shared by every map: three lanes per team.
+const spawnPads=(lanes,z,r=36,blend=55)=>lanes.flatMap(x=>[{x,z:-z,r,blend},{x,z,r,blend}]);
+
+function mesaMask(f,x,z){
+  const dx=x-f.x,dz=z-f.z;if(dx>f.m||dx<-f.m||dz>f.m||dz<-f.m)return 0;
+  const lx=(dx*f.c-dz*f.s)/f.rx,lz=(dx*f.s+dz*f.c)/f.rz,rho=Math.sqrt(lx*lx+lz*lz)+f.wob*vnoise(x/34,z/34,f.seed);
+  return 1-smooth((rho-1)*f.R/f.edge+.5);
+}
+// A house ring around a village green; gable ends face the green.
+function village(P,cx,cz,{count,r0,r1,style='house',w=[8.5,11],d=[12,17],h=[5.5,7.5]}){
+  for(let i=0;i<count;i++){
+    const a=i/count*TAU+(P.r()-.5)*.3,r=r0+P.r()*(r1-r0),x=cx+Math.cos(a)*r,z=cz+Math.sin(a)*r;
+    P.building(x,z,w[0]+P.r()*(w[1]-w[0]),d[0]+P.r()*(d[1]-d[0]),h[0]+P.r()*(h[1]-h[0]),heading(cx-x,cz-z),{style},{search:2,step:8});
+  }
+}
+// Rotated local frame helper for designed clusters.
+const frame=(cx,cz,rot)=>{const c=Math.cos(rot),s=Math.sin(rot);return (lx,lz)=>[cx+lx*c+lz*s,cz-lx*s+lz*c];};
+function farmstead(P,cx,cz,rot=0){
+  const at=frame(cx,cz,rot),opt={search:2,step:8};
+  P.building(...at(0,-56),36,12,8,rot,{landmark:'barn'},opt);
+  P.building(...at(-56,2),12,32,7.5,rot,{landmark:'barn'},opt);
+  P.building(...at(56,4),11,22,7,rot,{style:'house'},opt);
+  P.building(...at(46,-48),10,13,6,rot+.5,{style:'house'},opt);
+  P.building(...at(-44,52),10,14,6,rot+.2,{style:'house'},opt);
+  for(let i=0;i<5;i++){const [x,z]=at(-30+i*14,60+(i%2)*4);if(P.free(x,z,2,{gap:2}))P.add(landmark('bale',x,z,2.4,2.4,2,0,{round:true}));}
+}
+function orchard(P,cx,cz,rot,cols,rows,step=11){
+  const at=frame(cx,cz,rot);
+  for(let i=0;i<cols;i++)for(let j=0;j<rows;j++){const [x,z]=at((i-(cols-1)/2)*step,(j-(rows-1)/2)*step);if(P.free(x,z,1.3,{gap:3}))P.add(tree(x,z,6.5+P.r()*2,'fruit'));}
+}
+
+// ============================ 1. ZELENÉ ÚDOLÍ ===============================
+// A meandering river with a mill island at B: wooden bridges reach the island,
+// stone bridges cross below the two villages, fords cover the far flanks.
+{
+  const riverPath=[[-1750,-330,52],[-1400,-320,50],[-1100,-300,46],[-930,-285,46],[-800,-250,46],[-690,-150,46],[-610,-10,46],[-520,120,46],
+    [-400,205,46],[-260,225,46],[-150,190,54],[-75,110,110],[0,0,205],[75,-110,110],[150,-190,54],[260,-225,46],[400,-205,46],[520,-120,46],
+    [610,10,46],[690,150,46],[800,250,46],[930,285,46],[1100,300,46],[1400,320,50],[1750,330,52]];
+  const river=makeLines([{points:riverPath}],{reach:96,step:25}),wide=makeLines([{points:riverPath}],{reach:400,step:40});
+  const zW=zAtX(river,-260),zE=zAtX(river,260),fW=zAtX(river,-930),fE=zAtX(river,930);
+  const half=[
+    [[-1150,-700],[-780,-720],[-560,-690],[-250,-700],[0,-680],[260,-660],[560,-700],[860,-650],[1150,-680]],
+    [[-560,-690],[-540,-470],[-500,-230],[-455,-60],[-430,30],[-330,75],[-262,118],[-260,zW],[-258,335],[-240,500],[-260,665]],
+    [[0,-680],[-60,-460],[-150,-250],[-215,-80],[-205,0],[-100,0],[0,0]],
+    [[-780,-720],[-860,-500],[-930,fW],[-900,-60],[-790,180],[-700,420],[-560,690]],
+  ];
+  const roads=makeLines([...half,...half.map(flipPoints)].map(points=>({points,width:9})),{reach:40,step:20});
+  const forests=both([{x:560,z:-300,r:120,n:110},{x:-860,z:-560,r:125,n:110},{x:130,z:-880,r:90,n:60},{x:900,z:-120,r:95,n:70},{x:-100,z:-570,r:70,n:36}],flipHill)
+    .map(f=>({...f,r2:(f.r*.95)**2}));
+  const island=oriented({x:0,z:0,rx:135,rz:56,rot:.972,h:5});
+  const axis=[.563,-.826],side=[.826,.563],onIsland=(t,l)=>[axis[0]*t+side[0]*l,axis[1]*t+side[1]*l];
+  defineMap({
+    id:'valley',kind:'hills',biome:'summer',theme:'valley',size:2200,spawnZ:680,lanes:[-560,0,560],
+    zones:[{id:'A',x:-430,z:30},{id:'B',x:0,z:0},{id:'C',x:430,z:-30}],
+    relief:(x,z)=>9+2.6*Math.sin(x*.0061+.4)*Math.cos(z*.0053-.2)+3.4*fbm(x/210,z/210,11,3),
+    hills:both([
+      {x:-760,z:-560,rx:210,rz:150,rot:.3,h:44},{x:200,z:-470,rx:170,rz:100,rot:.6,h:30},{x:740,z:-400,rx:150,rz:115,rot:-.4,h:34},
+      {x:-170,z:-320,rx:95,rz:80,h:14},{x:-1000,z:-900,rx:240,rz:200,rot:.2,h:48},{x:1000,z:-880,rx:220,rz:200,rot:-.2,h:36},
+      {x:520,z:-820,rx:150,rz:90,rot:.2,h:20},{x:-480,z:-880,rx:130,rz:90,rot:-.3,h:16},{x:-860,z:120,rx:150,rz:100,rot:.7,h:22},
+    ],flipHill),
+    ridges:both([{ax:60,az:-330,bx:400,bz:-400,r:45,h:16}],flipRidge),
+    pads:[{x:-430,z:30,r:58,blend:60},{x:430,z:-30,r:58,blend:60},...spawnPads([-560,0,560],680)],
+    rivers:[{lines:river,level:2,depth:3.4,bank:80,type:TERRAIN.river,bankType:TERRAIN.bank,islands:[island],
+      fords:[{x:-930,z:fW,r:34},{x:930,z:fE,r:34}]}],
+    lakes:[...both([{x:420,z:-590,rx:90,rz:42,rot:.25,drop:1.4,depth:3,bank:26},{x:-388,z:82,rx:15,rz:11,rot:.3,drop:.8,depth:1.6,bank:10}],flipHill)]
+      .map(L=>({...L,type:TERRAIN.pond})),
+    bridges:[
+      {id:'w',axis:'z',x:-260,z:zW,w:16,d:94,height:9,ramp:72,style:'stone'},
+      {id:'iw',axis:'x',x:-95,z:0,w:14,d:80,height:6,ramp:28,style:'wood'},
+      {id:'ie',axis:'x',x:95,z:0,w:14,d:80,height:6,ramp:28,style:'wood'},
+      {id:'e',axis:'z',x:260,z:zE,w:16,d:94,height:9,ramp:72,style:'stone'},
+    ],
+    roads,forests,
+    surface(x,z){
+      if(lineEdge(roads,x,z)<0)return TERRAIN.dirt;
+      for(const f of forests)if((x-f.x)**2+(z-f.z)**2<f.r2)return TERRAIN.forest;
+      const n=vnoise(x/85,z/85,5);
+      return n>.58?TERRAIN.mud:n<-.5?TERRAIN.meadow:TERRAIN.grass;
+    },
+    // Wooded hills close the valley; the river keeps its own low corridor.
+    edge(x,z,out,h){
+      let rise=(26*smooth(out/380)+125*smooth((out-160)/1250))*(.62+.5*fbm(x/420,z/420,7,3));
+      const d=lineNear(wide,x,z);if(d<wide.pad)rise*=mix(.1,1,smooth((d-NEAR.w*.5-40)/300));
+      return h+rise;
+    },
+    variantKnolls(r){
+      const list=[];
+      for(let ix=0;ix<6;ix++)for(let iz=0;iz<5;iz++)list.push({x:-900+ix*360+(r()-.5)*200,z:-820+iz*410+(r()-.5)*200,rx:50+r()*70,rz:45+r()*70,rot:r()*3,h:4+r()*9});
+      return list;
+    },
+    build(s,r){
+      const P=new Placer(s,r);
+      for(const zn of s.zones)P.keepOut(zn.x,zn.z,30);
+      for(const x of s.lanes)for(const z of [-680,680])P.keepOut(x,z,42);
+      // A: Lhota around its village green, C: a farmstead. B: the mill island.
+      village(P,-430,30,{count:13,r0:50,r1:76});
+      P.building(-506,-26,12,26,10,heading(1,-.4),{landmark:'church'},{search:3,step:10});
+      farmstead(P,430,-30,.15);
+      P.building(392,-104,12,24,10,heading(-1,.3),{landmark:'church'},{search:3,step:10});
+      P.put(landmark('mill',...onIsland(90,0),12,18,9,heading(...axis)));
+      P.put(building(...onIsland(-92,4),9,13,6,heading(...axis),{style:'house'}));
+      // Cover around B itself: a mill shed, a ruined wall, a log pile and sandbags.
+      P.put(building(...onIsland(-38,-22),8,12,5,heading(...axis),{style:'shed'}));
+      P.put(landmark('ruin',...onIsland(34,20),14,2.2,3.2,heading(...axis)+Math.PI/2,{material:'stone'}));
+      P.put(landmark('logs',...onIsland(18,-30),11,4.5,2.4,heading(...axis)));
+      P.put(landmark('sandbags',...onIsland(-22,30),10,2,1.5,heading(...axis)+Math.PI/2));
+      for(const [t,l] of [[114,0],[-116,4],[60,26],[62,-24],[-58,-26],[-64,24],[40,-34],[-40,34]])P.add(tree(...onIsland(t,l),10+r()*5,'willow'));
+      for(const [x,z,n] of [[-250,-770,4],[250,-870,3],[840,-560,4],[-660,-300,3],[-860,-860,3]])for(const q of [1,-1])village(P,x*q,z*q,{count:n,r0:14,r1:30});
+      orchard(P,-575,-125,.4,6,4);orchard(P,575,125,.4,6,4);
+      orchard(P,-300,-150,-.3,4,3);orchard(P,300,150,-.3,4,3);
+      for(const f of forests)P.trees({x:f.x,z:f.z,r:f.r,n:f.n,gap:3.6});
+      // Willows and alders line both banks.
+      for(const path of river.paths)for(let i=0;i<path.pts.length-1;i+=4){
+        const [ax,az,w]=path.pts[i],[bx,bz]=path.pts[i+1],len=Math.hypot(bx-ax,bz-az)||1;
+        for(const q of [-1,1]){if(r()<.45)continue;const off=w/2+8+r()*9,x=ax-(bz-az)/len*off*q,z=az+(bx-ax)/len*off*q;if(P.free(x,z,1.4,{water:1,gap:5}))P.add(tree(x,z,9+r()*5,'willow'));}
+      }
+      P.trees({x:0,z:0,r:1050,n:110,gap:6});
+      P.rocks(34,{size:[5,12],height:[2,5]});
+      return P.list;
+    },
+  });
+}
+
+// ============================ 2. PÍSEČNÁ BOUŘE ==============================
+// Two dry wadis run along the flanks; dune seas fill the NE and SW, mesas and
+// buttes break the sight lines. Oasis at A, caravanserai at B, ruins at C.
+{
+  const wadiPath=[[-720,-1600],[-700,-1100],[-610,-780],[-670,-450],[-590,-150],[-690,160],[-600,480],[-660,800],[-700,1100],[-720,1600]];
+  const wadi=makeLines([{points:wadiPath,width:54},{points:flipPoints(wadiPath),width:54}],{reach:40,step:20});
+  // Dune seas (0..1): two big ergs in the NE and SW plus patchy dune fields elsewhere.
+  const duneField=(x,z)=>clamp(1.15*(Math.exp(-(((x-540)/430)**2+((z+430)/380)**2))+Math.exp(-(((x+540)/430)**2+((z-430)/380)**2)))
+    +.6*smooth((fbm(x/320,z/320,61,2)+.05)/.45),0,1);
+  // Transverse dunes ~105 m apart, crests across a south-west wind: a long gentle
+  // windward slope, a steeper lee face (still drivable) and crests that break up.
+  const dunes=(x,z,a)=>{
+    const wx=x+28*vnoise(x/190,z/190,71),wz=z+28*vnoise(z/170,x/170,73);
+    const u=(wx*.84+wz*.54)/105+.35*Math.sin(wz*.011),f=u-Math.floor(u);
+    const p=f<.64?smooth(f/.64):1-smooth((f-.64)/.36);
+    return a*p*(.55+.45*vnoise(wx/150,wz/150,79));
+  };
+  const duneHeight=(x,z)=>1.5+11*duneField(x,z);
+  const half=[
+    [[-500,-690],[-490,-480],[-440,-310],[-410,-230],[-300,-120],[-150,-40],[-46,0]],
+    [[0,-690],[30,-460],[-10,-250],[0,-46]],
+    [[-1150,-640],[-820,-700],[-500,-690],[-250,-700],[0,-690],[300,-700],[500,-690],[860,-720],[1150,-660]],
+  ];
+  const roads=makeLines([...half,...half.map(flipPoints)].map(points=>({points,width:10})),{reach:40,step:20});
+  const mesas=both([
+    {x:-830,z:330,rx:125,rz:85,rot:.5,top:50,edge:10,wob:.07,seed:3},{x:-170,z:-500,rx:72,rz:50,rot:-.3,top:40,edge:9,wob:.08,seed:5},
+    {x:-235,z:135,rx:40,rz:32,rot:.2,top:38,edge:7,wob:.06,seed:8},{x:880,z:820,rx:60,rz:45,rot:.9,top:44,edge:8,wob:.06,seed:11},
+    {x:-380,z:-920,rx:70,rz:40,rot:.1,top:36,edge:8,wob:.07,seed:13},
+  ],flipHill);
+  // Distant mesas stand entirely outside the battlefield.
+  const backMesas=[],br=seeded(4242);
+  for(let i=0;i<24;i++){
+    const a=i/24*TAU+br()*.18,sx=Math.sin(a),cz=Math.cos(a),k=Math.max(Math.abs(sx),Math.abs(cz)),rx=90+br()*210,rz=60+br()*130,
+      m=Math.max(rx,rz)*1.3+30,t=(1100+m+120+br()*1400)/k;
+    backMesas.push(oriented({x:sx*t,z:cz*t,rx,rz,rot:br()*3,top:45+br()*75,edge:16,wob:.08,seed:i,R:Math.min(rx,rz),m}));
+  }
+  const oasis={x:-482,z:-292};
+  defineMap({
+    id:'desert',kind:'hills',biome:'desert',theme:'desert',size:2200,spawnZ:680,lanes:[-500,0,500],
+    zones:[{id:'A',x:-410,z:-230},{id:'B',x:0,z:0},{id:'C',x:420,z:230}],
+    relief(x,z){const out=Math.max(Math.abs(x),Math.abs(z))-1100,a=duneHeight(x,z)+(out>0?6*smooth(out/700):0);return 13+dunes(x,z,a)+2.2*fbm(x/150,z/150,23,2);},
+    hills:[{x:420,z:230,rx:130,rz:110,rot:.3,h:6},{x:-470,z:-280,rx:120,rz:90,h:-3}],
+    mesas,wadis:[{lines:wadi,bank:34,level:5}],
+    pads:[{x:-410,z:-230,r:52,blend:50},{x:420,z:230,r:60,blend:60},{x:0,z:0,r:70,blend:60},...spawnPads([-500,0,500],680)],
+    lakes:[{x:oasis.x,z:oasis.z,rx:52,rz:34,rot:.4,drop:1.6,depth:2.5,bank:18,type:TERRAIN.spring}],
+    roads,
+    surface(x,z){
+      if(Math.abs(x)<44&&Math.abs(z)<44)return TERRAIN.sandYard;
+      if(lineEdge(roads,x,z)<0)return TERRAIN.firm;
+      if(lineEdge(wadi,x,z)<4)return TERRAIN.wadi;
+      for(const f of this.mesas){const m=mesaMask(f,x,z);if(m>.93)return TERRAIN.mesaTop;if(m>.05)return TERRAIN.cliff;}
+      if((x-oasis.x)**2+(z-oasis.z)**2<118**2)return TERRAIN.oasis;
+      const field=duneField(x,z),a=duneHeight(x,z);
+      if(field>.35&&dunes(x,z,a)>a*.62)return TERRAIN.deepSand;
+      if(field<.2&&vnoise(x/140,z/140,4)>.15)return TERRAIN.gravel;
+      return TERRAIN.sand;
+    },
+    edge(x,z,out,h){
+      h+=16*smooth(out/900)*(.6+.6*fbm(x/300,z/300,91,2));
+      for(const f of backMesas){const m=mesaMask(f,x,z);if(m>0)h=mix(h,Math.max(h,f.top),m);}
+      return h;
+    },
+    variantKnolls(r){
+      const list=[];
+      for(let ix=0;ix<6;ix++)for(let iz=0;iz<5;iz++)list.push({x:-900+ix*360+(r()-.5)*220,z:-820+iz*410+(r()-.5)*220,rx:40+r()*60,rz:40+r()*60,rot:r()*3,h:3+r()*6});
+      return list;
+    },
+    build(s,r){
+      const P=new Placer(s,r);
+      for(const zn of s.zones)P.keepOut(zn.x,zn.z,30);
+      for(const x of s.lanes)for(const z of [-680,680])P.keepOut(x,z,42);
+      // B: caravanserai, gates on the four tracks.
+      const wall=(x,z,w,d)=>P.put(landmark('wall',x,z,w,d,7.5,0,{material:'adobe'}));
+      for(const q of [-1,1]){wall(q*24.75,-46,33.5,3);wall(q*24.75,46,33.5,3);wall(-46,q*24.75,3,33.5);wall(46,q*24.75,3,33.5);}
+      for(const x of [-46,46])for(const z of [-46,46])P.put(landmark('tower',x,z,9,9,10.5));
+      P.put(landmark('well',18,-16,3,3,1.6,0,{round:true}));
+      // A: oasis. Palms ring the spring; mud-brick houses face the track.
+      for(let i=0;i<34;i++){const a=i/34*TAU+r()*.15,q=1.12+r()*.5,x=oasis.x+Math.cos(a)*52*q,z=oasis.z+Math.sin(a)*34*q;if(P.free(x,z,1.3,{water:1,gap:2.5}))P.add(tree(x,z,10+r()*5,'palm'));}
+      P.trees({x:-360,z:-300,r:60,n:18,kind:'palm',h:[10,15],gap:4});
+      for(const [x,z,w,d,h,rot] of [[-352,-312,10,12,4.5,.2],[-326,-272,9,11,4,.5],[-462,-178,10,10,4.5,-.2],[-512,-214,9,12,4,.1],[-348,-176,11,9,5,.4],[-450,-356,10,12,4.5,.6],[-392,-160,8,10,4,.0]])
+        P.building(x,z,w,d,h,rot,{style:'adobe'},{search:2,step:7});
+      // C: ruins on a low tell, a colonnade and broken temple walls.
+      const at=frame(410,182,.3);
+      for(const row of [-9,9])for(let i=0;i<8;i++){const [x,z]=at(-24.5+i*7,row);P.put(landmark('column',x,z,2.3,2.3,i%3===1?3+r()*2:6.5+r()*3,.3));}
+      for(const [lx,lz,w,d,h] of [[30,42,22,3,5],[52,60,3,18,4],[8,64,14,3,3],[-36,58,3,16,5.5],[64,22,10,3,2.5]]){const [x,z]=at(lx,lz);P.put(landmark('ruin',x,z,w,d,h,.3,{material:'sandstone'}));}
+      P.put(landmark('ruin',470,276,22,14,6,.3,{material:'sandstone'}));
+      for(let i=0;i<10;i++){const a=r()*TAU,d=40+r()*55,x=420+Math.cos(a)*d,z=230+Math.sin(a)*d;if(P.free(x,z,2,{gap:2}))P.add(rock(x,z,2.5+r()*2,2+r()*1.5,1.2+r()));}
+      // Burnt-out convoy hulks and scrub.
+      for(let i=0,n=0;i<60&&n<9;i++){const x=(r()-.5)*1900,z=(r()-.5)*1900,rot=r()*TAU;if(P.free(x,z,5,{gap:12})&&P.level(x,z,3.4,7,rot,2)){P.add(landmark('wreck',x,z,3.4,7,2.4,rot));n++;}}
+      for(const f of mesas)for(let i=0;i<8;i++){const a=r()*TAU,q=1.05+r()*.35,x=f.x+Math.cos(a)*f.rx*q,z=f.z+Math.sin(a)*f.rz*q,w=4+r()*9;if(P.free(x,z,w*.6,{gap:3}))P.add(rock(x,z,w,w*(.7+r()*.4),2+r()*5));}
+      P.rocks(26,{size:[5,14],height:[2,7]});
+      P.trees({x:0,z:0,r:1050,n:80,kind:'bush',h:[3,5],gap:6});
+      return P.list;
+    },
+  });
+}
+
+// ============================= 3. ZIMNÍ PRŮLOM ==============================
+// A mountain valley split by a central spur. The railway and freight yard (A)
+// run up the west corridor, the road and fortified station (C) up the east;
+// the only gentle crossing between them is the pass at B.
+{
+  const railPath=[[-640,-1600],[-620,-1100],[-560,-800],[-505,-600],[-500,-460],[-500,-80],[-505,60],[-520,220],[-560,520],[-600,820],[-620,1100],[-640,1600]];
+  const sidings=[-26,-13,13,26].map(o=>({points:[[-500+o*.2,-510],[-500+o,-450],[-500+o,-90],[-500+o*.2,-30]],width:3.4,smooth:false}));
+  const rails=makeLines([{points:railPath,width:3.4},...sidings],{reach:40,step:20});
+  const roads=makeLines([
+    {points:flipPoints(railPath),width:12},
+    {points:[[-492,0],[-300,8],[-150,4],[0,0],[150,-4],[300,-8],[492,0]],width:10},
+    {points:[[-500,-718],[0,-724],[500,-718]],width:10},{points:[[500,718],[0,724],[-500,718]],width:10},
+  ],{reach:40,step:20});
+  // The spur stops ~250 m short of the middle spawns so they open onto both corridors.
+  const spur=[{ax:0,az:-470,bx:0,bz:-270,r:112,h:86},{ax:0,az:270,bx:0,bz:470,r:112,h:86},{ax:0,az:-150,bx:0,bz:150,r:125,h:28}];
+  const spurHeight=(x,z)=>{let h=0;for(const f of spur){const t=clamp((z-f.az)/(f.bz-f.az),0,1),ez=z-f.az-(f.bz-f.az)*t;h+=f.h*Math.exp(-(x*x+ez*ez)/(f.r*f.r));}return h;};
+  const lake=oriented({x:540,z:-470,rx:165,rz:100,rot:.15});
+  const forests=[{x:-760,z:-560,r:130,n:95},{x:-180,z:300,r:100,n:55},{x:-600,z:560,r:120,n:90},{x:-900,z:-100,r:110,n:60},{x:-300,z:-420,r:80,n:35},
+    {x:760,z:560,r:130,n:95},{x:300,z:560,r:90,n:45},{x:180,z:-300,r:100,n:55},{x:900,z:100,r:110,n:60},{x:820,z:-700,r:100,n:55}];
+  defineMap({
+    id:'winter',kind:'hills',biome:'winter',theme:'winter',size:2200,spawnZ:720,lanes:[-500,0,500],
+    zones:[{id:'A',x:-500,z:-250},{id:'B',x:0,z:0},{id:'C',x:500,z:250}],
+    relief(x,z){
+      const ax=Math.abs(x),sp=Math.exp(-((x/120)**2))*smooth((540-Math.abs(z))/180)*smooth((Math.abs(z)-150)/120);
+      return 10+2.6*fbm(x/170,z/170,41,3)+74*smooth((ax-800)/330)*(.85+.3*fbm(x/200,z/200,3,2))+16*(ridged(x/70,z/70,5,3)-.5)*sp;
+    },
+    ridges:spur.map(f=>({...f})),
+    hills:both([{x:-760,z:-120,rx:90,rz:130,h:14},{x:-300,z:-610,rx:110,rz:80,h:12},{x:-760,z:640,rx:150,rz:110,h:20},{x:-320,z:380,rx:90,rz:70,h:10}],flipHill),
+    pads:[{x:-500,z:-265,w:110,d:430,blend:45},{x:500,z:250,r:70,blend:60},{x:0,z:0,r:46,blend:70},...spawnPads([-500,0,500],720)],
+    lakes:[{x:lake.x,z:lake.z,rx:lake.rx,rz:lake.rz,rot:lake.rot,ice:true,drop:.4,bank:45}],
+    roads,rails,forests,
+    surface(x,z){
+      if(ellipseRho(lake,x,z)<1)return TERRAIN.ice;
+      if(lineEdge(rails,x,z)<1.6||Math.abs(x+500)<46&&z>-448&&z<-92)return TERRAIN.rail;
+      if(lineEdge(roads,x,z)<0)return TERRAIN.packed;
+      if(Math.abs(x)<300&&Math.abs(z)<720&&spurHeight(x,z)>44&&ridged(x/60,z/60,8,2)>.55)return TERRAIN.rock;
+      if(Math.abs(x)>930&&vnoise(x/60,z/60,6)>.3)return TERRAIN.rock;
+      // Wind-blown drifts: elongated along x, irregular from domain warping.
+      if(fbm(x/210+.6*vnoise(z/130,x/130,27),z/95,23,3)>.32)return TERRAIN.deepSnow;
+      return TERRAIN.snow;
+    },
+    // Great peaks rise beyond the east and west walls of the valley.
+    edge(x,z,out,h){
+      const side=smooth((Math.abs(x)-1100)/1300),p=ridged(x/520,z/520,3,4);
+      return h+side*(150+330*p*p)+36*smooth(out/1400)*(.5+.5*fbm(x/300,z/300,9,2));
+    },
+    variantKnolls(r){
+      const list=[];
+      for(let ix=0;ix<6;ix++)for(let iz=0;iz<5;iz++){const x=-900+ix*360+(r()-.5)*200;if(Math.abs(x)<200)continue;list.push({x,z:-820+iz*410+(r()-.5)*200,rx:45+r()*60,rz:45+r()*60,rot:r()*3,h:3+r()*7});}
+      return list;
+    },
+    build(s,r){
+      const P=new Placer(s,r);
+      for(const zn of s.zones)P.keepOut(zn.x,zn.z,30);
+      for(const x of s.lanes)for(const z of [-720,720])P.keepOut(x,z,42);
+      // A: the freight yard. Trains stand on every track with gaps to drive through.
+      for(const tx of [-526,-513,-500,-487,-474])for(let z=-440;z<-100;){
+        const run=2+Math.floor(r()*4);
+        for(let k=0;k<run&&z<-100;k++){
+          if(Math.abs(z+250)>34){const kind=r()<.25?'tankcar':r()<.3?'flatcar':'wagon';P.put(landmark(kind,tx,z+6.5,3.2,13,kind==='flatcar'?2.4:4.2,0));}
+          z+=14;
+        }
+        z+=18+r()*26;
+      }
+      P.put(landmark('station',-574,-300,16,46,9,0));P.put(landmark('watertower',-568,-168,8,8,17,0,{round:true}));
+      P.put(building(-428,-332,18,58,8,0,{style:'shed'}));P.put(building(-460,-462,7,9,7,0,{style:'house'}));
+      // C: signal station ringed by bunkers, a radio mast and sandbags.
+      P.put(building(548,262,14,20,9,.1,{style:'apartment'}));P.put(landmark('mast',592,300,3,3,32,0));
+      for(const [x,z,rot] of [[452,198,.6],[562,186,-.4],[446,318,-.5],[566,320,.4]])P.put(landmark('bunker',x,z,13,10,4,rot));
+      for(const [x,z,rot] of [[468,236,1.3],[530,214,0],[500,292,0]])P.put(landmark('sandbags',x,z,10,2,1.4,rot));
+      // Hedgehog belts guard the approaches to A and C (with gaps for the road).
+      const belt=(x0,x1,z,keep)=>{for(let x=x0;x<=x1;x+=8.5){if(keep.some(k=>Math.abs(x-k)<15))continue;const jz=z+(r()-.5)*5;if(P.free(x,jz,1.4,{road:2,gap:2.5}))P.add(landmark('hedgehog',x,jz,2.4,2.4,1.6,r()*3));}};
+      belt(250,860,140,[505,640,330]);belt(-860,-250,-140,[-505,-640,-330]);
+      // B: chapel and hut on the pass.
+      P.building(-30,-52,7,10,8,.2,{landmark:'chapel'},{search:3,step:6,tolerance:2});
+      P.building(46,58,10,13,6,-.3,{style:'house'},{search:3,step:6,tolerance:2});
+      P.put(landmark('booth',18,-34,3,3,3,0));
+      // Sawmill on the south-west flank.
+      P.put(building(-516,470,16,36,8,.1,{style:'shed'}));
+      for(const [x,z,rot] of [[-562,430,.3],[-468,508,1.2],[-590,522,.8],[-470,430,0]])P.put(landmark('logs',x,z,12,5,2.6,rot));
+      for(const [x,z] of [[-612,410],[-452,402]])P.building(x,z,9,12,6,r()*3,{style:'house'},{search:2,step:8});
+      for(const f of forests)P.trees({x:f.x,z:f.z,r:f.r,n:f.n,kind:'pine',h:[9,17],gap:3.6});
+      P.trees({x:0,z:0,r:1050,n:120,kind:'pine',h:[8,16],gap:6});
+      P.rocks(40,{x:0,z:0,r:380,size:[6,14],height:[3,8]});P.rocks(30,{size:[5,12],height:[2,5]});
+      return P.list;
+    },
+  });
+}
+
+// ============================= 4. OCELOVÉ MĚSTO =============================
+// An old town around the main square (B), a boulevard ring, radial streets
+// and alleys. The station square (A) and the market square (C) sit where the
+// main avenue enters the ring. Street frontage follows every street.
+{
+  const streets=makeLines([
+    {points:[[-470,-392],[0,-386],[470,-392]],width:26},{points:[[470,392],[0,386],[-470,392]],width:26},
+    {points:[[-470,-250],[-370,-195],[-290,-150]],width:20},{points:[[-205,-110],[-120,-60],[-62,-6]],width:20},
+    {points:[[470,250],[370,195],[290,150]],width:20},{points:[[205,110],[120,60],[62,6]],width:20},
+    {points:[[-10,-46],[-30,-170],[-5,-280],[10,-386]],width:16},{points:[[10,46],[30,170],[5,280],[-10,386]],width:16},
+    {points:[[58,-30],[150,-120],[260,-200],[360,-250],[470,-280]],width:14},{points:[[-58,30],[-150,120],[-260,200],[-360,250],[-470,280]],width:14},
+    {points:[[0,-235],[165,-170],[240,-10],[190,165],[0,235],[-165,170],[-240,10],[-190,-165]],width:18,closed:true},
+    {points:[[0,-140],[105,-95],[150,0],[100,100],[0,140],[-105,95],[-150,0],[-100,-100]],width:11,closed:true},
+    {points:[[-240,10],[-340,40],[-470,30]],width:14},{points:[[240,-10],[340,-40],[470,-30]],width:14},
+    {points:[[-110,-222],[-140,-300],[-150,-386]],width:12},{points:[[110,222],[140,300],[150,386]],width:12},
+    {points:[[110,-215],[150,-300],[160,-386]],width:12},{points:[[-110,215],[-150,300],[-160,386]],width:12},
+    {points:[[-400,-386],[-395,-200],[-370,40],[-380,280],[-400,386]],width:14},{points:[[400,386],[395,200],[370,-40],[380,-280],[400,-386]],width:14},
+    {points:[[-62,-78],[-110,-40],[-150,0]],width:9},{points:[[62,78],[110,40],[150,0]],width:9},
+  ],{reach:40,step:8});
+  const squares=[area(0,0,124,92,.1,{kind:'square'}),area(-250,-130,104,78,-.35,{kind:'square'}),area(250,130,104,78,-.35,{kind:'square'})];
+  const parks=[area(-285,262,112,70,.4,{kind:'park'}),area(285,-262,112,70,.4,{kind:'park'})];
+  const areas=[...squares,...parks];
+  defineMap({
+    id:'city',kind:'urban',biome:'summer',theme:'city',size:900,spawnZ:388,lanes:[-180,0,180],plain:true,flat:7,
+    zones:[{id:'A',x:-250,z:-130},{id:'B',x:0,z:0},{id:'C',x:250,z:130}],
+    relief:()=>7,streets,areas,
+    surface(x,z){
+      const e=lineEdge(streets,x,z);
+      if(e<0)return TERRAIN.street;
+      for(const a of squares)if(rectDistance(a,x,z)<0)return TERRAIN.square;
+      if(e<3.2)return TERRAIN.sidewalk;
+      for(const a of parks)if(rectDistance(a,x,z)<0)return TERRAIN.park;
+      return TERRAIN.yard;
+    },
+    build(s,r){return cityBlocks(s,r,{squares,parks,landmarks:[
+      landmark('townhall',34,-70,42,20,15,.1),landmark('church',-40,74,16,34,13,.1+Math.PI/2),
+      landmark('station',-282,-196,64,18,13,-.35),landmark('market',282,196,58,24,12,-.35),
+      landmark('column',24,-14,3,3,10,.1),landmark('fountain',-30,18,8,8,1.6,0,{round:true}),
+      landmark('pavilion',-285,262,9,9,5,.4,{round:true}),landmark('pavilion',285,-262,9,9,5,.4,{round:true}),
+    ]});},
+  });
+}
+// Fills every street frontage with rotated row houses and tenements.
+function cityBlocks(s,r,{squares,parks,landmarks,heights=(d)=>d<165?[9,14]:d<265?[13,19]:[11,17],industrial=false}){
+  const placed=[],cells=new Map(),key=(cx,cz)=>cx*1009+cz;
+  const nearby=function*(o){const rr=Math.hypot(o.w,o.d)/2+30;for(let cx=Math.floor((o.x-rr)/40);cx<=Math.floor((o.x+rr)/40);cx++)for(let cz=Math.floor((o.z-rr)/40);cz<=Math.floor((o.z+rr)/40);cz++)yield* cells.get(key(cx,cz))||[];};
+  const zones=s.zones,lanes=s.lanes;
+  const fits=(o,{sidewalk=3,margin=.25}={})=>{
+    for(const [x,z] of footprint(o)){
+      if(Math.abs(x)>s.half-6||Math.abs(z)>s.half-6)return false;
+      if(lineEdge(s.streets,x,z)<sidewalk)return false;
+      for(const a of [...squares,...parks])if(rectDistance(a,x,z)<2)return false;
+      for(const zn of zones)if(Math.hypot(x-zn.x,z-zn.z)<34)return false;
+    }
+    for(const x of lanes)if(Math.abs(o.x-x)<30&&Math.abs(Math.abs(o.z)-s.spawnZ)<30)return false;
+    for(const p of nearby(o))if(boxesOverlap(o,p,margin))return false;
+    return true;
+  };
+  const add=o=>{placed.push(o);const rr=Math.hypot(o.w,o.d)/2;for(let cx=Math.floor((o.x-rr)/40);cx<=Math.floor((o.x+rr)/40);cx++)for(let cz=Math.floor((o.z-rr)/40);cz<=Math.floor((o.z+rr)/40);cz++){const k=key(cx,cz);let c=cells.get(k);if(!c)cells.set(k,c=[]);c.push(o);}};
+  for(const o of landmarks)if(o.landmark==='column'||o.landmark==='fountain'||o.landmark==='pavilion'||fits(o,{sidewalk:2}))add(o);
+  for(const path of s.streets.paths){
+    const pts=path.pts;let carry=r()*6;
+    for(let i=0;i<pts.length-1;i++){
+      const [ax,az]=pts[i],[bx,bz]=pts[i+1],len=Math.hypot(bx-ax,bz-az);if(len<.5)continue;
+      const ux=(bx-ax)/len,uz=(bz-az)/len,rot=heading(ux,uz)+Math.PI/2;let t=carry;
+      while(t<len){
+        const front=industrial?18+r()*16:9+r()*10,px=ax+ux*(t+front/2),pz=az+uz*(t+front/2);
+        for(const q of [-1,1]){
+          if(r()<.1)continue;
+          let depth=industrial?16+r()*14:12+r()*8;
+          for(let attempt=0;attempt<2;attempt++,depth*=.62){
+            const off=path.width/2+3.4+depth/2,cx=px-uz*off*q,cz=pz+ux*off*q,dist=Math.hypot(cx,cz),[h0,h1]=heights(dist);
+            const o=building(cx,cz,front-.5,depth,h0+r()*(h1-h0),rot,industrial?{style:'warehouse',colorIndex:Math.floor(r()*4)}:
+              {style:dist<170&&r()<.65?'townhouse':'apartment',colorIndex:Math.floor(r()*6),front:q});
+            if(fits(o)){add(o);break;}
+          }
+        }
+        t+=front+(r()<.12?7+r()*5:.2);
+      }
+      carry=t-len;
+    }
+  }
+  // War damage: a few shells of buildings and rubble heaps in the yards.
+  for(const o of placed)if(!o.landmark&&r()<.09){o.landmark='ruin';o.h*=.75;o.material='brick';}
+  const list=[...placed];
+  for(let i=0,n=0;i<400&&n<26;i++){
+    const x=(r()-.5)*(s.size-40),z=(r()-.5)*(s.size-40),o=rock(x,z,4+r()*5,3+r()*4,1.4+r()*1.6);o.material='rubble';
+    if(lineEdge(s.streets,x,z)>4&&fits({...o,w:o.w+3,d:o.d+3},{sidewalk:4})){list.push(o);add(o);n++;}
+  }
+  // Park trees and street barricades by the squares.
+  for(const p of parks)for(let i=0;i<26;i++){
+    const lx=(r()-.5)*(p.w-8),lz=(r()-.5)*(p.d-8),x=p.x+lx*p.c+lz*p.s,z=p.z-lx*p.s+lz*p.c;
+    if(Math.hypot(x-p.x,z-p.z)>9&&!list.some(o=>Math.hypot(o.x-x,o.z-z)<6))list.push(tree(x,z,9+r()*5));
+  }
+  for(const q of squares)for(let i=0;i<5;i++){
+    const a=r()*TAU,x=q.x+Math.cos(a)*(q.w*.5+6),z=q.z+Math.sin(a)*(q.d*.5+6);
+    if(lineEdge(s.streets,x,z)<-2&&!list.some(o=>Math.hypot(o.x-x,o.z-z)<9))list.push(landmark('hedgehog',x,z,2.4,2.4,1.6,r()*3));
+  }
+  return list;
+}
+
+// =========================== 5. PRŮMYSLOVÝ UZEL =============================
+// Factory halls, a silo yard and rail spur at A, a gantry-free central plaza
+// at B and the tank farm with slag heaps at C. Service roads ring the works.
+{
+  const roads=makeLines([
+    {points:[[-380,-322],[0,-316],[380,-322]],width:24},{points:[[380,322],[0,316],[-380,322]],width:24},
+    {points:[[-380,-205],[-250,-150],[-170,-112],[-80,-48],[0,0],[80,48],[170,112],[250,150],[380,205]],width:16},
+    {points:[[-262,-322],[-255,-130],[-268,60],[-255,322]],width:14},{points:[[262,322],[255,130],[268,-60],[255,-322]],width:14},
+    {points:[[0,-322],[-8,-230],[12,-120],[0,0]],width:12},{points:[[0,322],[8,230],[-12,120],[0,0]],width:12},
+    {points:[[-380,30],[-268,60],[-100,110],[-12,120]],width:12},{points:[[380,-30],[268,-60],[100,-110],[12,-120]],width:12},
+  ],{reach:40,step:8});
+  const spur=[[-420,-96],[-300,-100],[-200,-86],[-120,-62]];
+  const rails=makeLines([{points:spur,width:3.4},{points:spur.map(([x,z])=>[x,z-13]).slice(0,3),width:3.4},
+    {points:flipPoints(spur),width:3.4},{points:flipPoints(spur).map(([x,z])=>[x,z+13]).slice(0,3),width:3.4}],{reach:40,step:20});
+  const heaps=[{x:-330,z:140,rx:30,rz:26,rot:.3,h:9},{x:330,z:-140,rx:30,rz:26,rot:.3,h:9},{x:-62,z:-250,rx:24,rz:20,rot:.8,h:6},{x:64,z:252,rx:24,rz:22,rot:.2,h:7}];
+  const plaza=area(0,0,96,72,.1),loading=area(-170,-110,90,60,-.45),tankyard=area(170,110,90,60,-.45);
+  defineMap({
+    id:'works',kind:'urban',biome:'desert',theme:'works',size:720,spawnZ:316,lanes:[-160,0,160],flat:7,
+    zones:[{id:'A',x:-170,z:-110},{id:'B',x:0,z:0},{id:'C',x:170,z:110}],
+    relief:()=>7,hills:heaps,roads,rails,areas:[{...plaza,kind:'concrete'},{...loading,kind:'concrete'},{...tankyard,kind:'concrete'}],
+    surface(x,z){
+      if(lineEdge(rails,x,z)<1.6)return TERRAIN.rail;
+      if(lineEdge(roads,x,z)<0)return TERRAIN.asphalt;
+      if(rectDistance(plaza,x,z)<0||rectDistance(loading,x,z)<0||rectDistance(tankyard,x,z)<0)return TERRAIN.concrete;
+      for(const f of heaps)if(ellipseRho(f,x,z)<1.15)return TERRAIN.slag;
+      return TERRAIN.dust;
+    },
+    build(s,r){
+      const P=new Placer(s,r);
+      const put=o=>P.put(o);
+      // Halls and warehouses (sawtooth roofs), mirrored across the works.
+      for(const q of [1,-1]){
+        // Assembly halls follow the cross road; warehouses line the west/east roads.
+        put(landmark('hall',-170*q,30*q,120,38,15,-.29));
+        put(landmark('hall',-320*q,-30*q,34,70,11,.1));
+        put(landmark('chimney',-70*q,62*q,7,7,48,0,{round:true}));
+        put(landmark('coolingtower',-300*q,250*q,52,52,38,0,{round:true}));
+        for(let i=0;i<14;i++){const lx=(i%7)*8.5,lz=Math.floor(i/7)*9;put(landmark('container',-150*q+lx*q,232*q+lz*q,6,2.6,i%3===0?5.2:2.6,0,{colorIndex:i%4}));}
+        put(building(-96*q,-150*q,22,14,7,.05,{style:'warehouse',colorIndex:1}));
+      }
+      put(landmark('hall',-140,-200,150,34,13,-.04));
+      // A: silos and loading tower beside the rail spur.
+      for(let i=0;i<3;i++)for(let j=0;j<2;j++)put(landmark('silo',-324+i*13,-150+j*13,12,12,26,0,{round:true}));
+      put(landmark('silotower',-276,-142,9,9,32,0));
+      // C: storage tanks and a boiler house.
+      for(const [x,z,rr] of [[100,200,11],[132,226,10],[164,200,11],[132,174,9],[196,226,8]])put(landmark('storagetank',x,z,rr*2,rr*2,12+rr*.3,0,{round:true}));
+      put(building(310,240,30,40,14,0,{style:'warehouse',colorIndex:2}));
+      // Wagons on both spurs (never across a road); pipe stacks across the plaza.
+      for(const path of rails.paths){const pts=path.pts;for(let i=1;i<pts.length-1;i+=3){
+        const [x,z]=pts[i],[nx,nz]=pts[i+1],rot=heading(nx-x,nz-z);
+        if(Math.abs(x)>120&&Math.abs(x)<340&&lineEdge(roads,x,z)>9&&r()<.6)put(landmark(x<0?'wagon':'tankcar',x,z,3.2,13,4.2,rot));
+      }}
+      for(const [x,z,rot] of [[36,-24,.1],[-40,22,1.2],[8,34,.1],[-22,-34,.7]])put(landmark('pipes',x,z,12,3.4,2.4,rot));
+      for(const [x,z,rot] of [[-120,-150,.2],[120,150,.2],[-30,-120,1.4],[30,120,1.4],[-200,140,.1],[200,-140,.1]])if(P.free(x,z,4,{road:3,gap:3}))put(landmark('pipes',x,z,10,3,2.2,rot));
+      for(const [x,z,w,rot] of [[-340,-280,40,0],[340,280,40,0],[-215,-262,30,1.57],[215,262,30,1.57]])if(P.free(x,z,6,{road:2,gap:2}))put(landmark('wall',x,z,w,1.2,3.4,rot,{material:'concrete'}));
+      return P.list;
+    },
+  });
+}
+
+// ============================== 6. ŠIROKÁ PLÁŇ ==============================
+// Rolling farmland: field patchwork, hedgerows, tree-lined roads, a farmstead
+// at A, a wayside chapel at the crossroads (B) and a hamlet at C.
+{
+  const half=[
+    [[0,-950],[10,-500],[0,0]],[[-950,20],[-500,10],[0,0]],[[-400,-660],[-380,-380],[-340,-130]],[[-340,-130],[-200,-70],[-40,-6]],
+    [[-950,-650],[-400,-660],[0,-650],[400,-640],[950,-650]],
+  ];
+  const roads=makeLines([...half,...half.map(flipPoints)].map(points=>({points,width:8})),{reach:40,step:20});
+  const fieldRot=.1,fc=Math.cos(fieldRot),fs=Math.sin(fieldRot),FW=190,FD=140;
+  const fieldOf=(x,z)=>{const lx=x*fc-z*fs,lz=x*fs+z*fc;return [Math.floor(lx/FW),Math.floor(lz/FD),lx,lz];};
+  const crops=[TERRAIN.wheat,TERRAIN.plowed,TERRAIN.pasture,TERRAIN.wheat,TERRAIN.rape,TERRAIN.pasture,TERRAIN.plowed];
+  defineMap({
+    id:'plains',kind:'flat',biome:'summer',theme:'plains',size:1800,spawnZ:650,lanes:[-400,0,400],
+    zones:[{id:'A',x:-340,z:-130},{id:'B',x:0,z:0},{id:'C',x:340,z:130}],
+    relief:(x,z)=>7+5*Math.sin(x*.0024+.6)*Math.cos(z*.0019-.3)+3*fbm(x/300,z/300,61,3),
+    ridges:both([{ax:-760,az:170,bx:-160,bz:80,r:60,h:6}],flipRidge),
+    hills:both([{x:-560,z:-420,rx:140,rz:120,h:9},{x:200,z:-520,rx:120,rz:100,h:7},{x:-640,z:470,rx:110,rz:90,h:8}],flipHill),
+    pads:[{x:-340,z:-130,r:50,blend:50},{x:340,z:130,r:50,blend:50},{x:0,z:0,r:40,blend:50},...spawnPads([-400,0,400],650)],
+    lakes:both([{x:-392,z:-182,rx:20,rz:13,rot:.4,drop:1,depth:1.8,bank:12}],flipHill).map(L=>({...L,type:TERRAIN.pond})),
+    roads,
+    surface(x,z){
+      if(lineEdge(roads,x,z)<0)return TERRAIN.dirt;
+      const [i,j,lx,lz]=fieldOf(x,z),ex=Math.min(lx-i*FW,(i+1)*FW-lx),ez=Math.min(lz-j*FD,(j+1)*FD-lz);
+      if(ex<3||ez<3)return TERRAIN.grass;
+      return crops[Math.floor(lattice(i,j,77)*crops.length)];
+    },
+    edge(x,z,out,h){return h+(10*smooth(out/500)+22*smooth((out-300)/1400))*(.6+.5*fbm(x/500,z/500,4,2));},
+    build(s,r){
+      const P=new Placer(s,r);
+      for(const zn of s.zones)P.keepOut(zn.x,zn.z,30);
+      for(const x of s.lanes)for(const z of [-650,650])P.keepOut(x,z,42);
+      farmstead(P,-340,-130,-.2);
+      village(P,340,130,{count:8,r0:48,r1:74});
+      P.put(landmark('chapel',32,-30,6,9,7,.8));P.put(tree(-30,27,19,'linden'));
+      P.put(landmark('windmill',-640,470,9,9,17,0,{round:true}));P.put(landmark('silo',640,-470,10,10,22,0,{round:true}));
+      P.building(-600,500,9,13,6,.4,{style:'house'},{search:2,step:8});P.building(600,-500,12,22,8,.4,{landmark:'barn'},{search:2,step:8});
+      // Hedgerows along some field edges, with a gap every 50 m. A row is tested
+      // before any of its own segments are added, so segments sit end to end.
+      for(let n=0;n<16;n++){
+        const i=Math.floor((r()-.5)*9),j=Math.floor((r()-.5)*12),vertical=r()<.5,len=vertical?FD:FW,steps=Math.floor(len/10),row=[];
+        for(let k=0;k<steps;k++){
+          if(k%5===2)continue;
+          const lx=vertical?i*FW:i*FW+(k+.5)*10,lz=vertical?j*FD+(k+.5)*10:j*FD,x=lx*fc+lz*fs,z=-lx*fs+lz*fc;
+          if(P.free(x,z,4,{road:4,gap:1}))row.push(landmark('hedge',x,z,vertical?3:10,vertical?10:3,2.6,fieldRot));
+        }
+        row.forEach(o=>P.add(o));
+      }
+      // Power lines cross the plain.
+      for(const q of [-1,1])for(let x=-900;x<=900;x+=150){const z=.3*x+q*260;if(Math.abs(z)<880&&P.free(x,z,2.5,{road:4,gap:4}))P.add(landmark('pylon',x,z,4,4,24,heading(1,.3)));}
+      // Tree-lined roads (aleje).
+      for(const path of roads.paths){const pts=path.pts;for(let i=0;i<pts.length-1;i+=3){
+        const [ax,az]=pts[i],[bx,bz]=pts[i+1],len=Math.hypot(bx-ax,bz-az)||1;
+        for(const q of [-1,1]){const x=ax-(bz-az)/len*9*q,z=az+(bx-ax)/len*9*q;if(r()<.55&&P.free(x,z,1.4,{road:1.5,gap:8}))P.add(tree(x,z,11+r()*4,'poplar'));}
+      }}
+      // Round bales in the wheat, groves and lone trees.
+      for(let g=0;g<14;g++){const cx=(r()-.5)*1600,cz=(r()-.5)*1600;for(let i=0;i<7;i++){const x=cx+(r()-.5)*60,z=cz+(r()-.5)*40;if(P.free(x,z,1.6,{road:3,gap:3}))P.add(landmark('bale',x,z,2.4,2.4,2,0,{round:true}));}}
+      for(let g=0;g<11;g++)P.trees({x:(r()-.5)*1600,z:(r()-.5)*1600,r:30+r()*30,n:8+Math.floor(r()*8),gap:3});
+      P.trees({x:0,z:0,r:880,n:40,gap:10});
+      P.rocks(18,{size:[5,11],height:[2,4]});
+      return P.list;
+    },
+  });
+}
+
+
+// ---------------------------------------------------------------------------
+// Map registry: playable map objects assembled from the specs above.
+// ---------------------------------------------------------------------------
+const MAP_INFO={
+  valley:{name:'Zelené údolí',subtitle:'Kopce · říční mosty · vesnice',
+    description:'Meandrující řeka obtéká mlýnský ostrov u B. Kamenné mosty vedou k vesnicím, na křídlech jsou brody.'},
+  desert:{name:'Písečná bouře',subtitle:'Dunová pole · oáza · ruiny',
+    description:'Vyschlá koryta, dunová moře a stolové hory. Oáza u A, karavanseraj u B, ruiny chrámu u C.'},
+  winter:{name:'Zimní průlom',subtitle:'Průsmyk · nádraží · bunkry',
+    description:'Horské údolí dělí skalnatý hřbet. Západem vede trať k nákladovému nádraží u A, východem silnice k opevněné stanici u C.'},
+  city:{name:'Ocelové město',subtitle:'Uliční bloky · náměstí · průjezdné dvory',
+    description:'Staré město kolem hlavního náměstí: okružní bulvár, radiální ulice a úzké průjezdy. Nádraží u A, tržnice u C.'},
+  works:{name:'Průmyslový uzel',subtitle:'Průmyslové dvory · sklady · obchvaty',
+    description:'Montážní haly, sila u vlečky a nádrže. Obvodové a servisní silnice obcházejí hlavní dvůr.'},
+  plains:{name:'Široká pláň',subtitle:'Otevřená rovina · dlouhé palebné linie',
+    description:'Mírně zvlněná pole, remízky a aleje. Statek u A, kaple na křižovatce u B a osada u C.'},
+};
+const PROP_SEEDS={valley:18421,desert:83217,winter:31039,city:52711,works:77031,plains:99071};
+// Bridges and fords as two-ended waypoints; flank crossings send AI flankers wide.
+function crossingsFor(s){
+  const list=[];
+  for(const b of s.bridges){
+    const reach=b.d*.5+b.ramp+12,a=b.axis==='x'?{x:b.x-reach,z:b.z}:{x:b.x,z:b.z-reach},e=b.axis==='x'?{x:b.x+reach,z:b.z}:{x:b.x,z:b.z+reach};
+    list.push({id:b.id,kind:'bridge',bridge:b.id,flank:b.style==='stone',x:b.x,z:b.z,a,b:e});
+  }
+  for(const r of s.rivers)for(const f of r.fords){
+    lineNear(r.lines,f.x,f.z);
+    const seg=r.lines.segs[NEAR.i],nx=-seg.dz/seg.len,nz=seg.dx/seg.len,o=NEAR.w*.5+28;
+    list.push({id:'ford'+list.length,kind:'ford',flank:true,x:f.x,z:f.z,a:{x:f.x+nx*o,z:f.z+nz*o},b:{x:f.x-nx*o,z:f.z-nz*o}});
+  }
+  return list;
+}
+const visualFor=s=>({
+  rivers:s.rivers.map(r=>({paths:r.lines.paths,level:r.level,islands:r.islands,fords:r.fords})),
+  lakes:s.lakes.map(L=>({x:L.x,z:L.z,rx:L.rx,rz:L.rz,rot:L.rot||0,level:L.level,ice:!!L.ice})),
+  roads:s.roads.paths,rails:s.rails.paths,streets:s.streets.paths,areas:s.areas,
 });
+// A square memorial stands on every capture point: cover from one direction
+// while capturing. Anything the map placed on that spot gives way to it.
+const MONUMENT={w:6,d:6,h:6,top:5.45};
+function withMonuments(spec,list){
+  const clear=MONUMENT.w*.71+4;
+  const out=list.filter(o=>!spec.zones.some(z=>Math.hypot(o.x-z.x,o.z-z.z)<Math.hypot(o.w,o.d)*.5+clear));
+  for(const z of spec.zones)out.push(landmark('monument',z.x,z.z,MONUMENT.w,MONUMENT.d,MONUMENT.h,Math.PI/2,{zone:z.id}));
+  return out;
+}
+function assembleMap(spec,id,random){
+  return {id,...MAP_INFO[spec.id],kind:spec.kind,biome:spec.biome,theme:spec.theme,size:spec.size,spawnZ:spec.spawnZ,lanes:[...spec.lanes],
+    zones:spec.zones.map(z=>({...z})),bridges:spec.bridges.map(b=>({...b})),crossings:crossingsFor(spec),visual:visualFor(spec),
+    waterTop:Math.max(-Infinity,...spec.rivers.map(r=>r.level),...spec.lakes.filter(L=>!L.ice).map(L=>L.level)),
+    obstacles:withMonuments(spec,spec.build?spec.build(spec,random):[])};
+}
+const MAPS=['valley','desert','winter','city','works','plains'].map(id=>assembleMap(MAP_SPECS[id],id,seeded(PROP_SEEDS[id])));
 
 function getTank(id) { return TANKS.find(t => t.id === id) || TANKS[0]; }
-function urbanMap(id,name,size,industrial=false){
- const spec=specFor(id),step=spec.roadStep,half=spec.roadHalf,roads=[],blocks=[],parks=[],obstacles=[];
- const zones=[{id:'A',x:-step*2,z:-step},{id:'B',x:0,z:0},{id:'C',x:step*2,z:step}];
- for(let p=-step*3;p<=step*3;p+=step)roads.push(p);
- for(let ix=0;ix<roads.length-1;ix++)for(let iz=0;iz<roads.length-1;iz++){
-  const left=roads[ix]+half+6,right=roads[ix+1]-half-6,near=roads[iz]+half+6,far=roads[iz+1]-half-6;
-  const cx=(left+right)/2,cz=(near+far)/2,w=right-left,d=far-near,blockId=ix*10+iz;
-  // Aligned street fronts enclose courtyards; gaps are actual tank-width alleys.
-  const block={x:cx,z:cz,w,d};blocks.push(block);
-  if(!industrial&&((ix===1&&iz===3)||(ix===4&&iz===2))){parks.push(block);continue;}
-  const push=(x,z,bw,bd,h)=>{
-   if(zones.some(q=>Math.abs(x-q.x)<bw/2+30&&Math.abs(z-q.z)<bd/2+30))return;
-   obstacles.push({...building(x,z,bw,bd,h),blockId,style:industrial?'warehouse':iz%3===0?'townhouse':'apartment',colorIndex:ix%4});
-  };
-  if(industrial){
-   push(cx,near+8,w,16,8);push(cx,far-8,w,16,10);
-   push(left+8,cz,16,d-44,7);
-  }else{
-   const frontage=(w-14)/2,depth=17,height=iz%3===0?8:13+(ix%2)*3;
-   for(const z of [near+depth/2,far-depth/2])for(const x of [left+frontage/2,right-frontage/2])push(x,z,frontage,depth,height);
-   for(const x of [left+depth/2,right-depth/2])push(x,cz,depth,d-depth*2-12,height);
-  }
- }
- return {id,name,subtitle:industrial?'Průmyslové dvory · sklady · obchvaty':'Uliční bloky · náměstí · průjezdné dvory',description:industrial?'Sklady kolem servisních dvorů. Propojené ulice a zadní průjezdy umožňují obejít hlavní brány.':'Řadové domy podél ulic, vnitrobloky a dva městské parky. Náměstí propojují hlavní třídy i úzké zadní průjezdy.',biome:industrial?'desert':'summer',kind:'urban',size,spawnZ:size*.43,water:null,bridges:[],zones,obstacles,streets:{axes:roads,width:half*2,sidewalk:3},blocks,parks};
+// Seeded knolls must not bury an objective, a spawn, a bridge or the river.
+function knollAllowed(s,k){
+  const m=Math.max(k.rx,k.rz);
+  for(const z of s.zones)if(Math.hypot(k.x-z.x,k.z-z.z)<m*1.6+50)return false;
+  for(const x of s.lanes)for(const z of [-s.spawnZ,s.spawnZ])if(Math.hypot(k.x-x,k.z-z)<m*1.4+40)return false;
+  for(const b of s.bridges)if(Math.hypot(k.x-b.x,k.z-b.z)<m*1.6+b.d*.5+b.ramp)return false;
+  for(const r of s.rivers)if(lineNear(r.lines,k.x,k.z)<NEAR.w*.5+m*1.3)return false;
+  for(const L of s.lakes)if(Math.hypot(k.x-L.x,k.z-L.z)<Math.max(L.rx,L.rz)+m*1.3)return false;
+  return true;
 }
-MAPS.push(urbanMap('city','Ocelové město',900),urbanMap('works','Průmyslový uzel',720,true),{id:'plains',name:'Široká pláň',subtitle:'Otevřená rovina · dlouhé palebné linie',description:'Přehledné bojiště s menšími osadami, skalami a širokými obchvaty.',biome:'summer',kind:'flat',size:1800,spawnZ:650,water:null,bridges:[],zones:[{id:'A',x:-330,z:-100},{id:'B',x:0,z:0},{id:'C',x:330,z:100}],obstacles:[]});
-for(const map of MAPS)if(!map.kind)map.kind='hills';
-const plains=MAPS.find(m=>m.id==='plains');
-for(const x of [-500,-260,260,500])for(const z of [-270,270])plains.obstacles.push(building(x,z,20,20,10));
-for(let i=0;i<38;i++)plains.obstacles.push(rock(Math.sin(i*2.4)*780,Math.cos(i*3.1)*620,10,9,5));
-
 function createBattleMap(id,seed){
- const source=getMap(id);if(source.kind!=='hills')return source;
- const variantId=source.id.split(':')[0]+':'+(seed>>>0);if(variants.has(variantId))return variants.get(variantId).map;
- let state=seed>>>0;const random=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;};
- const base=source.id.split(':')[0],original=specFor(base),hills=[];
- // Many separated low hills, knolls and narrow ridges. Stratification avoids
- // piling several enormous Gaussian peaks onto the same part of the map.
- for(let ix=0;ix<7;ix++)for(let iz=0;iz<6;iz++){
-  const x=-900+ix*300+(random()-.5)*160,z=-800+iz*320+(random()-.5)*150,shape=random();
-  const rx=shape<.3?130+random()*40:55+random()*55,rz=shape<.3?45+random()*25:65+random()*65;
-  hills.push([x,z,rx,rz,9+random()*27]);
- }
- for(const zone of source.zones)if(zone.id!=='B')hills.push([zone.x+(random()-.5)*70,zone.z,110,125,18+random()*8]);
- const spec={...original,base,seed,hills,spawnZ:source.spawnZ};variants.set(variantId,{spec,map:null});
- const map={...source,id:variantId,baseId:base,seed,terrainHills:hills.map(h=>[...h]),zones:source.zones.map(z=>({...z})),obstacles:makeObstacles(variantId)};
- variants.get(variantId).map=map;
- return map;
+  const source=getMap(id);if(source.kind!=='hills')return source;
+  const base=source.baseId||source.id.split(':')[0],variantId=base+':'+(seed>>>0);
+  if(variants.has(variantId))return variants.get(variantId).map;
+  const original=MAP_SPECS[base],random=seeded((seed^0x5bd1e995)>>>0);
+  const knolls=(original.variantKnolls?.(random)||[]).filter(k=>knollAllowed(original,k));
+  const spec=prepareSpec({...original,base,seed:seed>>>0,knolls});
+  variants.set(variantId,{spec,map:null});
+  const map={...assembleMap(spec,base,random),id:variantId,baseId:base,seed:seed>>>0};
+  variants.get(variantId).map=map;
+  return map;
 }
-function getMap(id) { return variants.get(id)?.map || MAPS.find(m => m.id === id) || MAPS[0]; }
+function getMap(id) { return variants.get(id)?.map || MAPS.find(m => m.id === id) || MAPS.find(m => m.id === String(id).split(':')[0]) || MAPS[0]; }
 // A dedicated process can run indefinitely; release completed seeded worlds.
 let damagedSerial=0;
 function removeBridgeDeck(map,bridge){
- const original=specFor(map.id);
- if(!original.missingDecks){
+ let spec=specFor(map.id);
+ if(!spec.missingDecks){
+   const base=spec.base||map.id.split(':')[0];
    map.id=map.id+':damage'+(++damagedSerial);
-   variants.set(map.id,{spec:{...original,base:original.base||map.id.split(':')[0],missingDecks:new Set()},map});
+   spec=Object.assign(specShape(spec),{base,missingDecks:new Set()});
+   variants.set(map.id,{spec,map});
  }
- specFor(map.id).missingDecks.add(bridge.x);map.bridges=map.bridges.filter(b=>b!==bridge);
+ spec.missingDecks.add(bridge.id);map.bridges=map.bridges.filter(b=>b!==bridge);
 }
 function releaseBattleMap(id) { if(typeof id==='string'&&id.includes(':'))variants.delete(id); }
 
-return {NATIONS,TANKS,riverCenter,terrainHeight,surfaceHeight,terrainAt,MAPS,getTank,createBattleMap,getMap,removeBridgeDeck,releaseBattleMap};
+return {NATIONS,TANKS,TERRAIN,terrainHeight,surfaceHeight,terrainAt,blockedAt,waterNearSegment,waterLevel,waterBetween,MAPS,getTank,createBattleMap,getMap,removeBridgeDeck,releaseBattleMap};
 })();
 MODULES["tactics.js"]=(()=>{
-const {getTank,riverCenter} = MODULES["data.js"];
+const {getTank,waterBetween} = MODULES["data.js"];
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
 function tankRole(type){
   const s=getTank(type);
@@ -2634,13 +3450,22 @@ class TacticalDirector{
   return game.map.zones.map((z,i)=>({id:'patrol-'+i+'-'+stage,x:z.x,z:z.z+sign*stage*game.map.size*.12,owner:-1}));
  }
  crossing(game,t,goal,flank){
-  if(!flank||(t.z-riverCenter(game.map.id,t.x))*(goal.z-riverCenter(game.map.id,goal.x))>=0)return goal;
-  const outer=game.map.bridges.filter(b=>Math.abs(b.x)>500);if(!outer.length)return goal;
-  const bridge=outer.reduce((a,b)=>distance(t,a)+distance(goal,a)<distance(t,b)+distance(goal,b)?a:b);
-  const sign=t.z>riverCenter(game.map.id,t.x)?1:-1;
-  const entry={x:bridge.x,z:bridge.z+sign*(bridge.d/2+bridge.ramp+12)};
-  if(Math.abs(t.x-bridge.x)>bridge.w*.4||Math.abs(t.z-bridge.z)>bridge.d/2+bridge.ramp+25)return entry;
-  return {x:bridge.x,z:bridge.z-sign*(bridge.d/2+bridge.ramp+12)};
+  // Flankers cross water at an outer bridge or ford instead of the direct
+  // route. The chosen crossing is kept until both of its ends are reached.
+  const list=(game.map.crossings||[]).filter(c=>c.flank&&(!c.bridge||game.map.bridges.some(b=>b.id===c.bridge)));
+  if(!flank||!list.length){t._crossing=null;return goal;}
+  let c=t._crossing&&game.time<t._crossing.until&&list.find(q=>q.id===t._crossing.id);
+  if(!c){
+    if(!waterBetween(game.map.id,t,goal))return goal;
+    const options=list.filter(q=>q.id!==t._crossed?.id||game.time>t._crossed.until);if(!options.length)return goal;
+    c=options.reduce((a,b)=>distance(t,a)+distance(goal,a)<distance(t,b)+distance(goal,b)?a:b);
+    t._crossing={id:c.id,first:distance(t,c.a)<distance(t,c.b)?'a':'b',stage:0,until:game.time+150};
+  }
+  const s=t._crossing,first=c[s.first],last=c[s.first==='a'?'b':'a'];
+  if(!s.stage&&!waterBetween(game.map.id,t,goal)){t._crossing=null;return goal;}
+  if(!s.stage&&distance(t,first)<18)s.stage=1;
+  if(s.stage&&distance(t,last)<18){t._crossed={id:c.id,until:game.time+60};t._crossing=null;return goal;}
+  return s.stage?last:first;
  }
  cover(game,t,threat){
   // Bounded local search, using actual terrain/obstacles for protection.
@@ -2658,29 +3483,77 @@ return {tankRole,TacticalDirector};
 })();
 MODULES["spatial.js"]=(()=>{
 // Static obstacles are indexed once; moving tanks remain exact dynamic queries.
+// Each obstacle is registered in every grid cell its bounding square touches.
+// Queries dedupe with a per-query stamp instead of building a Set.
+const CELL_OFFSET=32768;
+const cellKey=(x,z)=>(x+CELL_OFFSET)*65536+z+CELL_OFFSET;
 class ObstacleIndex {
- constructor(obstacles,size=64){
+ constructor(obstacles,size=24){
    this.source=obstacles;
    this.length=obstacles.length;
    this.size=size;
    this.cells=new Map();
-   for(const o of obstacles){
-     const r=Math.hypot(o.w,o.d)*.5+1;
+   this.marks=new Uint32Array(obstacles.length);
+   this.stamp=0;
+   for(let i=0;i<obstacles.length;i++){
+     const o=obstacles[i],r=Math.hypot(o.w,o.d)*.5+1;
      for(let x=Math.floor((o.x-r)/size);x<=Math.floor((o.x+r)/size);x++)for(let z=Math.floor((o.z-r)/size);z<=Math.floor((o.z+r)/size);z++){
-       const key=x+','+z;
-       if(!this.cells.has(key))this.cells.set(key,[]);
-       this.cells.get(key).push(o);
+       const key=cellKey(x,z);let list=this.cells.get(key);
+       if(!list)this.cells.set(key,list=[]);
+       list.push(i);
      }
    }
  }
+ _begin(){if(++this.stamp>0xfffffff0){this.marks.fill(0);this.stamp=1;}}
+ _collect(x0,z0,x1,z1,out){
+   const size=this.size,marks=this.marks,source=this.source,stamp=this.stamp;
+   for(let x=Math.floor(x0/size),xe=Math.floor(x1/size);x<=xe;x++)for(let z=Math.floor(z0/size),ze=Math.floor(z1/size);z<=ze;z++){
+     const list=this.cells.get(cellKey(x,z));if(!list)continue;
+     for(let k=0;k<list.length;k++){const i=list[k];if(marks[i]!==stamp){marks[i]=stamp;out.push(source[i]);}}
+   }
+ }
  query(x0,z0,x1=x0,z1=z0){
-   const found=new Set();
-   for(let x=Math.floor(Math.min(x0,x1)/this.size);x<=Math.floor(Math.max(x0,x1)/this.size);x++)for(let z=Math.floor(Math.min(z0,z1)/this.size);z<=Math.floor(Math.max(z0,z1)/this.size);z++)for(const o of this.cells.get(x+','+z)||[])found.add(o);
-   return found;
+   const out=[];this._begin();
+   this._collect(Math.min(x0,x1),Math.min(z0,z1),Math.max(x0,x1),Math.max(z0,z1),out);
+   return out;
+ }
+ // Obstacles registered in cells within pad of segment a-b. The segment is
+ // walked in pieces no longer than a cell, so long rays stay cheap.
+ segment(ax,az,bx,bz,pad=0){
+   const out=[],n=Math.max(1,Math.ceil(Math.hypot(bx-ax,bz-az)/this.size));this._begin();
+   for(let i=0;i<n;i++){
+     const x0=ax+(bx-ax)*i/n,z0=az+(bz-az)*i/n,x1=ax+(bx-ax)*(i+1)/n,z1=az+(bz-az)*(i+1)/n;
+     this._collect(Math.min(x0,x1)-pad,Math.min(z0,z1)-pad,Math.max(x0,x1)+pad,Math.max(z0,z1)+pad,out);
+   }
+   return out;
  }
 }
 
-return {ObstacleIndex};
+// Exact samples on a square lattice, computed on first use in 32x32 tiles and
+// read back bilinearly. Outside the lattice it falls back to the exact sample.
+class Lattice {
+ constructor(half,step,sample){
+   this.half=half;this.step=step;this.sample=sample;
+   this.n=Math.ceil(half*2/step)+1;this.nt=Math.ceil(this.n/32);
+   this.tiles=new Array(this.nt*this.nt).fill(null);
+ }
+ _get(i,j){
+   const t=(j>>5)*this.nt+(i>>5);let tile=this.tiles[t];
+   if(tile===null)tile=this.tiles[t]=new Float32Array(1024).fill(NaN);
+   const k=((j&31)<<5)|(i&31);let h=tile[k];
+   if(h!==h)h=tile[k]=this.sample(i*this.step-this.half,j*this.step-this.half);
+   return h;
+ }
+ at(x,z){
+   const fx=(x+this.half)/this.step,fz=(z+this.half)/this.step,i=Math.floor(fx),j=Math.floor(fz);
+   if(!(i>=0&&j>=0&&i<this.n-1&&j<this.n-1))return this.sample(x,z);
+   const u=fx-i,v=fz-j;
+   return (this._get(i,j)*(1-u)+this._get(i+1,j)*u)*(1-v)+(this._get(i,j+1)*(1-u)+this._get(i+1,j+1)*u)*v;
+ }
+ reset(){this.tiles.fill(null);}
+}
+
+return {ObstacleIndex,Lattice};
 })();
 MODULES["ballistics.js"]=(()=>{
 const { getTank, surfaceHeight } = MODULES["data.js"];
@@ -2793,8 +3666,10 @@ return {GRAVITY,secondaryWeaponGeometry,weaponGeometry,hullPose,weaponFrame,solv
 })();
 MODULES["simulation.js"]=(()=>{
 const {TacticalDirector} = MODULES["tactics.js"];
-const {ObstacleIndex} = MODULES["spatial.js"];
-const { TANKS, getTank, getMap, createBattleMap, removeBridgeDeck, terrainHeight, terrainAt, surfaceHeight } = MODULES["data.js"];
+const {ObstacleIndex,Lattice} = MODULES["spatial.js"];
+// Tanks with deep-wading gear (Maus, both Tiger I variants); the rest drown.
+const WADERS=new Set(['maus','tigerh1','tigere']),DROWN_TIME=5;
+const { TANKS, getTank, getMap, createBattleMap, removeBridgeDeck, terrainHeight, terrainAt, surfaceHeight, waterLevel, blockedAt, waterNearSegment } = MODULES["data.js"];
 const { weaponFrame, weaponGeometry, secondaryWeaponGeometry, solveWeaponAim, GRAVITY } = MODULES["ballistics.js"];
 const TAU = Math.PI * 2;
 const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
@@ -2816,6 +3691,7 @@ function pointSegmentDistance(x,z,ax,az,bx,bz) {
   return Math.hypot(x-ax-dx*t,z-az-dz*t);
 }
 function obstacleDistance(x,z,o) {
+  if(o.round)return Math.max(0,Math.hypot(x-o.x,z-o.z)-o.w*.5);
   const a=o.rotation||0,c=Math.cos(a),s=Math.sin(a),dx=x-o.x,dz=z-o.z;
   const lx=dx*c-dz*s,lz=dx*s+dz*c;
   return Math.hypot(Math.max(0,Math.abs(lx)-o.w*.5),Math.max(0,Math.abs(lz)-o.d*.5));
@@ -2903,6 +3779,12 @@ class Game {
     this._input={};this._repairHeld=false;this._smokeHeld=false;
     this._rules=DIFFICULTY[this.difficulty];
     this.sightDistance=Math.min(this._rules.vision,this.map.size*Math.SQRT2);
+    // Ray and path tests sample heights every few metres; they read 2 m lattices
+    // of exact heights instead. Bridge decks only enter the surface lattice.
+    const half=this.map.size*.5+40;
+    this._obstacleBase=new Map();
+    this._groundGrid=new Lattice(half,2,(x,z)=>this._groundExact(x,z));
+    this._surfaceGrid=new Lattice(half,2,(x,z)=>surfaceHeight(this.map.id,x,z));
     this._nav=this._buildNav();
     const selected=getTank(tankId),
       friendly=TANKS.filter(t=>t.id!=='bmpt'&&t.nation===selected.nation&&t.rank<=Math.max(2,selected.rank));
@@ -2922,7 +3804,7 @@ class Game {
   _message(text,t=this.player) {this._event({type:'message',text,x:t.x,z:t.z,team:t.team,playerRelated:t.isPlayer});}
   _spawn(t,initial=false) {
     const spec=getTank(t.type),sign=t.team===0?1:-1;
-    const lanes=this.initialBridges?.length?this.initialBridges.map(b=>b.x):[-this.map.size*.22,0,this.map.size*.22];
+    const lanes=this.map.lanes||[-this.map.size*.22,0,this.map.size*.22];
     const lane=t.isPlayer||t.isHuman?1:t._slot%3;
     let x=lanes[lane]+(t._slot<3?-12:12)+(initial?0:(this._rand()-.5)*6),
       z=-sign*(this.map.spawnZ||this.map.size*.36)+(t._slot%2)*sign*14;
@@ -2934,7 +3816,7 @@ class Game {
       alive:true,fall:0,drone:null,flight:null,reload:0,secondaryReload:0,mgCooldown:0,mgHeat:0,mgOverheated:false,modules:{engine:100,tracks:100,turret:100,breech:100,ammo:100,crew:100},repair:0,fire:0,respawnIn:0,
       smoke:0,smokes:3,smokeCooldown:0,missiles:t.type==='bmpt'?4:0,missileReload:0,_barrelIndex:0,health:100,maxSpeed:(t.developer?350:spec.speed)/3.6,width:spec.width??(spec.role==='Těžký tank'||t.type==='bmpt'?4.0:3.45),length:spec.length??(spec.role==='Těžký tank'||t.type==='bmpt'?7.2:6.5),
       _aimX:x,_aimZ:z+sign*100,_aimY:null,sightRange:0,_playerDamage:0,_lastPlayerHit:-Infinity,gunPitch:0,_think:this._rand()*.3,_targetId:null,_goal:null,_path:[],_pathAge:99,_reaction:this._rules.reaction,
-      _approachKey:null,_approach:null,_approachDone:false,_observed:null,_flankDone:null,_order:null,_tactic:null,_sightChecks:new Map(),
+      _approachKey:null,_approach:null,_approachDone:false,_observed:null,_flankDone:null,_crossing:null,_crossed:null,_order:null,_tactic:null,_sightChecks:new Map(),
       _slopeStall:0,_escapeSlope:null,_avoidSlope:null,_stuck:0,_reverse:0,_lastX:x,_lastZ:z,_lastPlayerHit:-999,_fireSource:null,_repairTotal:0,_captureClock:0,lastHit:null,lastKiller:null});
     if(!initial&&t.isPlayer)this._message('Nový tank připraven. Zpátky do boje!',t);
   }
@@ -2998,6 +3880,11 @@ class Game {
       }
       if(t.drone)this.flyDrone(t,dt,t.isPlayer?input:this.time-(t._lastNetworkInput??-10)<.35?t._remoteInput||{}:{});else if(t.isPlayer)this._playerControl(t,dt,input);else if(t.isHuman)this._playerControl(t,dt,this.time-(t._lastNetworkInput??-10)<.35?t._remoteInput||{}:{});else this._botControl(t,dt);
       t.y=surfaceHeight(this.map.id,t.x,t.z);t.health=t.modules.crew;
+      // Deep water: the Maus and the Tiger I wade through, every other tank drowns.
+      if(!t.flight&&!t.developer&&!WADERS.has(t.type)&&blockedAt(this.map.id,t.x,t.z)){
+        t.drown=(t.drown||0)+dt;
+        if(t.drown>=DROWN_TIME){t.modules.crew=0;this._destroy(t,null,'Tank utonul');continue;}
+      }else t.drown=0;
       if(t.modules.crew<=0)this._destroy(t,t._fireSource,'Posádka vyřazena');
     }
     this.walkSahurs(dt);this._updateShells(dt);this._updateZones(dt);
@@ -3078,7 +3965,9 @@ class Game {
     const bound=this.map.size*.5-8;
     const ox=t.x,oz=t.z,nx=clamp(ox+Math.sin(t.angle)*t.speed*dt,-bound,bound),
       nz=clamp(oz+Math.cos(t.angle)*t.speed*dt,-bound,bound);
-    const free=(x,z)=>this._free(x,z,t.width*.52)&&(surfaceHeight(this.map.id,x,z)-surfaceHeight(this.map.id,ox,oz)<=Math.hypot(x-ox,z-oz)*.85+.03)&&!this.tanks.some(other=>other!==t&&!other.fall&&!other.flight&&other.alive&&Math.hypot(other.x-x,other.z-z)<(other.width+t.width)*.61);
+    // Players and wading bots may enter deep water; other bots keep to the banks.
+    const wade=t.isPlayer||t.isHuman||t.developer||WADERS.has(t.type);
+    const free=(x,z)=>this._free(x,z,t.width*.52,wade)&&(surfaceHeight(this.map.id,x,z)-surfaceHeight(this.map.id,ox,oz)<=Math.hypot(x-ox,z-oz)*.85+.03)&&!this.tanks.some(other=>other!==t&&!other.fall&&!other.flight&&other.alive&&Math.hypot(other.x-x,other.z-z)<(other.width+t.width)*.61);
     if(free(nx,nz)){t.x=nx;t.z=nz;}
     else if(free(nx,oz)){t.x=nx;t.speed*=.8;}
     else if(free(ox,nz)){t.z=nz;t.speed*=.8;}
@@ -3129,6 +4018,7 @@ class Game {
     if(!b||this.brokenBridges.includes(i))return false;
     removeBridgeDeck(this.map,b);
     this.brokenBridges.push(i);
+    this._surfaceGrid.reset();
     this._nav=this._buildNav();
     for(const t of this.tanks)t._pathAge=99;
     return true;
@@ -3298,9 +4188,19 @@ class Game {
     s.vz=Math.cos(nextYaw)*Math.cos(nextPitch)*95;
   }
 
-  _obstacles(x0,z0,x1=x0,z1=z0){
+  _index(){
     if(this._obstacleIndex?.source!==this.map.obstacles||this._obstacleIndex.length!==this.map.obstacles.length)this._obstacleIndex=new ObstacleIndex(this.map.obstacles);
-    return this._obstacleIndex.query(x0,z0,x1,z1);
+    return this._obstacleIndex;
+  }
+  _obstacles(x0,z0,x1=x0,z1=z0){return this._index().query(x0,z0,x1,z1);}
+  // Exact ground height as shells and sight lines meet it. Shells pass through
+  // water to the bed, so a wading tank cannot hide beneath the surface.
+  _groundExact(x,z){return terrainHeight(this.map.id,x,z);}
+  // Static obstacles whose bounding circle comes within pad of segment a-b.
+  _obstaclesAlong(a,b,pad=0){
+    const out=[];
+    for(const o of this._index().segment(a.x,a.z,b.x,b.z,pad))if(pointSegmentDistance(o.x,o.z,a.x,a.z,b.x,b.z)<=Math.hypot(o.w,o.d)*.5+pad)out.push(o);
+    return out;
   }
 
   _traceSegment(a,b,ignoreTankId=null,includeTanks=true) {
@@ -3325,22 +4225,22 @@ class Game {
       const hit=segmentBox(a,b,{x:s.x-.65,y:s.y,z:s.z-.65},{x:s.x+.65,y:s.y+3.2,z:s.z+.65});
       if(hit&&(!closest||hit.t<closest.t))closest={...hit,sahur:s};
     }
-    for(const o of this._obstacles(a.x,a.z,b.x,b.z)) {
-      if(pointSegmentDistance(o.x,o.z,a.x,a.z,b.x,b.z)>Math.hypot(o.w,o.d)*.5+1)continue;
-      const ref={x:o.x,z:o.z,angle:o.rotation||0},base=terrainHeight(this.map.id,o.x,o.z);
+    for(const o of this._obstaclesAlong(a,b,1)) {
+      let base=this._obstacleBase.get(o);
+      if(base===undefined)this._obstacleBase.set(o,base=terrainHeight(this.map.id,o.x,o.z));
+      const ref={x:o.x,z:o.z,angle:o.rotation||0};
       const hit=segmentBox(localPoint(a,ref,base),localPoint(b,ref,base),{x:-o.w/2,y:0,z:-o.d/2},{x:o.w/2,y:o.h,z:o.d/2});
       if(hit&&(!closest||hit.t<closest.t))closest={...hit,obstacle:o};
     }
     // Deck slabs stop shells while the space beneath a bridge stays open.
     for(const bridge of this.map.bridges||[]){
-      const hit=segmentBox(a,b,{x:bridge.x-bridge.w/2,y:bridge.height-1.2,z:bridge.z-bridge.d/2},{x:bridge.x+bridge.w/2,y:bridge.height,z:bridge.z+bridge.d/2});
+      const hx=bridge.axis==='x'?bridge.d/2:bridge.w/2,hz=bridge.axis==='x'?bridge.w/2:bridge.d/2;
+      const hit=segmentBox(a,b,{x:bridge.x-hx,y:bridge.height-1.2,z:bridge.z-hz},{x:bridge.x+hx,y:bridge.height,z:bridge.z+hz});
       if(hit&&(!closest||hit.t<closest.t))closest={...hit,bridge};
     }
     const steps=Math.max(2,Math.ceil(Math.hypot(b.x-a.x,b.z-a.z)/2.5));
-    const groundGap=u=>{
-      const x=mix(a.x,b.x,u),z=mix(a.z,b.z,u),raw=terrainHeight(this.map.id,x,z);
-      return mix(a.y,b.y,u)-Math.max(raw,this.map.water?.level??-Infinity)-.03;
-    };
+    // Bridge decks are separate boxes, so the deck state never changes this ground.
+    const groundGap=u=>mix(a.y,b.y,u)-this._groundGrid.at(mix(a.x,b.x,u),mix(a.z,b.z,u))-.03;
     if(groundGap(0)<=0)return {t:0,ground:true};
     for(let i=1;i<=steps;i++){
       const u=i/steps;if(closest&&u-1/steps>closest.t)break;
@@ -3698,19 +4598,38 @@ class Game {
       turn=norm(heading+(back?Math.PI:0)-t.angle);
     this._move(t,dt,(back?-1:1)*(Math.abs(turn)>.7?.22:.95),clamp(turn*2,-1,1));return true;
   }
-  _free(x,z,radius=2.2) {
+  _free(x,z,radius=2.2,wade=false) {
     const bound=this.map.size*.5-5;
     if(Math.abs(x)>bound-radius||Math.abs(z)>bound-radius)return false;
     for(const o of this._obstacles(x-radius,z-radius,x+radius,z+radius))if(obstacleDistance(x,z,o)<radius)return false;
-    for(const [dx,dz] of [[0,0],[radius,0],[-radius,0],[0,radius],[0,-radius]])if(terrainAt(this.map.id,x+dx,z+dz).passable===false)return false;
+    if(wade)return true;
+    for(const [dx,dz] of [[0,0],[radius,0],[-radius,0],[0,radius],[0,-radius]])if(blockedAt(this.map.id,x+dx,z+dz))return false;
     return true;
   }
+  // _free(x,z,2.5) plus a climb limit at every 3 m sample. Obstacle candidates
+  // are gathered once per segment, water is tested only near water, and the
+  // climb reads the surface lattice.
   _lineFree(a,b) {
-    const d=distance(a,b),steps=Math.ceil(d/3);
-    let previousHeight=surfaceHeight(this.map.id,a.x,a.z);
+    const radius=2.5,bound=this.map.size*.5-5-radius,id=this.map.id;
+    // The playable square is convex, so checking both ends covers every sample.
+    if(Math.abs(a.x)>bound||Math.abs(a.z)>bound||Math.abs(b.x)>bound||Math.abs(b.z)>bound)return false;
+    const d=distance(a,b),steps=Math.ceil(d/3),rise=d/Math.max(1,steps)*.72;
+    // Each candidate is tested only at the samples that can come within its reach.
+    for(const o of this._obstaclesAlong(a,b,radius)){
+      let i0=0,i1=steps;
+      if(steps){
+        const along=((o.x-a.x)*(b.x-a.x)+(o.z-a.z)*(b.z-a.z))/d,reach=Math.hypot(o.w,o.d)*.5+radius;
+        i0=Math.max(0,Math.floor((along-reach)/d*steps));i1=Math.min(steps,Math.ceil((along+reach)/d*steps));
+      }
+      for(let i=i0;i<=i1;i++){const u=steps?i/steps:0;if(obstacleDistance(mix(a.x,b.x,u),mix(a.z,b.z,u),o)<radius)return false;}
+    }
+    const wet=waterNearSegment(id,a.x,a.z,b.x,b.z,radius+1);
+    let previousHeight=this._surfaceGrid.at(a.x,a.z);
     for(let i=0;i<=steps;i++){
-      const u=steps?i/steps:0,x=mix(a.x,b.x,u),z=mix(a.z,b.z,u),h=surfaceHeight(this.map.id,x,z);
-      if(!this._free(x,z,2.5)||(i>0&&h-previousHeight>d/Math.max(1,steps)*.72))return false;
+      const u=steps?i/steps:0,x=mix(a.x,b.x,u),z=mix(a.z,b.z,u);
+      if(wet&&(blockedAt(id,x,z)||blockedAt(id,x+radius,z)||blockedAt(id,x-radius,z)||blockedAt(id,x,z+radius)||blockedAt(id,x,z-radius)))return false;
+      const h=this._surfaceGrid.at(x,z);
+      if(i>0&&h-previousHeight>rise)return false;
       previousHeight=h;
     }
     return true;
@@ -3983,7 +4902,7 @@ class HostedBattle extends Game{
  }
 }
 
-const tankFields=['fall','x','z','y','angle','turretAngle','gunPitch','speed','yawVelocity','reload','secondaryReload','mgCooldown','mgHeat','repair','fire','respawnIn','smoke','smokes','smokeCooldown','missiles','missileReload','width','length','health','maxSpeed','_barrelIndex'];
+const tankFields=['fall','x','z','y','angle','turretAngle','gunPitch','speed','yawVelocity','reload','secondaryReload','mgCooldown','mgHeat','repair','fire','respawnIn','smoke','smokes','smokeCooldown','missiles','missileReload','width','length','health','maxSpeed','_barrelIndex','drown'];
 const rounded=v=>Math.round(v*10000)/10000;
 function makeSnapshot(game,sequence,ack=0,paused=false){
  return {match:game.descriptor.id,sequence,ack,paused:!!paused,time:rounded(game.time),remaining:rounded(game.remaining),duration:game.duration,initialTickets:game.initialTickets,tickets:game.tickets.map(rounded),
@@ -6086,7 +7005,7 @@ return {ZOMBIE_UPGRADES,ZombieGame};
 MODULES["renderer.js"]=(()=>{
 
 const {normalizeAppearance} = MODULES["appearance.js"];
-const { getTank, getMap, terrainHeight, surfaceHeight, riverCenter, terrainAt } = MODULES["data.js"];
+const { getTank, getMap, terrainHeight, surfaceHeight, terrainAt, waterLevel, TERRAIN } = MODULES["data.js"];
 const { weaponFrame, weaponGeometry, hullPose, GRAVITY } = MODULES["ballistics.js"];
 // All geometry and surface textures are generated locally. No runtime asset requests.
 const TAU = Math.PI * 2;
@@ -6109,8 +7028,9 @@ function terrainGeometry(map,segments=300){
     const values=Array.from({length:segments+1},(_,i)=>-half+i*size/segments).filter(v=>!fixed.some(f=>Math.abs(f-v)<.05));
     return [...values,...fixed].sort((a,b)=>a-b);
   };
-  const xs=axis((map.bridges||[]).flatMap(b=>[b.x-b.w/2-10,b.x-b.w/2,b.x,b.x+b.w/2,b.x+b.w/2+10]));
-  const zs=axis((map.bridges||[]).flatMap(b=>[-1,1].flatMap(s=>[b.z+s*b.d/2,b.z+s*(b.d/2+b.ramp)])));
+  const across=(c,w)=>[c-w/2-10,c-w/2,c,c+w/2,c+w/2+10],along=(c,b)=>[-1,1].flatMap(s=>[c+s*b.d/2,c+s*(b.d/2+b.ramp)]);
+  const xs=axis((map.bridges||[]).flatMap(b=>b.axis==='x'?along(b.x,b):across(b.x,b.w)));
+  const zs=axis((map.bridges||[]).flatMap(b=>b.axis==='x'?across(b.z,b.w):along(b.z,b)));
   const geo=new THREE.PlaneGeometry(size,size,xs.length-1,zs.length-1),p=geo.attributes.position,uv=geo.attributes.uv;
   // Add exact deck/approach edges to the terrain grid. Uniform coarse grids
   // blended the embankment down to the riverbed before it met the bridge.
@@ -6118,6 +7038,7 @@ function terrainGeometry(map,segments=300){
     const k=j*xs.length+i,x=xs[i],z=zs[j];
     p.setXYZ(k,x,terrainHeight(map.id,x,z),z);uv.setXY(k,(x+half)/size,1-(z+half)/size);
   }
+  geo.userData={xs,zs,half};
   geo.computeVertexNormals();return geo;
 }
 function muzzleEffectProfile(weapon,scoped=false,own=false){
@@ -6253,6 +7174,37 @@ function mergeStatic(group) {
     g.computeBoundingSphere();
     const mesh = new THREE.Mesh(g, material); mesh.castShadow = true; mesh.receiveShadow = true; group.add(mesh);
   }
+}
+
+// Distant tree for the instanced backdrop: a unit-tall column (y -.5 .. .5,
+// radius 1) with a trunk and either three stacked pine tiers, snow-tipped in
+// winter, or a two-lobed leafy crown. Colours live in a vertex attribute.
+function backdropTreeGeometry(pine, snowy) {
+  return geometry('backdrop-tree:' + pine + ':' + snowy, () => {
+    const parts = [], color = new THREE.Color();
+    const add = (g, x, y, z, paint) => {
+      g = g.index ? g.toNonIndexed() : g; g.translate(x, y, z);
+      const p = g.attributes.position, c = new Float32Array(p.count * 3);
+      for (let i = 0; i < p.count; i++) { paint(p.getY(i) - y, color); c[i * 3] = color.r; c[i * 3 + 1] = color.g; c[i * 3 + 2] = color.b; }
+      g.setAttribute('color', new THREE.BufferAttribute(c, 3)); parts.push(g);
+    };
+    add(new THREE.CylinderGeometry(.07, .1, .3, 5, 1, true), 0, -.35, 0, (_, c) => c.set('#5b4936'));
+    if (pine) {
+      [[1, .5, -.08], [.76, .44, .1], [.5, .36, .31]].forEach(([r, h, y]) =>
+        add(new THREE.ConeGeometry(r, h, 7), 0, y, 0, (dy, c) => c.set(dy > 0 ? (snowy ? '#e9eef0' : '#4f6c4c') : snowy ? '#38554a' : '#2f4a33')));
+    } else {
+      const crown = (dy, c) => c.set(dy > 0 ? '#6d8a48' : '#4b6636');
+      add(new THREE.IcosahedronGeometry(1, 0).scale(1, .42, 1), 0, .05, 0, crown);
+      add(new THREE.IcosahedronGeometry(1, 0).scale(.66, .3, .66), .12, .26, -.08, crown);
+    }
+    const n = parts.reduce((v, g) => v + g.attributes.position.count, 0), out = new THREE.BufferGeometry();
+    for (const [name, size] of [['position', 3], ['normal', 3], ['color', 3]]) {
+      const data = new Float32Array(n * size); let o = 0;
+      for (const g of parts) { data.set(g.attributes[name].array, o); o += g.attributes[name].array.length; }
+      out.setAttribute(name, new THREE.BufferAttribute(data, size));
+    }
+    parts.forEach(g => g.dispose()); out.computeBoundingSphere(); return out;
+  });
 }
 
 function slopedHull(width, length, bottom, top, upperWidth = width * .9, upperLength = length * .82) {
@@ -6899,6 +7851,217 @@ function radialTexture(key, rgb = '255,245,217') {
   }, 64);
 }
 
+// ---------------------------------------------------------------------------
+// Battlefield scenery: themed sky domes, the terrain apron that runs out to the
+// horizon, water surfaces and road ribbons.
+// ---------------------------------------------------------------------------
+const SKY_THEMES={
+  valley:{fog:'#bccfd5',density:.0004,zenith:'#5689bf',high:'#7aa5cc',low:'#a8c2d2',sun:[-.5,.62,.6],sunColor:'#fff0c9',sunIntensity:3.5,glow:'255,243,214',
+    hemi:'#d6e6ea',ground:'#68704e',hemiIntensity:2.1,exposure:1.06,clouds:'cumulus',cover:.5,horizon:'hills',land:'#7b9187',backdrop:'forest',rock:'#7b7e72'},
+  desert:{fog:'#d4c7ab',density:.00046,zenith:'#5b8dc2',high:'#8cafcc',low:'#c5c3b3',sun:[.42,.74,-.52],sunColor:'#ffe1ab',sunIntensity:3.7,glow:'255,236,198',
+    hemi:'#e4e0d0',ground:'#8b7151',hemiIntensity:2,exposure:1.04,clouds:'cirrus',cover:.35,horizon:'mesas',land:'#b29a7c',backdrop:'rocks',rock:'#a5815f'},
+  winter:{fog:'#b9c4cb',density:.0005,zenith:'#7a8ca1',high:'#97a6b4',low:'#afbbc4',sun:[-.62,.42,.66],sunColor:'#e9eef2',sunIntensity:2.6,glow:'238,242,247',
+    hemi:'#d8e5f2',ground:'#73828c',hemiIntensity:2.6,exposure:1.04,clouds:'overcast',cover:.8,horizon:'peaks',land:'#91a1ac',backdrop:'pines',rock:'#868e93'},
+  city:{fog:'#cbb9a4',density:.00055,zenith:'#465e87',high:'#7f86a1',low:'#d5ad8a',sun:[.72,.36,-.6],sunColor:'#ffd09a',sunIntensity:3.1,glow:'255,208,152',
+    hemi:'#ddd5cc',ground:'#6b6253',hemiIntensity:2,exposure:1.08,clouds:'streaks',cover:.5,horizon:'skyline',land:'#8c8784',backdrop:'city',rock:'#86817a',smoke:6},
+  works:{fog:'#b0ac9d',density:.00065,zenith:'#6a7984',high:'#8a9194',low:'#b4ab96',sun:[-.4,.55,.73],sunColor:'#f6e4c2',sunIntensity:3,glow:'250,231,198',
+    hemi:'#d2d2c8',ground:'#6c6656',hemiIntensity:2.1,exposure:1.05,clouds:'smog',cover:.55,horizon:'industry',land:'#8a8679',backdrop:'industry',rock:'#7f7a70',smoke:9},
+  plains:{fog:'#c4d6dd',density:.00036,zenith:'#4a82c0',high:'#76a4d0',low:'#aac7d8',sun:[.38,.7,.6],sunColor:'#fff2cf',sunIntensity:3.6,glow:'255,246,222',
+    hemi:'#d8e8ee',ground:'#6c744f',hemiIntensity:2.1,exposure:1.06,clouds:'cumulus',cover:.62,horizon:'flat',land:'#8e9f8f',backdrop:'groves',rock:'#7c7e72'},
+};
+const SKY_LOW=-12*Math.PI/180,SKY_HIGH=Math.PI/2;
+// Periodic value noise on [0,1): horizon outlines close seamlessly behind the camera.
+function ringNoise(seed,cells){
+  const rng=random(seed),table=Array.from({length:cells},rng);
+  return u=>{const t=((u%1)+1)%1*cells,i=Math.floor(t),f=t-i,s=f*f*(3-2*f);return table[i%cells]*(1-s)+table[(i+1)%cells]*s;};
+}
+function skyTexture(name,theme,W){
+  const key='sky-'+name+'-'+W;if(TEX.has(key))return TEX.get(key);
+  const H=W/4,canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d'),rng=random(9001+name.length*131+name.charCodeAt(0)),deg=Math.PI/180,px=W/360;
+  const rowOf=e=>(1-(e-SKY_LOW)/(SKY_HIGH-SKY_LOW))*H,mixHex=(a,b,t)=>'#'+color(a).lerp(color(b),t).getHexString();
+  const gradient=ctx.createLinearGradient(0,0,0,H);
+  for(const [e,c] of [[90,theme.zenith],[40,theme.high],[13,theme.low],[3.5,theme.fog],[-12,theme.fog]])gradient.addColorStop(clamp(rowOf(e*deg)/H,0,1),c);
+  ctx.fillStyle=gradient;ctx.fillRect(0,0,W,H);
+  const sun=new THREE.Vector3(...theme.sun).normalize(),sunU=(Math.atan2(sun.x,sun.z)/TAU+.5)*W,sunE=Math.asin(sun.y),sunY=rowOf(sunE);
+  // Everything that wraps around the dome is drawn three times.
+  const wrap=draw=>{for(const o of [-W,0,W])draw(o);};
+  const blob=(x,y,rx,ry,rgb,alpha,rot=0)=>wrap(o=>{
+    if(x+o+rx<0||x+o-rx>W)return;
+    ctx.save();ctx.translate(x+o,y);ctx.rotate(rot);ctx.scale(rx,ry);
+    const g=ctx.createRadialGradient(0,0,0,0,0,1);g.addColorStop(0,`rgba(${rgb},${alpha})`);g.addColorStop(.55,`rgba(${rgb},${alpha*.55})`);g.addColorStop(1,`rgba(${rgb},0)`);
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,1,0,TAU);ctx.fill();ctx.restore();
+  });
+  const stretch=e=>1/Math.max(.2,Math.cos(e));
+  const sunGlow=(radius,alpha)=>blob(sunU,sunY,radius*px*stretch(sunE),radius*px,theme.glow,alpha);
+  sunGlow(70,theme.clouds==='overcast'?.35:.45);sunGlow(22,.55);
+  // How brightly a cloud at azimuth x is lit by a low sun.
+  const sunward=x=>{const d=Math.abs(((x-sunU)/W+1.5)%1-.5)*2;return 1-d;};
+  const cloud=(x,e,size,flat,lit,shade,alpha)=>{
+    const y=rowOf(e*deg),s=size*px,puffs=7+Math.floor(rng()*9);
+    for(let i=0;i<puffs;i++){const dx=(rng()-.5)*s*2.1,dy=-rng()*s*.45*flat,r=s*(.35+rng()*.45);blob(x+dx,y+dy+r*.25*flat,r*1.1,r*.55*flat,shade,alpha*.55);}
+    for(let i=0;i<puffs;i++){const dx=(rng()-.5)*s*1.9,dy=-rng()*s*.5*flat,r=s*(.3+rng()*.4);blob(x+dx,y+dy-r*.1,r,r*.62*flat,lit,alpha);}
+  };
+  const kind=theme.clouds;
+  if(kind==='overcast'){
+    for(let i=0;i<260;i++){const e=3+Math.pow(rng(),.8)*70,x=rng()*W,g=Math.floor(150+rng()*70);
+      blob(x,rowOf(e*deg),(20+rng()*60)*px*stretch(e*deg),(1.5+rng()*5)*px,`${g},${g+6},${g+14}`,.12+rng()*.18);}
+    for(let i=0;i<70;i++){const e=4+rng()*25,x=rng()*W;blob(x,rowOf(e*deg),(14+rng()*30)*px,(1+rng()*2)*px,'118,128,140',.12+rng()*.12);}
+  }else if(kind==='cirrus'){
+    for(let i=0;i<46;i++){const e=14+rng()*48,x=rng()*W;blob(x,rowOf(e*deg),(12+rng()*30)*px*stretch(e*deg),(.35+rng()*1.1)*px,'255,255,255',.16+rng()*.22,(rng()-.5)*.25);}
+    for(let i=0;i<10;i++)cloud(rng()*W,4+rng()*6,2.5+rng()*3,.7,'250,246,238','206,198,186',.6);
+  }else if(kind==='streaks'){
+    for(let i=0;i<120;i++){
+      const e=2.5+Math.pow(rng(),1.6)*30,x=rng()*W,t=sunward(x),warm=Math.max(0,t)**1.5;
+      const r=Math.round(mix(132,248,warm)),g=Math.round(mix(128,176,warm)),b=Math.round(mix(152,128,warm));
+      blob(x,rowOf(e*deg),(10+rng()*34)*px*stretch(e*deg),(.5+rng()*1.8)*px,`${r},${g},${b}`,.2+rng()*.3,(rng()-.5)*.08);
+    }
+  }else if(kind==='smog'){
+    for(let i=0;i<24;i++)cloud(rng()*W,5+rng()*22,3+rng()*6,.75,'224,220,206','150,144,130',.55);
+    const haze=ctx.createLinearGradient(0,rowOf(16*deg),0,rowOf(0));haze.addColorStop(0,'rgba(150,138,112,0)');haze.addColorStop(1,'rgba(150,138,112,.38)');
+    ctx.fillStyle=haze;ctx.fillRect(0,rowOf(16*deg),W,rowOf(0)-rowOf(16*deg));
+  }
+  if(kind==='cumulus'){
+    const n=Math.round(30+theme.cover*60);
+    for(let i=0;i<n;i++){const e=3+Math.pow(rng(),1.7)*34,size=(3+rng()*7)*(.45+e/26);cloud(rng()*W,e,size,.6+e/70,'255,255,255','188,198,208',.75);}
+  }
+  // Smoke columns from fires beyond the battlefield.
+  for(let i=0;i<(theme.smoke||0);i++){
+    const x0=rng()*W,lean=(rng()-.5)*2.4,top=7+rng()*10;
+    for(let k=0;k<26;k++){const t=k/25,e=t*top,spread=(1+t*5)*px;blob(x0+lean*e*px*1.4+(rng()-.5)*spread,rowOf(e*deg),spread*1.3,spread,'84,80,76',.22*(1-t*.75));}
+  }
+  // Distant landforms. Farther ridges are paler: aerial perspective.
+  const outline=(fn,fill,base=-12)=>wrap(o=>{
+    ctx.beginPath();ctx.moveTo(o,rowOf(base*deg));
+    for(let x=0;x<=W;x+=2)ctx.lineTo(x+o,rowOf(fn(x/W)*deg));
+    ctx.lineTo(W+o,rowOf(base*deg));ctx.closePath();ctx.fillStyle=fill;ctx.fill();
+  });
+  const far=mixHex(theme.land,theme.fog,.72),mid=mixHex(theme.land,theme.fog,.5),n1=ringNoise(31,24),n2=ringNoise(57,96),n3=ringNoise(83,420),n4=ringNoise(97,1400);
+  const h=theme.horizon;
+  if(h==='hills'||h==='flat'){
+    const a=h==='hills'?1:.4;
+    outline(u=>a*(.3+1.6*n1(u)+.6*n2(u))+.18*n4(u),far);
+    outline(u=>a*(.1+.9*n2(u+.3)+.5*n3(u))+.22*n4(u+.5),mid);
+  }else if(h==='peaks'){
+    const ridged=s=>{const oct=[0,1,2,3,4].map(k=>ringNoise(s+k*13,Math.round(12*2.3**k)));
+      return u=>{let v=0,amp=1;for(const q of oct){v+=amp*(1-Math.abs(q(u)*2-1));amp*=.5;}return v/1.94;};};
+    const r1=ridged(111),r2=ridged(151),peak=u=>.8+6.2*r1(u)**2.2,snow=mixHex('#f2f5f7',theme.fog,.55);
+    outline(peak,far);
+    ctx.fillStyle=snow;
+    wrap(o=>{for(let x=0;x<=W;x+=2){const top=peak(x/W);if(top<3)continue;ctx.fillRect(x+o,rowOf(top*deg),2,rowOf((top-(top-3)*.45)*deg)-rowOf(top*deg));}});
+    outline(u=>.3+3.2*r2(u+.37)**2,mid);
+  }else if(h==='mesas'){
+    const plateau=(s,lo,hi)=>{const a=ringNoise(s,30),b=ringNoise(s+7,140);return u=>lo+(hi-lo)*smoothstep(.52,.6,a(u))*(.85+.15*b(u));};
+    const m1=plateau(201,0,2.6),m2=plateau(233,0,1.6);
+    outline(u=>.2+m1(u)+.25*n3(u),far);
+    outline(u=>.1+m2(u+.21)+.2*n3(u+.4),mid);
+  }else if(h==='skyline'||h==='industry'){
+    outline(u=>.15+.5*n2(u),far);
+    const sky=h==='skyline';
+    wrap(o=>{
+      ctx.fillStyle=far;
+      for(let x=0;x<W;){const bw=(sky?.6+rng()*2.2:1.4+rng()*3.6)*px,top=(sky?.5+rng()*1.7:.3+rng()*.9)+.4*n1(x/W);
+        ctx.fillRect(x+o,rowOf(top*deg),bw+1,rowOf(-1*deg)-rowOf(top*deg));
+        if(rng()<(sky?.06:.1)){const cw=(sky?.25:.18)*px,ch=top+(sky?1.2+rng()*1.6:2.2+rng()*2.8);ctx.fillRect(x+o+bw*.4,rowOf(ch*deg),cw,rowOf(top*deg)-rowOf(ch*deg)+1);}
+        x+=bw;}
+    });
+    if(!sky)for(let i=0;i<5;i++){const x=rng()*W,s=(1.4+rng())*px,top=2+rng()*1.4;wrap(o=>{ctx.fillStyle=far;ctx.beginPath();ctx.moveTo(x+o-s,rowOf(0));ctx.quadraticCurveTo(x+o-s*.45,rowOf(top*.6*deg),x+o-s*.6,rowOf(top*deg));ctx.lineTo(x+o+s*.6,rowOf(top*deg));ctx.quadraticCurveTo(x+o+s*.45,rowOf(top*.6*deg),x+o+s,rowOf(0));ctx.fill();});}
+    outline(u=>.05+.35*n3(u+.2),mid);
+  }
+  // Haze lies over the horizon line, where the terrain meets the fog colour.
+  const hz=ctx.createLinearGradient(0,rowOf(5*deg),0,rowOf(-.5*deg));hz.addColorStop(0,`${theme.fog}00`);hz.addColorStop(1,theme.fog);
+  ctx.fillStyle=hz;ctx.fillRect(0,rowOf(5*deg),W,rowOf(-.5*deg)-rowOf(5*deg));
+  ctx.fillStyle=theme.fog;ctx.fillRect(0,rowOf(-.5*deg),W,H-rowOf(-.5*deg));
+  if(kind!=='overcast'){blob(sunU,sunY,1.3*px*stretch(sunE),1.3*px,'255,252,240',1);blob(sunU,sunY,.7*px*stretch(sunE),.7*px,'255,255,250',1);}
+  const texture=new THREE.CanvasTexture(canvas);
+  texture.colorSpace=THREE.NoColorSpace;texture.generateMipmaps=false;texture.minFilter=THREE.LinearFilter;texture.wrapS=THREE.RepeatWrapping;
+  TEX.set(key,texture);return texture;
+}
+const smoothstep=(a,b,v)=>{const t=clamp((v-a)/(b-a),0,1);return t*t*(3-2*t);};
+const BED_DEEP=new THREE.Color('#2f4a44');
+// Painted pixels are drawn as they are, matching the fog colour exactly.
+function skyDome(texture){
+  const material=new THREE.ShaderMaterial({
+    uniforms:{map:{value:texture},low:{value:SKY_LOW},high:{value:SKY_HIGH}},
+    vertexShader:'varying vec3 vDir;void main(){vDir=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
+    fragmentShader:'uniform sampler2D map;uniform float low;uniform float high;varying vec3 vDir;void main(){vec3 d=normalize(vDir);'+
+      'float u=atan(d.x,d.z)/6.2831853+0.5;float v=clamp((asin(clamp(d.y,-1.0,1.0))-low)/(high-low),0.0,1.0);gl_FragColor=vec4(texture2D(map,vec2(u,v)).rgb,1.0);}',
+    side:THREE.BackSide,depthWrite:false,depthTest:false,fog:false,toneMapped:false,
+  });
+  const mesh=new THREE.Mesh(new THREE.SphereGeometry(1000,48,24),material);
+  mesh.name='sky';mesh.renderOrder=-10;mesh.frustumCulled=false;return mesh;
+}
+// Flat strip along a polyline: two or more vertices across, y from a callback.
+function ribbonGeometry(points,width,heightAt,{across=2,uvScale=8,skip=null,lift=0}={}){
+  const pos=[],uv=[],index=[];let length=0,row=-1;
+  for(let i=0;i<points.length;i++){
+    const p=points[i],a=points[Math.max(0,i-1)],b=points[Math.min(points.length-1,i+1)];
+    let tx=b[0]-a[0],tz=b[1]-a[1];const tl=Math.hypot(tx,tz)||1;tx/=tl;tz/=tl;
+    if(i)length+=Math.hypot(p[0]-points[i-1][0],p[1]-points[i-1][1]);
+    const w=(typeof width==='function'?width(p):width)*.5;
+    if(skip?.(p[0],p[1])){row=-1;continue;}
+    const base=pos.length/3;
+    for(let k=0;k<across;k++){const s=k/(across-1)*2-1,x=p[0]-tz*w*s,z=p[1]+tx*w*s;pos.push(x,heightAt(x,z)+lift,z);uv.push(k/(across-1),length/uvScale);}
+    if(row>=0)for(let k=0;k<across-1;k++){const a0=row+k,a1=row+k+1,b0=base+k,b1=base+k+1;index.push(a0,b0,a1,a1,b0,b1);}
+    row=base;
+  }
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
+  geo.setIndex(index);geo.computeVertexNormals();return geo;
+}
+// Catmull-Rom resampling of a centreline that carries a width per point.
+function resample(points,step){
+  const out=[],n=points.length;
+  for(let i=0;i<n-1;i++){
+    const p0=points[Math.max(0,i-1)],p1=points[i],p2=points[i+1],p3=points[Math.min(n-1,i+2)],pieces=Math.max(1,Math.ceil(Math.hypot(p2[0]-p1[0],p2[1]-p1[1])/step));
+    for(let k=0;k<pieces;k++){const t=k/pieces,t2=t*t,t3=t2*t,f=(a,b,c,d)=>.5*(2*b+(c-a)*t+(2*a-5*b+4*c-d)*t2+(3*b-a-3*c+d)*t3);
+      out.push([f(p0[0],p1[0],p2[0],p3[0]),f(p0[1],p1[1],p2[1],p3[1]),mix(p1[2]??0,p2[2]??0,t)]);}
+  }
+  out.push([...points[n-1]]);return out;
+}
+// A box whose side faces carry metre UVs, so one window texture tiles every facade.
+function facadeGeometry(w,h,d,cell=3){
+  const geo=new THREE.BoxGeometry(w,h,d),p=geo.attributes.position,uv=geo.attributes.uv;
+  for(let i=0;i<p.count;i++){
+    const face=Math.floor(i/4),x=p.getX(i),y=p.getY(i)+h/2,z=p.getZ(i);
+    if(face<2)uv.setXY(i,(z+d/2)/cell,y/cell);else if(face<4)uv.setXY(i,x/cell,z/cell);else uv.setXY(i,(x+w/2)/cell,y/cell);
+  }
+  return geo;
+}
+function windowTexture(kind='house'){
+  const tex=localTexture('windows-'+kind,(ctx,s)=>{
+    ctx.fillStyle='#ffffff';ctx.fillRect(0,0,s,s);
+    const g=ctx.createLinearGradient(0,0,s,s);g.addColorStop(0,'#2e3a3e');g.addColorStop(.6,'#46565a');g.addColorStop(1,'#323d40');
+    const [x0,x1,y0,y1]=kind==='small'?[.4,.6,.3,.55]:kind==='tall'?[.33,.67,.12,.62]:[.3,.7,.22,.62];
+    ctx.fillStyle='#d9d5cb';ctx.fillRect(s*(x0-.05),s*(y0-.04),s*(x1-x0+.1),s*(y1-y0+.1));
+    ctx.fillStyle=g;ctx.fillRect(s*x0,s*y0,s*(x1-x0),s*(y1-y0));
+    ctx.fillStyle='rgba(255,255,255,.2)';ctx.fillRect(s*(x0+x1)/2-1,s*y0,2,s*(y1-y0));
+    ctx.fillStyle='#bdb8ab';ctx.fillRect(s*(x0-.07),s*(y1+.04),s*(x1-x0+.14),s*.035);
+  },128);
+  tex.wrapS=tex.wrapT=THREE.RepeatWrapping;return tex;
+}
+function trackTexture(kind){
+  const tex=localTexture('track-'+kind,(ctx,s)=>{
+    const base=kind==='snow'?'#a9b6b7':kind==='sand'?'#b3a07c':kind==='asphalt'?'#56595b':kind==='ballast'?'#7a756c':'#958a6c';
+    ctx.fillStyle=base;ctx.fillRect(0,0,s,s);const rng=random(kind.length*77+5);
+    for(let i=0;i<2600;i++){const c=rng()<.5?0:255;ctx.fillStyle=`rgba(${c},${c},${c},${.04+rng()*.08})`;ctx.fillRect(rng()*s,rng()*s,1+rng()*2,1+rng()*2);}
+    if(kind!=='asphalt'&&kind!=='ballast')for(const x of [.27,.73]){ctx.fillStyle='rgba(40,34,26,.18)';ctx.fillRect(s*(x-.07),0,s*.14,s);}
+    const edge=ctx.createLinearGradient(0,0,s,0);edge.addColorStop(0,'rgba(0,0,0,.18)');edge.addColorStop(.12,'rgba(0,0,0,0)');edge.addColorStop(.88,'rgba(0,0,0,0)');edge.addColorStop(1,'rgba(0,0,0,.18)');
+    ctx.fillStyle=edge;ctx.fillRect(0,0,s,s);
+  },128);
+  tex.wrapS=tex.wrapT=THREE.RepeatWrapping;return tex;
+}
+// Gable roof with overhang; the ridge runs along local x or local z.
+function gableGeometry(w,d,h,rise,alongX){
+  const o=.35,L=(alongX?w:d)/2+o,S=(alongX?d:w)/2+o,v=[];
+  // Swapping x and z mirrors the shape, so the winding is reversed to match.
+  const P=(a,b,y)=>alongX?[a,y,b]:[b,y,a];
+  const tri=(p,q,r)=>alongX?v.push(...p,...q,...r):v.push(...p,...r,...q),quad=(p,q,r,s)=>{tri(p,q,r);tri(p,r,s);};
+  const e1=P(-L,-S,h),e2=P(L,-S,h),e3=P(L,S,h),e4=P(-L,S,h),r1=P(-L,0,h+rise),r2=P(L,0,h+rise);
+  quad(e1,r1,r2,e2);quad(e4,e3,r2,r1);tri(e1,e4,r1);tri(e2,r2,e3);quad(e1,e2,e3,e4);
+  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(v,3));
+  geo.computeVertexNormals();return geo;
+}
 class Renderer {
   constructor(canvas, { onError } = {}) {
     this.canvas = canvas;
@@ -6999,6 +8162,7 @@ class Renderer {
     this.shellMeshes.clear();
     this.hangarTank = null;
     this.terrain = null;
+    this.sky = null;
     this.flash.intensity = 0;
   }
 
@@ -7118,19 +8282,24 @@ class Renderer {
     this.game = game;
     const map = game.map || getMap(game.mapId);
     this.map = map;
-    const desert = map.biome === 'desert', winter = map.biome === 'winter';
-    const sky = desert ? '#b8c5c4' : winter ? '#aabac4' : '#b4cacf';
-    this.scene.background = color(sky);
-    this.scene.fog = new THREE.FogExp2(sky, desert ? .00060 : winter ? .00065 : .00050);
-    this.hemi.color.set(winter ? '#d8e5f2' : '#d6e6ea');
-    this.hemi.groundColor.set(desert ? '#8b7151' : winter ? '#73828c' : '#68704e');
-    this.hemi.intensity = winter ? 2.6 : 2.1;
-    this.sun.color.set(winter ? '#e6edf1' : desert ? '#ffe2ac' : '#ffebbf');
-    this.sun.intensity = winter ? 2.7 : 3.5;
+    const theme = this.theme = SKY_THEMES[map.theme] || SKY_THEMES.valley;
+    this.propPalette = null;
+    this.scene.background = color(theme.fog);
+    this.scene.fog = new THREE.FogExp2(theme.fog, theme.density);
+    this.hemi.color.set(theme.hemi);
+    this.hemi.groundColor.set(theme.ground);
+    this.hemi.intensity = theme.hemiIntensity;
+    this.sun.color.set(theme.sunColor);
+    this.sun.intensity = theme.sunIntensity;
+    this.sunOffset = new THREE.Vector3(...theme.sun).normalize().multiplyScalar(130);
     this.fill.intensity = .4;
     Object.assign(this.sun.shadow.camera, { left: -85, right: 85, top: 85, bottom: -85 });
     this.sun.shadow.camera.updateProjectionMatrix();
-    this.renderer.toneMappingExposure = winter ? 1.05 : 1.06;
+    this.renderer.toneMappingExposure = theme.exposure;
+    // The land runs out to the horizon, so the view distance reaches past it.
+    for (const c of [this.camera, this.aimCamera]) { c.far = 6000; c.updateProjectionMatrix(); }
+    this.sky = skyDome(skyTexture(map.theme || 'valley', theme, this.quality === 'low' ? 2048 : 4096));
+    this.world.add(this.sky);
     this.buildTerrain(map); this.buildBridges(map); this.buildProps(map); this.buildZones(game.zones);
     this.resetView(game);
     this.syncTanks(game, 1);
@@ -7157,104 +8326,250 @@ class Renderer {
   heightAt(x, z) { return surfaceHeight(this.map?.id, x, z) || 0; }
   groundAt(x, z) { return terrainHeight(this.map?.id, x, z) || 0; }
 
+  // Vertex colours from the surface types; steep faces turn to bare rock.
+  paintGround(geo, map) {
+    geo.computeVertexNormals();
+    const pos = geo.attributes.position, nrm = geo.attributes.normal, colors = new Float32Array(pos.count * 3), base = new THREE.Color(), rock = color(this.theme.rock);
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i), z = pos.getZ(i), terrain = terrainAt(map.id, x, z);
+      base.set(terrain?.color || '#7c8b59');
+      // The water is see-through, so beds read as silt and pebbles that darken with depth.
+      if (terrain?.water || terrain === TERRAIN.bank) {
+        const depth = Math.max(0, waterLevel(map.id, x, z) - pos.getY(i));
+        base.set(map.biome === 'desert' ? '#9a8a68' : '#6e6c50').lerp(BED_DEEP, Math.min(1, depth / 2.5) * .85);
+      }
+      const steep = terrain?.water || terrain?.bridge ? 0 : smoothstep(.86, .6, nrm.getY(i));
+      if (steep > 0) base.lerp(rock, steep * .85);
+      base.multiplyScalar(.88 + hash(x * .13, z * .13) * .16 + Math.sin(x * .075 + z * .03) * .035);
+      colors[i * 3] = base.r; colors[i * 3 + 1] = base.g; colors[i * 3 + 2] = base.b;
+    }
+    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  }
+
   buildTerrain(map) {
     const size = map.size || 1000, segments = this.quality === 'low' ? 200 : 300;
-    const geo = terrainGeometry(map,segments);
-    const pos = geo.attributes.position, colors = new Float32Array(pos.count * 3), base = new THREE.Color();
-    for (let i = 0; i < pos.count; i++) {
-      const x = pos.getX(i), z = pos.getZ(i), h = this.groundAt(x, z); pos.setY(i, h);
-      const terrain = terrainAt(map.id, x, z);
-      base.set(terrain?.color || (map.biome === 'desert' ? '#c6b283' : map.biome === 'winter' ? '#cbd4d2' : '#7c8b59'));
-      const variation = .88 + hash(x * .13, z * .13) * .16 + Math.sin(x * .075 + z * .03) * .035;
-      base.multiplyScalar(variation); colors[i * 3] = base.r; colors[i * 3 + 1] = base.g; colors[i * 3 + 2] = base.b;
-    }
-    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3)); geo.computeVertexNormals();
+    const geo = terrainGeometry(map, segments);
+    this.paintGround(geo, map);
     const tex = groundTexture().clone();
     tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
     tex.repeat.set(size / 5, size / 5);
     tex.needsUpdate = true;
-    this.terrain = new THREE.Mesh(geo, mat('#ffffff', { vertexColors: true, map: tex, roughness: 1, metalness: 0 }));
+    const material = mat('#ffffff', { vertexColors: true, map: tex, roughness: 1, metalness: 0 });
+    this.terrain = new THREE.Mesh(geo, material);
     this.terrain.receiveShadow = true;
     this.world.add(this.terrain);
-    if (map.water) {
-      const vertices = [];
-      for (let i = 0; i < 320; i++) {
-        const x0 = -(size + 80) / 2 + i * (size + 80) / 320, x1 = -(size + 80) / 2 + (i + 1) * (size + 80) / 320;
-        const z0 = riverCenter(map.id, x0), z1 = riverCenter(map.id, x1), halfWidth = map.water.width / 2;
-        const points = [[x0, z0 - halfWidth], [x0, z0 + halfWidth], [x1, z1 + halfWidth], [x1, z1 - halfWidth]];
-        for (const k of [0, 1, 2, 0, 2, 3]) { const [x, z] = points[k]; vertices.push(x, map.water.level, z); }
-      }
-      const waterGeo = new THREE.BufferGeometry();
-      waterGeo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-      waterGeo.computeVertexNormals();
-      const water = new THREE.Mesh(waterGeo, mat(map.biome === 'winter' ? '#547e91' : '#426f6c', { metalness: .4, roughness: .17, transparent: true, opacity: .85, side: THREE.DoubleSide, depthWrite: false }));
-      water.receiveShadow = true;
-      this.world.add(water);
-    }
-    const mountains = new THREE.Group(),
-      mountainMaterial = mat(map.biome === 'desert' ? '#9b9176' : map.biome === 'winter' ? '#a5b1b4' : '#74867a', { roughness: 1, metalness: 0 });
-    const rng = random(1973);
-    for (let i = 0; i < 30; i++) {
-      const angle = i / 30 * TAU, radius = size * .79 + rng() * 160, height = 80 + rng() * 150;
-      const m = addMesh(mountains, geometry('mountain', () => new THREE.ConeGeometry(1, 1, 7, 1)), mountainMaterial, Math.sin(angle) * radius, height / 2 - 12, Math.cos(angle) * radius, 70 + rng() * 60, height, 70 + rng() * 60);
-      m.rotation.y = rng() * TAU;
-    }
-    mergeStatic(mountains); this.world.add(mountains);
-    if(map.streets)this.buildStreets(map);else this.buildClutter(map);
+    this.buildApron(map, geo, material);
+    this.buildBackdrop(map);
+    this.buildWater(map);
+    this.buildRoads(map);
+    if (map.kind !== 'urban') this.buildClutter(map);
   }
 
-  buildStreets(map){
-    const group=new THREE.Group(),road=mat('#505957',{roughness:1,metalness:0}),
-      paving=mat('#a6a18f',{roughness:1,metalness:0}),mark=mat('#b9bba5',{roughness:1});
-    const {axes,width,sidewalk}=map.streets,level=7;
-    for(const axis of axes)for(const vertical of [false,true]){
-      const x=vertical?axis:0,z=vertical?0:axis;
-      box(group,paving,x,level+.025,z,vertical?width+sidewalk*2:map.size,.05,vertical?map.size:width+sidewalk*2);
-      box(group,road,x,level+.075,z,vertical?width:map.size,.04,vertical?map.size:width);
-      for(let p=-map.size/2+10;p<map.size/2;p+=14){
-        if(axes.some(a=>Math.abs(p-a)<width/2+5))continue;
-        box(group,mark,vertical?axis:p,level+.101,vertical?p:axis,vertical?.16:5,.008,vertical?5:.16);
+  // Land continues past the playable square out to the horizon. The inner ring
+  // reuses the battlefield mesh's border vertices, so the seam is watertight.
+  buildApron(map, geo, material) {
+    const { xs, zs, half } = geo.userData, ring = [];
+    for (const x of xs) ring.push([x, -half]);
+    for (let j = 1; j < zs.length; j++) ring.push([half, zs[j]]);
+    for (let i = xs.length - 2; i >= 0; i--) ring.push([xs[i], half]);
+    for (let j = zs.length - 2; j > 0; j--) ring.push([-half, zs[j]]);
+    const P = ring.length, K = this.quality === 'low' ? 22 : 34, R = 5400, size = half * 2;
+    const pos = new Float32Array(P * (K + 1) * 3), uv = new Float32Array(P * (K + 1) * 2), index = [];
+    for (let k = 0; k <= K; k++) {
+      const s = (half + (R - half) * Math.pow(k / K, 2.1)) / half;
+      for (let i = 0; i < P; i++) {
+        const x = ring[i][0] * s, z = ring[i][1] * s, o = k * P + i;
+        pos[o * 3] = x; pos[o * 3 + 1] = terrainHeight(map.id, x, z); pos[o * 3 + 2] = z;
+        uv[o * 2] = (x + half) / size; uv[o * 2 + 1] = 1 - (z + half) / size;
       }
     }
-    for(const park of map.parks||[])box(group,mat('#74845e',{roughness:1}),park.x,level+.04,park.z,park.w,.04,park.d);
-    mergeStatic(group);this.world.add(group);
+    for (let k = 0; k < K; k++) for (let i = 0; i < P; i++) {
+      const a = k * P + i, b = k * P + (i + 1) % P, c = (k + 1) * P + (i + 1) % P, d = (k + 1) * P + i;
+      index.push(a, b, d, b, c, d);
+    }
+    const apron = new THREE.BufferGeometry();
+    apron.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    apron.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+    apron.setIndex(index);
+    this.paintGround(apron, map);
+    const mesh = new THREE.Mesh(apron, material); mesh.receiveShadow = true; mesh.name = 'apron';
+    this.world.add(mesh);
+  }
+
+  // Woods, rocks or rooftops beyond the boundary, so the land does not look empty.
+  buildBackdrop(map) {
+    const kind = this.theme.backdrop, half = map.size / 2, low = this.quality === 'low', rng = random(4401 + map.size);
+    const patch = (x, z) => Math.sin(x * .0041 + 1.3) * Math.sin(z * .0047 + .4) + .6 * Math.sin(x * .011 - z * .008 + 2) + .3 * Math.sin(x * .031 + z * .027);
+    const sample = (n, near, far, accept) => {
+      const out = [];
+      for (let i = 0; i < n * 8 && out.length < n; i++) {
+        const x = (rng() * 2 - 1) * (half + far), z = (rng() * 2 - 1) * (half + far), out2 = Math.max(Math.abs(x), Math.abs(z)) - half;
+        if (out2 < near || out2 > far) continue;
+        const t = terrainAt(map.id, x, z); if (t?.water || t?.passable === false) continue;
+        const y = terrainHeight(map.id, x, z); if (accept(x, z, y, out2)) out.push([x, y, z]);
+      }
+      return out;
+    };
+    const instanced = (geo, material, list, scale, tint) => {
+      if (!list.length) return;
+      const mesh = new THREE.InstancedMesh(geo, material, list.length), c = new THREE.Color();
+      list.forEach((p, i) => {
+        const [sx, sy, sz, yaw] = scale(p, i);
+        DUMMY.position.set(p[0], p[1] + sy * .5 - .4, p[2]); DUMMY.rotation.set(0, yaw ?? rng() * TAU, 0); DUMMY.scale.set(sx, sy, sz); DUMMY.updateMatrix();
+        mesh.setMatrixAt(i, DUMMY.matrix);
+        if (tint) { c.set(tint(p, i)); mesh.setColorAt(i, c); }
+      });
+      mesh.computeBoundingSphere(); this.world.add(mesh);
+    };
+    const leafy = mat('#ffffff', { roughness: 1, metalness: 0, vertexColors: true });
+    if (kind === 'forest' || kind === 'groves' || kind === 'pines') {
+      const n = (low ? .4 : 1) * (kind === 'groves' ? 1600 : 3600), pines = kind === 'pines';
+      const trees = sample(n, 25, 1600, (x, z, y, out) => patch(x, z) > (kind === 'groves' ? .75 : pines ? .05 : .3) && (!pines || y < 230) && rng() < 1.15 - out / 1600);
+      const snowy = map.biome === 'winter', geo = backdropTreeGeometry(pines, snowy);
+      // Colours are baked into the geometry; instances only vary brightness.
+      instanced(geo, leafy, trees, () => { const s = pines ? 3 + rng() * 2.4 : 4 + rng() * 3; return [s, pines ? s * 4.2 : s * 2.3, s]; },
+        () => ['#ffffff', '#e4ead8', '#f2ecd6', '#d8e0d4'][Math.floor(rng() * 4)]);
+    } else if (kind === 'rocks') {
+      const rocks = sample(low ? 300 : 800, 20, 1500, () => true);
+      instanced(ROCK(), mat('#ffffff', { roughness: 1, metalness: 0 }), rocks, () => { const s = 3 + rng() * 10; return [s * 1.3, s * .8, s]; }, () => rng() < .5 ? '#a58665' : '#b49773');
+    } else if (kind === 'city' || kind === 'industry') {
+      const city = kind === 'city', grid = city ? 110 : 150;
+      const blocks = sample(low ? 700 : 1900, 18, city ? 1500 : 1200, (x, z) => {
+        const gx = ((x % grid) + grid) % grid, gz = ((z % grid) + grid) % grid;
+        return gx > 16 && gz > 16 && rng() < (city ? .95 : .6);
+      });
+      const facade = mat('#ffffff', { roughness: 1, metalness: 0, map: city ? windowTexture('house') : null });
+      instanced(geometry('backdrop-block', () => facadeGeometry(1, 1, 1, .2)), facade, blocks, (p) => {
+        const out = Math.max(Math.abs(p[0]), Math.abs(p[2])) - half;
+        const h = city ? (rng() < .06 ? 34 + rng() * 22 : 9 + rng() * 15) * (1 - Math.min(.4, out / 3000)) : (rng() < .08 ? 30 + rng() * 25 : 7 + rng() * 9);
+        return city ? [14 + rng() * 14, h, 12 + rng() * 12, Math.round(rng() * 2) * Math.PI / 2] : [rng() < .08 ? 5 : 24 + rng() * 26, h, rng() < .08 ? 5 : 16 + rng() * 22, 0];
+      }, () => city ? ['#b5a28b', '#a3aaa2', '#c4bca4', '#a8a18e', '#b89c86', '#9fa8ad'][Math.floor(rng() * 6)] : ['#8d948f', '#a39a86', '#7f8a8f', '#9c8f7a', '#8b5a46'][Math.floor(rng() * 5)]);
+    }
+  }
+
+  buildWater(map) {
+    const vis = map.visual; if (!vis) return;
+    const desert = map.biome === 'desert';
+    // Clear water: the bed and anything wading in it show through the surface.
+    const material = mat(desert ? '#3f8a86' : '#2f6f78', { metalness: .25, roughness: .08, transparent: true, opacity: .58, depthWrite: false });
+    for (const r of vis.rivers) for (const path of r.paths) {
+      const geo = ribbonGeometry(resample(path.pts, 8), p => p[2] + 10, () => r.level, { uvScale: 20 });
+      const mesh = new THREE.Mesh(geo, material); mesh.receiveShadow = true; this.world.add(mesh);
+    }
+    for (const L of vis.lakes) {
+      if (L.ice) continue;
+      const geo = geometry('lake-disc', () => new THREE.CircleGeometry(1, 48).rotateX(-Math.PI / 2));
+      const mesh = new THREE.Mesh(geo, material); mesh.position.set(L.x, L.level, L.z); mesh.scale.set(L.rx + 3, 1, L.rz + 3); mesh.rotation.y = L.rot;
+      mesh.receiveShadow = true; this.world.add(mesh);
+    }
+  }
+
+  // Roads, streets, squares and railways drawn as ribbons over the ground.
+  buildRoads(map) {
+    const vis = map.visual; if (!vis) return;
+    const group = new THREE.Group(), urban = map.kind === 'urban', biome = map.biome;
+    const overlay = (c, extra = {}) => mat(c, { roughness: 1, metalness: 0, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -3, ...extra });
+    const deck = (x, z) => terrainAt(map.id, x, z) === TERRAIN.bridge;
+    const drape = lift => (x, z) => this.heightAt(x, z) + lift;
+    const add = (geo, material) => { const m = new THREE.Mesh(geo, material); m.receiveShadow = true; group.add(m); return m; };
+    if (vis.streets.length) {
+      const paving = overlay('#a7a291'), asphalt = overlay('#ffffff', { map: trackTexture('asphalt') }), line = overlay('#c9c6b2');
+      for (const path of vis.streets) {
+        const pts = resample(path.pts, 6);
+        add(ribbonGeometry(pts, path.width + 6.4, drape(.03), { uvScale: 10 }), paving);
+        add(ribbonGeometry(pts, path.width, drape(.07), { uvScale: path.width }), asphalt);
+      }
+      // Centre lines on the wider streets, broken at every junction.
+      const others = vis.streets.map(p => resample(p.pts, 6));
+      vis.streets.forEach((path, n) => {
+        if (path.width < 14) return;
+        const pts = others[n];
+        for (let i = 0; i < pts.length - 1; i += 2) {
+          const [x, z] = pts[i], [nx, nz] = pts[i + 1];
+          if (others.some((q, m) => m !== n && q.some(p => (p[0] - x) ** 2 + (p[1] - z) ** 2 < (vis.streets[m].width * .5 + 5) ** 2))) continue;
+          const len = Math.hypot(nx - x, nz - z), seg = box(group, line, (x + nx) / 2, this.heightAt(x, z) + .1, (z + nz) / 2, .18, .012, len * .55);
+          seg.rotation.y = Math.atan2(nx - x, nz - z); seg.castShadow = false;
+        }
+      });
+    }
+    if (vis.roads.length) {
+      const kind = map.theme === 'works' ? 'asphalt' : biome === 'winter' ? 'snow' : biome === 'desert' ? 'sand' : 'dirt';
+      const material = overlay('#ffffff', { map: trackTexture(kind) });
+      for (const path of vis.roads) add(ribbonGeometry(resample(path.pts, 6), path.width, drape(.07), { across: 3, uvScale: path.width, skip: deck }), material);
+    }
+    for (const a of vis.areas || []) {
+      const c = a.kind === 'park' ? '#6f8458' : a.kind === 'concrete' ? '#9a958a' : '#a1998a';
+      const m = new THREE.Mesh(geometry('area-plane', () => new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2)), overlay(c));
+      m.position.set(a.x, this.heightAt(a.x, a.z) + .05, a.z); m.scale.set(a.w, 1, a.d); m.rotation.y = a.rot || 0; m.receiveShadow = true; group.add(m);
+    }
+    if (vis.rails.length) {
+      const ballast = overlay('#ffffff', { map: trackTexture('ballast') }), steel = mat('#6c6a66', { roughness: .45, metalness: .7 }), wood = mat(biome === 'winter' ? '#6a6458' : '#4f4536', { roughness: 1, metalness: 0 });
+      const sleepers = [], rails = [];
+      for (const path of vis.rails) {
+        add(ribbonGeometry(resample(path.pts, 5), path.width + 1.8, (x, z) => terrainHeight(map.id, x, z) + .06, { across: 3, uvScale: 4 }), ballast);
+        const pts = resample(path.pts, 1.3);
+        for (let i = 0; i < pts.length - 1; i++) {
+          const [x, z] = pts[i], [nx, nz] = pts[i + 1], y = terrainHeight(map.id, x, z);
+          sleepers.push([x, y + .14, z, nx, terrainHeight(map.id, nx, nz) + .14, nz]);
+          if (i % 4 === 0) {
+            const j = Math.min(pts.length - 1, i + 4), [bx, bz] = pts[j], len = Math.hypot(bx - x, bz - z) || 1, ox = -(bz - z) / len * .72, oz = (bx - x) / len * .72, by = terrainHeight(map.id, bx, bz);
+            for (const s of [-1, 1]) rails.push([x + ox * s, y + .3, z + oz * s, bx + ox * s, by + .3, bz + oz * s]);
+          }
+        }
+      }
+      const place = (geo, material, list, sx, sy, stretch) => {
+        const mesh = new THREE.InstancedMesh(geo, material, list.length);
+        list.forEach(([x, y, z, nx, ny, nz], i) => {
+          DUMMY.position.set(stretch ? (x + nx) / 2 : x, stretch ? (y + ny) / 2 : y, stretch ? (z + nz) / 2 : z); DUMMY.scale.set(1, 1, 1);
+          DUMMY.lookAt(nx, ny + (stretch ? 0 : y - ny), nz); DUMMY.scale.set(sx, sy, stretch ? Math.hypot(nx - x, ny - y, nz - z) : .26); DUMMY.updateMatrix();
+          mesh.setMatrixAt(i, DUMMY.matrix);
+        });
+        mesh.receiveShadow = true; mesh.computeBoundingSphere(); this.world.add(mesh);
+      };
+      if (sleepers.length) place(BOX(), wood, sleepers, 2.5, .14, false);
+      if (rails.length) place(BOX(), steel, rails, .12, .16, true);
+    }
+    mergeStatic(group); this.world.add(group);
   }
 
   buildBridges(map) {
-    const bridgeRoot = new THREE.Group();
-    const concrete = mat(map.biome === 'winter' ? '#929b99' : '#888b7e', { roughness: .98, metalness: 0 });
-    const asphalt = mat(map.biome === 'winter' ? '#adb6ae' : '#555e56', { roughness: .96, metalness: 0 });
-    const iron = mat('#52605a', { roughness: .65, metalness: .55 }), stripe = mat('#bfb99b', { roughness: 1 });
-    for (const bridge of map.bridges || []) {
-      const bridges=new THREE.Group();
-      bridgeRoot.add(bridges);
-      bridges.name='deck:'+bridge.x;
-      const {x, z, w, d, height} = bridge;
-      // Concrete ends below the wearing course. Coplanar top faces flickered.
-      box(bridges, concrete, x, height - .66, z, w, 1.2, d);
-      box(bridges, asphalt, x, height - .03, z, w - .8, .06, d);
-      for(const end of [-1,1]){
-        const bankZ=z+end*(d/2-1.5),
-          bottom=Math.min(this.groundAt(x-w/2,bankZ),this.groundAt(x+w/2,bankZ),this.groundAt(x,bankZ));
-        // Abutments seal the sides below the road, without a coplanar top.
-        const top=height-.065;
-        if(top>bottom)box(bridges,concrete,x,(top+bottom)/2,bankZ,w,top-bottom,3.2);
-      }
-      for (const side of [-1, 1]) {
-        const railX = x + side * (w / 2 - .18);
-        for (let dz = -d / 2; dz <= d / 2 + .1; dz += 5) box(bridges, iron, railX, height + .63, z + dz, .12, 1.26, .12);
-        for (const h of [.45, 1.18]) box(bridges, iron, railX, height + h, z, .1, .1, d);
-        for (const end of [-1, 1]) {
-          const pz = z + end * d * .28, bottom = this.groundAt(x + side * w * .31, pz),
-            pierHeight = height - 1.2 - bottom;
-          box(bridges, concrete, x + side * w * .31, bottom + pierHeight / 2, pz, 2.2, pierHeight, 2.8);
+    const root = new THREE.Group(), winter = map.biome === 'winter', M = (c, o) => mat(c, { roughness: 1, metalness: 0, ...o });
+    const stone = M(winter ? '#9b9d97' : '#8f8a7b'), parapet = M(winter ? '#b4b8b2' : '#a19b89'), road = M(winter ? '#adb6ae' : '#6d685d'),
+      timber = M('#6b583f'), boards = M(winter ? '#b7bbb4' : '#8a7454');
+    for (const b of map.bridges || []) {
+      const g = new THREE.Group(); g.name = 'deck:' + b.id; g.position.set(b.x, 0, b.z); if (b.axis === 'x') g.rotation.y = Math.PI / 2; root.add(g);
+      const { w, d, height } = b, ground = (lx, lz) => b.axis === 'x' ? this.groundAt(b.x + lz, b.z - lx) : this.groundAt(b.x + lx, b.z + lz);
+      if (b.style === 'wood') {
+        // Every layer stands proud of the one beneath it: coincident faces flicker.
+        box(g, timber, 0, height - .55, 0, w, .6, d); box(g, boards, 0, height - .1, 0, w - .3, .24, d + .1);
+        for (const side of [-1, 1]) {
+          for (let dz = -d / 2; dz <= d / 2 + .1; dz += 4) box(g, timber, side * (w / 2 - .2), height + .55, dz, .22, 1.1, .22);
+          for (const y of [.62, 1.08]) box(g, timber, side * (w / 2 - .2), height + y, 0, .14, .14, d);
+        }
+        for (let dz = -d / 2 + 8; dz < d / 2 - 4; dz += 12) for (const side of [-1, 1]) {
+          const bottom = ground(side * w * .33, dz) - 1.5, top = height - .8;
+          if (top > bottom) box(g, timber, side * w * .33, (top + bottom) / 2, dz, .55, top - bottom, .55);
+        }
+      } else {
+        box(g, stone, 0, height - .8, 0, w, 1.5, d); box(g, road, 0, height - .03, 0, w - 1.7, .1, d + .1);
+        for (const side of [-1, 1]) box(g, parapet, side * (w / 2 - .4), height + .4, 0, .78, 1, d + .4);
+        const spans = Math.max(2, Math.round(d / 22));
+        for (let i = 1; i < spans; i++) {
+          const dz = -d / 2 + i * d / spans, bottom = Math.min(ground(-w / 2, dz), ground(w / 2, dz)) - 1.5, top = height - 1.5;
+          if (top > bottom) box(g, stone, 0, (top + bottom) / 2, dz, w + .8, top - bottom, 3.6);
+          // Arch rings: stepped voussoirs under the deck between the piers.
+          for (const s of [-1, 1]) for (let k = 1; k <= 3; k++) {
+            const off = s * (1.8 + k * 1.6), drop = 1.5 + (3 - k) * .9;
+            box(g, stone, 0, height - drop, dz + off, w - .12, .9, 1.6);
+          }
         }
       }
-      for (let dz = -d / 2 + 3; dz < d / 2 - 3; dz += 9) box(bridges, stripe, x, height + .008, z + dz, .16, .018, 4);
-      // Approaches use the terrain's road material: no second heightfield
-      // ribbon intersects its triangles on slopes or at a distance.
+      for (const end of [-1, 1]) {
+        const lz = end * (d / 2 - 1.5), bottom = Math.min(ground(-w / 2, lz), ground(w / 2, lz), ground(0, lz)), top = height - .065;
+        if (top > bottom) box(g, b.style === 'wood' ? timber : stone, 0, (top + bottom) / 2, lz, w - .12, top - bottom, 3.2);
+      }
     }
-    for(const b of bridgeRoot.children)mergeStatic(b);this.world.add(bridgeRoot);
+    for (const b of root.children) mergeStatic(b); this.world.add(root);
   }
 
   buildClutter(map) {
@@ -7271,8 +8586,7 @@ class Renderer {
     let written = 0;
     for (let i = 0; i < count * 2 && written < count; i++) {
       const x = (rng() - .5) * map.size, z = (rng() - .5) * map.size, terrain = terrainAt(map.id, x, z);
-      if (terrain?.speed > 1.05 || /silnic|cest|road|water|voda/i.test(terrain?.name || '')) continue;
-      if (map.water && Math.abs(z - riverCenter(map.id, x)) < map.water.width / 2 + 2) continue;
+      if (!terrain || terrain.speed > 1.05 || terrain.water || terrain.bridge || terrain.passable === false) continue;
       DUMMY.position.set(x, this.groundAt(x, z) - .03, z);
       DUMMY.rotation.set(0, rng() * TAU, 0);
       const scale = .45 + rng() * .8;
@@ -7283,102 +8597,29 @@ class Renderer {
     mesh.count = written; mesh.receiveShadow = true; mesh.frustumCulled = false; this.world.add(mesh);
   }
 
-  buildProps(map,only=null) {
-    const group = new THREE.Group(), desert = map.biome === 'desert', winter = map.biome === 'winter';
-    const wall = mat(desert ? '#baa27a' : winter ? '#a3a59b' : '#b4b09a', { roughness: 1, metalness: 0 }),
-      roof = mat(winter ? '#c6ceca' : '#686158', { roughness: .98 }), dark = mat('#414b48', { roughness: 1 }),
-      wood = mat('#665e45'), stone = mat(desert ? '#a99572' : '#7f897e', { roughness: 1 }),
-      leaves = mat(winter ? '#607a72' : '#556c43', { roughness: 1, metalness: 0 }),
-      snow = mat('#d4ddd9', { roughness: 1, metalness: 0 });
-    const facades=['#b5a28b','#a3aaa2','#c4bca4','#a8a18e'].map(c=>mat(c,{roughness:1,metalness:0}));
+  buildProps(map, only = null) {
+    const group = new THREE.Group(), P = this.propMaterials(map);
     for (const obstacle of map.obstacles || []) {
-      if(only!==null&&Math.floor(obstacle.x/180)+','+Math.floor(obstacle.z/180)!==only)continue;
-      const { x, z } = obstacle, w = obstacle.w || 3, d = obstacle.d || 3, h = obstacle.h || 4, y = this.heightAt(x, z),
-        prop = new THREE.Group();
-      prop.position.set(x, y, z);
+      if (only !== null && Math.floor(obstacle.x / 180) + ',' + Math.floor(obstacle.z / 180) !== only) continue;
+      const prop = new THREE.Group();
+      prop.position.set(obstacle.x, this.heightAt(obstacle.x, obstacle.z), obstacle.z);
       prop.rotation.y = obstacle.rotation || 0;
-      if(obstacle.landmark==='wagon'){
-        box(prop,dark,0,1,0,w,.8,d);box(prop,wood,0,h/2+1,0,w,h-1,d);box(prop,snow,0,h+.55,0,w+.35,.3,d+.3);
-        for(const side of [-1,1]){
-          box(prop,dark,side*w*.32,-.03,0,.2,.18,d+4);
-          for(const dz of [-.35,.35])cyl(prop,dark,side*w*.4,.7,d*dz,.7,.45,'x');
-        }
-      }else if(obstacle.landmark==='ruin'){
-        box(prop,wall,0,h*.37,0,w,h*.74,d);for(const dz of [-.36,.36])box(prop,wall,0,h*.87,d*dz,w-1,h*.27,d*.25);
-      }else if(obstacle.landmark==='bunker'){
-        box(prop,stone,0,h*.45,0,w,h*.9,d);
-        box(prop,snow,0,h,0,w+1,h*.2,d+1);
-        for(const side of [-1,1])box(prop,dark,0,h*.65,side*(d/2+.01),w*.62,.6,.1);
-      }else if (obstacle.type === 'building') {
-        const facade=map.kind==='urban'?facades[obstacle.colorIndex||0]:wall;
-        box(prop, facade, 0, h / 2, 0, w, h, d);
-        // Buried footing closes the downhill edge on gently sloping plots.
-        box(prop, stone, 0, -.75, 0, w + .15, 2.5, d + .15);
-        if (desert||obstacle.style==='apartment') {
-          box(prop, roof, 0, h + .15, 0, w + .25, .3, d + .25);
-          for (const side of [-1, 1]) box(prop, facade, side * w / 2, h + .5, 0, .22, .7, d);
-        }
-        else {
-          const roofGeo = new THREE.BufferGeometry(), rr = w * .16;
-          const vertices = [-w / 2 - .3, h, -d / 2 - .3, w / 2 + .3, h, -d / 2 - .3, 0, h + rr, -d / 2 - .3, -w / 2 - .3, h, d / 2 + .3, 0, h + rr, d / 2 + .3, w / 2 + .3, h, d / 2 + .3, -w / 2 - .3, h, -d / 2 - .3, 0, h + rr, -d / 2 - .3, 0, h + rr, d / 2 + .3, -w / 2 - .3, h, -d / 2 - .3, 0, h + rr, d / 2 + .3, -w / 2 - .3, h, d / 2 + .3, w / 2 + .3, h, -d / 2 - .3, w / 2 + .3, h, d / 2 + .3, 0, h + rr, d / 2 + .3, w / 2 + .3, h, -d / 2 - .3, 0, h + rr, d / 2 + .3, 0, h + rr, -d / 2 - .3];
-          for (let v = 0; v < vertices.length; v += 9) for (let c = 0; c < 3; c++) {
-            const a = vertices[v + 3 + c];
-            vertices[v + 3 + c] = vertices[v + 6 + c];
-            vertices[v + 6 + c] = a;
-          }
-          roofGeo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-          roofGeo.computeVertexNormals();
-          addMesh(prop, roofGeo, roof, 0, 0, 0);
-          box(prop, wall, -w * .25, h + .7, -d * .16, .7, 1.6, .8);
-        }
-        for (const side of [-1, 1]) {
-          for (let wx = -w / 2 + 1.3; wx < w / 2 - .5; wx += 2.8) for (let wy = 2.1; wy < h - .35; wy += 2.7) {
-            const window=addMesh(prop,geometry('window-plane',()=>new THREE.PlaneGeometry(1,1)),dark,wx,wy,side*(d/2+.025),.75,1,1);
-            window.rotation.y=side>0?0:Math.PI;
-            window.castShadow=false;
-            if(wy<3||map.kind!=='urban')box(prop, roof, wx, wy - .55, side * (d / 2 + .1), .95, .12, .22);
-          }
-          box(prop, wood, 0, .95, side * (d / 2 + .02), 1.2, 1.9, .06);
-        }
-        if(map.kind==='urban')box(prop,roof,0,h-.35,0,w+.2,.18,d+.2);
-        else for (let i = 0; i < 3; i++) {
-          const rubble = addMesh(prop, ROCK(), stone, (hash(x + i, z) - .5) * (w + 2), .18, d / 2 + .4 + hash(x, z + i) * 1.1, .2 + i * .08, .2, .3);
-          rubble.rotation.set(i, i * .7, 0);
-        }
-      } else if (obstacle.type === 'tree') {
-        const th = Math.max(h, 6.5), crown = Math.max(w, th * .27);
-        cyl(prop, wood, 0, th * .37, 0, Math.max(.18, w * .11), th * .74);
-        if (winter) {
-          for (let j = 0; j < 3; j++) {
-            addMesh(prop, geometry('pine', () => new THREE.ConeGeometry(1, 1, 7)), leaves, 0, th * (.45 + j * .18), 0, crown * (.7 - j * .15), th * .5, crown * (.7 - j * .15));
-            addMesh(prop, geometry('pine', () => new THREE.ConeGeometry(1, 1, 7)), snow, 0, th * (.48 + j * .18), 0, crown * (.57 - j * .12), th * .43, crown * (.57 - j * .12));
-          }
-        } else if (desert) {
-          for (let j = 0; j < 5; j++) {
-            const a = j / 5 * TAU;
-            const branch = addMesh(prop, ROCK(), leaves, Math.cos(a) * crown * .45, th * .8, Math.sin(a) * crown * .45, crown * .8, th * .14, crown * .4);
-            branch.rotation.y = a;
-          }
-        } else {
-          for (let j = 0; j < 4; j++) addMesh(prop, ROCK(), leaves, Math.sin(j * 2) * crown * .3, th * (.65 + j % 2 * .14), Math.cos(j * 2) * crown * .3, crown * .8, th * .3, crown * .78);
-        }
-      } else {
-        const rock = addMesh(prop, ROCK(), stone, 0, h * .39, 0, w * .56, h * .61, d * .56);
-        rock.rotation.set(.15, hash(x, z) * 3, .14);
-        if (winter) addMesh(prop, ROCK(), snow, 0, h * .66, 0, w * .48, h * .28, d * .48);
-      }
+      if (obstacle.type === 'tree') this.drawTree(prop, obstacle, P, map);
+      else if (obstacle.landmark) this.drawLandmark(prop, obstacle, P, map);
+      else if (obstacle.type === 'building') this.drawBuilding(prop, obstacle, P, map);
+      else this.drawRock(prop, obstacle, P, map);
       group.add(prop);
     }
     // Merge locally: a single map-wide batch prevents useful frustum culling.
-    const chunks=new Map();
-    for(const prop of [...group.children]){
-      const key=Math.floor(prop.position.x/180)+','+Math.floor(prop.position.z/180);
-      if(!chunks.has(key))chunks.set(key,new THREE.Group());
+    const chunks = new Map();
+    for (const prop of [...group.children]) {
+      const key = Math.floor(prop.position.x / 180) + ',' + Math.floor(prop.position.z / 180);
+      if (!chunks.has(key)) chunks.set(key, new THREE.Group());
       chunks.get(key).add(prop);
     }
-    for(const [key,chunk] of chunks){mergeStatic(chunk);chunk.name='props:'+key;group.add(chunk);}
+    for (const [key, chunk] of chunks) { mergeStatic(chunk); chunk.name = 'props:' + key; group.add(chunk); }
     this.world.add(group);
-    if(only!==null)return;
+    if (only !== null) return;
     // Survey posts visibly delimit the playable area without creating invisible obstacles.
     const boundary = new THREE.Group(), post = mat('#b2aa7c'), stripe = mat('#333c35');
     const half = map.size / 2 - 2;
@@ -7390,6 +8631,269 @@ class Renderer {
     mergeStatic(boundary); this.world.add(boundary);
   }
 
+  // One palette per map keeps the merged batches few and large.
+  propMaterials(map) {
+    if (this.propPalette?.map === map.id) return this.propPalette;
+    const desert = map.biome === 'desert', winter = map.biome === 'winter', M = (c, o) => mat(c, { roughness: 1, metalness: 0, ...o });
+    const win = windowTexture('house'), small = windowTexture('small'), tall = windowTexture('tall'), snowy = c => winter ? '#c9d1cd' : c;
+    this.propPalette = {
+      map: map.id, desert, winter,
+      plaster: M(desert ? '#cdb58c' : winter ? '#bebdb2' : '#d1c8ae', { map: win }), plasterTall: M(winter ? '#c9c8be' : '#d8d0b8', { map: tall }),
+      adobe: M('#c4a67c', { map: small }), adobeWall: M('#c2a479'),
+      facades: ['#b5a28b', '#a3aaa2', '#c4bca4', '#a8a18e', '#b89c86', '#9fa8ad'].map(c => M(c, { map: win })),
+      metal: ['#8d948f', '#a39a86', '#7f8a8f', '#9c8f7a'].map(c => M(c, { roughness: .82, metalness: .25 })),
+      tile: M(snowy('#8b5643')), slate: M(snowy('#4f5659')), zinc: M(snowy('#7c8386'), { roughness: .7, metalness: .3 }), flat: M(snowy('#686158')),
+      dark: M('#3f4947'), wood: M('#6a5e45'), darkWood: M('#4e4334'), stone: M(desert ? '#a99572' : '#7f897e'), brick: M('#8b5a46'),
+      sandstone: M('#c8a97c'), concrete: M('#9d9a90'), steel: M('#6e7577', { roughness: .6, metalness: .5 }), white: M('#dedbd2'), red: M('#a8473a'),
+      glass: M('#3a4a4d', { roughness: .3, metalness: .4 }), snow: M('#d9e1de'), charred: M('#4a4540'), hay: M('#c3a85d'), bags: M('#8e8463'),
+      hedge: M('#4b6237'), water: M('#4d7774', { roughness: .2, metalness: .3 }), gold: M('#b39a58', { roughness: .5, metalness: .6 }),
+      leaves: M(winter ? '#55705f' : '#556c43'), willow: M('#6c8148'), fruit: M('#5e7a3d'), poplar: M('#4d6837'), linden: M('#58723e'),
+      pine: M(winter ? '#3e594e' : '#3b5840'), palm: M('#6e7c3c'), bush: M(desert ? '#7f7b4b' : '#5e6f42'), trunk: M('#5c5040'), palmTrunk: M('#8a7a5c'),
+      containers: ['#8a4a3a', '#3f5f75', '#6f7a4a', '#b07f3a'].map(c => M(c, { roughness: .8, metalness: .3 })),
+      cooling: M('#a9a69d', { side: THREE.DoubleSide }),
+    };
+    return this.propPalette;
+  }
+
+  drawRock(g, o, P, map) {
+    const { w, d, h } = o, m = o.material === 'rubble' ? P.brick : P.stone;
+    const rock = addMesh(g, ROCK(), m, 0, h * .39, 0, w * .56, h * .61, d * .56);
+    rock.rotation.set(.15, hash(o.x, o.z) * 3, .14);
+    if (o.material === 'rubble') for (let i = 0; i < 3; i++) { const r = addMesh(g, ROCK(), P.concrete, (hash(o.x + i, o.z) - .5) * w, h * .3, (hash(o.x, o.z + i) - .5) * d, w * .25, h * .4, d * .22); r.rotation.set(i, i * 1.3, .4); }
+    if (P.winter) addMesh(g, ROCK(), P.snow, 0, h * .66, 0, w * .48, h * .28, d * .48);
+  }
+
+  drawTree(g, o, P, map) {
+    const h = Math.max(o.h, 3), kind = o.kind || (P.winter ? 'pine' : P.desert ? 'bush' : 'oak'), trunk = geometry('trunk', () => new THREE.CylinderGeometry(1, 1, 1, 6, 1, true));
+    const stem = (r, len, m = P.trunk, x = 0, z = 0, y = len / 2) => addMesh(g, trunk, m, x, y, z, r, len, r);
+    const blob = (m, x, y, z, sx, sy, sz, spin = 0) => { const b = addMesh(g, ROCK(), m, x, y, z, sx, sy, sz); b.rotation.set(spin, spin * 1.7, 0); return b; };
+    if (kind === 'pine') {
+      const crown = h * .27; stem(.2, h * .5);
+      const cone = geometry('pine', () => new THREE.ConeGeometry(1, 1, 7));
+      for (let j = 0; j < 3; j++) {
+        addMesh(g, cone, P.pine, 0, h * (.42 + j * .2), 0, crown * (.78 - j * .17), h * .46, crown * (.78 - j * .17));
+        if (P.winter) addMesh(g, cone, P.snow, 0, h * (.45 + j * .2), 0, crown * (.6 - j * .13), h * .38, crown * (.6 - j * .13));
+      }
+    } else if (kind === 'palm') {
+      let x = 0, y = 0; const lean = .1 + hash(o.x, o.z) * .12;
+      for (let k = 0; k < 4; k++) { const len = h * .25, seg = stem(.22 - k * .025, len, P.palmTrunk, x + lean * len * .5, 0, y + len / 2); seg.rotation.z = -lean * (1 + k * .3); x += lean * len * (1 + k * .3); y += len * .97; }
+      for (let k = 0; k < 8; k++) {
+        const a = k / 8 * TAU, f = addMesh(g, BOX(), P.palm, x + Math.sin(a) * 1.6, y - .2, Math.cos(a) * 1.6, .7, .06, 3.6);
+        f.rotation.order = 'YXZ'; f.rotation.set(.5, a, 0); f.castShadow = true;
+      }
+    } else if (kind === 'bush') {
+      for (let j = 0; j < 3; j++) blob(P.bush, Math.sin(j * 2.1) * h * .3, h * .35, Math.cos(j * 2.1) * h * .3, h * .55, h * .42, h * .5, j);
+    } else if (kind === 'poplar') {
+      stem(.22, h * .3); blob(P.poplar, 0, h * .58, 0, h * .13, h * .44, h * .13); blob(P.poplar, 0, h * .8, 0, h * .09, h * .24, h * .09, 1);
+    } else if (kind === 'willow') {
+      stem(.32, h * .45); for (let j = 0; j < 5; j++) blob(P.willow, Math.sin(j * 1.3) * h * .22, h * (.5 + (j % 2) * .12), Math.cos(j * 1.3) * h * .22, h * .32, h * .26, h * .3, j);
+    } else if (kind === 'fruit') {
+      stem(.16, h * .35); blob(P.fruit, 0, h * .55, 0, h * .3, h * .26, h * .3); blob(P.fruit, h * .1, h * .7, -h * .05, h * .2, h * .18, h * .2, 1);
+    } else {
+      const big = kind === 'linden', crown = Math.max(o.w || 1.2, h * (big ? .3 : .27)), m = big ? P.linden : P.leaves;
+      stem(Math.max(.18, h * .02), h * .62);
+      for (let j = 0; j < 4; j++) blob(m, Math.sin(j * 2) * crown * .3, h * (.62 + j % 2 * .14), Math.cos(j * 2) * crown * .3, crown * .8, h * .3, crown * .78, j);
+    }
+  }
+
+  drawBuilding(g, o, P, map) {
+    const { w, d, h } = o, style = o.style || 'house', ci = o.colorIndex || 0, urban = map.kind === 'urban';
+    const facade = (m, hh = h) => addMesh(g, facadeGeometry(w, hh, d), m, 0, hh / 2, 0);
+    const gable = (m, rise, alongX) => addMesh(g, gableGeometry(w, d, h, rise, alongX), m, 0, 0, 0);
+    const parapet = (m, top = .7) => { box(g, P.flat, 0, h + .12, 0, w - .2, .24, d - .2); for (const s of [-1, 1]) { box(g, m, s * (w / 2 - .12), h + top / 2, 0, .24, top, d); box(g, m, 0, h + top / 2, s * (d / 2 - .12), w, top, .24); } };
+    const front = o.front || 1;
+    if (map.kind !== 'urban') box(g, P.stone, 0, -.9, 0, w + .15, 2.6, d + .15);
+    if (style === 'warehouse') {
+      const m = P.metal[ci % 4]; facade(m);
+      gable(P.zinc, Math.min(w, d) * .1, w >= d);
+      for (const s of [-1, 1]) box(g, P.glass, 0, h * .78, s * (d / 2 + .03), w * .86, h * .12, .06);
+      box(g, P.dark, 0, Math.min(4.5, h * .45), front * (d / 2 + .04), Math.min(6, w * .4), Math.min(9, h * .9), .08);
+    } else if (style === 'shed') {
+      facade(P.wood); gable(P.zinc, Math.min(w, d) * .22, w >= d);
+      box(g, P.darkWood, 0, 2, front * (d / 2 + .04), Math.min(5, w * .5), 4, .08);
+    } else if (style === 'adobe') {
+      facade(P.adobe); parapet(P.adobeWall, .6);
+      box(g, P.darkWood, 0, 1, front * (d / 2 + .04), 1.1, 2, .08);
+    } else if (style === 'apartment') {
+      facade(urban ? P.facades[ci % 6] : P.plaster); parapet(urban ? P.facades[ci % 6] : P.plaster, .8);
+      box(g, P.darkWood, 0, 1.15, front * (d / 2 + .04), 1.6, 2.3, .08);
+      if (hash(o.x, o.z) > .5) box(g, P.dark, w * .2, h + 1.1, -d * .15, 2.2, 1.6, 2.2);
+    } else {
+      const m = urban ? P.facades[ci % 6] : P.plaster, alongX = style === 'townhouse' || w >= d;
+      facade(m); gable(style === 'townhouse' ? P.slate : P.tile, (alongX ? d : w) * .38, alongX);
+      box(g, P.brick, (alongX ? w : 0) * .22 + (alongX ? 0 : w * .18), h + (alongX ? d : w) * .3, alongX ? d * .12 : d * .22, .7, 1.8, .7);
+      box(g, P.darkWood, alongX ? -w * .2 : 0, 1.1, front * (d / 2 + .04), 1.2, 2.2, .08);
+    }
+  }
+
+  drawLandmark(g, o, P, map) {
+    const { w, d, h } = o, k = o.landmark, winter = P.winter;
+    const pyramid = geometry('pyramid', () => new THREE.ConeGeometry(1, 1, 4).rotateY(Math.PI / 4)), cone = geometry('cone8', () => new THREE.ConeGeometry(1, 1, 10));
+    const facade = (m, ww, hh, dd, x = 0, z = 0, y = 0) => addMesh(g, facadeGeometry(ww, hh, dd), m, x, y + hh / 2, z);
+    const gable = (m, ww, dd, hh, rise, alongX, x = 0, z = 0) => addMesh(g, gableGeometry(ww, dd, hh, rise, alongX), m, x, 0, z);
+    const footing = () => { if (map.kind !== 'urban') box(g, P.stone, 0, -.9, 0, w + .15, 2.6, d + .15); };
+    switch (k) {
+      case 'church': case 'chapel': {
+        footing();
+        const chapel = k === 'chapel', nh = h * (chapel ? .62 : .6), tower = chapel ? 0 : Math.min(w * .62, d * .3);
+        facade(P.plasterTall, w, nh, d - tower, 0, tower / 2); gable(P.tile, w, d - tower, nh, w * .48, false, 0, tower / 2);
+        if (chapel) { box(g, P.white, 0, nh + w * .55, -d / 2 + 1.2, 1.4, 1.6, 1.4); addMesh(g, pyramid, P.slate, 0, nh + w * .55 + 1.6, -d / 2 + 1.2, 1.1, 1.6, 1.1); }
+        else {
+          const th = h * 1.75, z = -d / 2 + tower / 2; facade(P.plasterTall, tower, th, tower, 0, z);
+          addMesh(g, pyramid, P.slate, 0, th + h * .4, z, tower * .72, h * .8, tower * .72); addMesh(g, cone, P.gold, 0, th + h * .85, z, .12, 1.4, .12);
+          for (const s of [-1, 1]) box(g, P.white, s * (tower / 2 + .03), th * .82, z, .05, 1.6, 1.6);
+        }
+        box(g, P.darkWood, 0, 1.4, -d / 2 - .04, 1.6, 2.8, .1);
+        break;
+      }
+      case 'barn': {
+        footing();
+        const alongX = w >= d, wall = h * .55; facade(P.darkWood, w, wall, d); gable(P.tile, w, d, wall, Math.min(w, d) * .45, alongX);
+        box(g, P.wood, alongX ? 0 : w / 2 + .05, 2.3, alongX ? d / 2 + .05 : 0, alongX ? 4.5 : .1, 4.6, alongX ? .1 : 4.5);
+        break;
+      }
+      case 'mill': {
+        footing(); facade(P.plaster, w, h * .65, d); gable(P.tile, w, d, h * .65, w * .45, false);
+        const wheel = cyl(g, P.darkWood, w / 2 + .9, h * .32, 0, h * .36, 1.1, 'x');
+        for (let i = 0; i < 4; i++) { const s = box(g, P.wood, w / 2 + 1.5, h * .32, 0, .2, h * .7, .3); s.rotation.x = i * Math.PI / 4; }
+        break;
+      }
+      case 'bale': cyl(g, P.hay, 0, h / 2, 0, h / 2, w, 'x'); break;
+      case 'hedge': { box(g, P.hedge, 0, h * .45, 0, w, h * .9, d); for (let i = 0; i < 3; i++) addMesh(g, ROCK(), P.hedge, (i - 1) * w * .3, h * .85, (i - 1) * d * .3, Math.max(w, d) * .22, h * .3, Math.min(w, d) * .55); break; }
+      case 'wagon': case 'tankcar': case 'flatcar': {
+        box(g, P.dark, 0, .95, 0, w, .5, d);
+        for (const dz of [-.33, .33]) { box(g, P.dark, 0, .45, d * dz, w * .8, .5, 2.6); for (const s of [-1, 1]) cyl(g, P.dark, s * w * .38, .45, d * dz, .45, .3, 'x'); }
+        if (k === 'wagon') { box(g, map.theme === 'works' ? P.brick : P.wood, 0, h / 2 + .9, 0, w, h - 1.2, d); box(g, winter ? P.snow : P.zinc, 0, h + .35, 0, w + .3, .25, d + .2); box(g, P.darkWood, w / 2 + .03, h / 2 + .7, 0, .06, h * .6, 3); }
+        else if (k === 'tankcar') { cyl(g, map.theme === 'works' ? P.white : P.dark, 0, 2.55, 0, 1.35, d - 1, 'z'); cyl(g, P.dark, 0, 3.95, 0, .45, .5); if (winter) box(g, P.snow, 0, 3.9, 0, 1.6, .12, d - 2); }
+        else for (let i = 0; i < 3; i++) cyl(g, P.wood, 0, 1.6 + (i % 2) * .5, (i - 1) * d * .28, .45, w - .2, 'x');
+        break;
+      }
+      case 'station': {
+        footing(); facade(P.plaster, w, h * .72, d); gable(P.slate, w, d, h * .72, w * .32, false);
+        facade(P.plaster, w * .7, h * 1.05, w * .7); addMesh(g, pyramid, P.slate, 0, h * 1.05 + 1.4, 0, w * .5, 2.8, w * .5);
+        for (const s of [-1, 1]) box(g, P.white, s * (w * .35 + .03), h * .9, 0, .05, 1.4, 1.4);
+        box(g, P.zinc, w / 2 + 3, 4.4, 0, 6, .22, d * .82); for (let dz = -d * .38; dz <= d * .39; dz += 7) box(g, P.steel, w / 2 + 5.6, 2.2, dz, .2, 4.4, .2);
+        break;
+      }
+      case 'watertower': {
+        for (const sx of [-1, 1]) for (const sz of [-1, 1]) box(g, P.steel, sx * w * .3, h * .3, sz * w * .3, .35, h * .6, .35);
+        cyl(g, P.wood, 0, h * .72, 0, w * .48, h * .26); addMesh(g, cone, winter ? P.snow : P.zinc, 0, h * .92, 0, w * .53, h * .16, w * .53);
+        break;
+      }
+      case 'mast': {
+        cyl(g, P.steel, 0, h / 2, 0, .9, h, 'y', .2); for (let y = 6; y < h; y += 6) box(g, P.steel, 0, y, 0, 2.6 - y / h * 2, .12, .12);
+        for (const y of [h * .35, h * .7]) cyl(g, P.red, 0, y, 0, .32, 1.2);
+        break;
+      }
+      case 'bunker': {
+        box(g, P.concrete, 0, h * .42, 0, w, h * .84, d); box(g, P.concrete, 0, h * .9, 0, w + .8, h * .2, d + .8);
+        if (winter) box(g, P.snow, 0, h + .06, 0, w + .9, .2, d + .9);
+        for (const s of [-1, 1]) box(g, P.dark, 0, h * .6, s * (d / 2 + .02), w * .6, .55, .1);
+        break;
+      }
+      case 'sandbags': box(g, P.bags, 0, h * .3, 0, w, h * .6, d); box(g, P.bags, 0, h * .78, 0, w * .92, h * .44, d * .8); break;
+      case 'hedgehog': for (let i = 0; i < 3; i++) { const b = box(g, P.steel, 0, h * .5, 0, .2, .2, w * 1.25); b.rotation.set(i === 2 ? Math.PI / 2 : .62, i * Math.PI / 3, i === 2 ? 0 : .62); } break;
+      case 'booth': facade(P.wood, w, h, d); box(g, P.flat, 0, h + .1, 0, w + .4, .2, d + .4); break;
+      case 'logs': for (let row = 0; row < 3; row++) for (let i = 0; i < 3 - row; i++) cyl(g, P.wood, 0, .45 + row * .78, (i - (2 - row) / 2) * .9, .45, w, 'x'); break;
+      case 'townhall': {
+        const m = P.facades[2]; facade(m, w, h, d); box(g, P.flat, 0, h + .12, 0, w - .2, .24, d - .2);
+        for (const s of [-1, 1]) box(g, m, 0, h + .45, s * (d / 2 - .12), w, .9, .24);
+        const t = Math.min(9, d * .5); facade(m, t, h * 1.9, t); addMesh(g, pyramid, P.zinc, 0, h * 1.9 + 3, 0, t * .7, 6, t * .7);
+        for (const s of [-1, 1]) { box(g, P.white, 0, h * 1.6, s * (t / 2 + .03), 2, 2, .05); box(g, P.white, s * (t / 2 + .03), h * 1.6, 0, .05, 2, 2); }
+        for (let x = -w / 2 + 3; x < w / 2 - 2; x += 4) for (const s of [-1, 1]) cyl(g, P.white, x, 2, s * (d / 2 + 1.2), .35, 4);
+        break;
+      }
+      case 'market': {
+        facade(P.plasterTall, w, h * .7, d); gable(P.zinc, w, d, h * .7, d * .32, true);
+        for (let x = -w / 2 + 4; x < w / 2 - 3; x += 7) box(g, P.dark, x, 2, -d / 2 - .03, 3.4, 4, .06);
+        break;
+      }
+      // Square war memorial on every capture point: stepped base, pedestal,
+      // cornice and a bronze tank turret on top (with the zone letter plaque).
+      case 'monument': {
+        const m = P.desert ? P.sandstone : P.stone, top = h * .52 + 1;
+        box(g, m, 0, .25, 0, w, .5, d); box(g, m, 0, .75, 0, w * .84, .5, d * .84);
+        box(g, m, 0, 1 + h * .26, 0, w * .62, h * .52, d * .62); box(g, m, 0, top + .16, 0, w * .74, .32, d * .74);
+        box(g, P.gold, 0, top + .55, 0, w * .44, .46, w * .56); box(g, P.gold, 0, top + 1.05, -.2, w * .3, .55, w * .3);
+        cyl(g, P.gold, 0, top + .64, w * .32, .12, w * .42, 'z');
+        for (const s of [-1, 1]) box(g, P.gold, 0, 1 + h * .3, s * (d * .31 + .02), w * .3, h * .2, .06);
+        if (winter) box(g, P.snow, 0, top + .34, 0, w * .76, .06, d * .76);
+        break;
+      }
+      case 'column': {
+        const desert = P.desert, m = desert ? P.sandstone : P.stone;
+        box(g, m, 0, .4, 0, w * 1.2, .8, d * 1.2); cyl(g, m, 0, h / 2 + .4, 0, w * .36, h - .8);
+        if (h > 6) box(g, m, 0, h - .2, 0, w * 1.15, .5, d * 1.15);
+        if (!desert) { addMesh(g, ROCK(), P.gold, 0, h + .9, 0, .6, 1.4, .6); for (let i = 0; i < 4; i++) cyl(g, P.stone, Math.cos(i * TAU / 4) * w * .9, .9, Math.sin(i * TAU / 4) * w * .9, .3, 1); }
+        break;
+      }
+      case 'fountain': cyl(g, P.stone, 0, .35, 0, w / 2, .7); cyl(g, P.water, 0, .66, 0, w / 2 - .45, .05); cyl(g, P.stone, 0, 1.2, 0, .45, 2.4); cyl(g, P.stone, 0, 2.3, 0, 1.1, .25); break;
+      case 'pavilion': {
+        cyl(g, P.stone, 0, .3, 0, w / 2, .6);
+        for (let i = 0; i < 6; i++) cyl(g, P.white, Math.cos(i * TAU / 6) * (w / 2 - .5), 2.2, Math.sin(i * TAU / 6) * (w / 2 - .5), .14, 3.2);
+        addMesh(g, cone, P.zinc, 0, 4.6, 0, w / 2 + .6, 2.2, w / 2 + .6);
+        break;
+      }
+      case 'hall': {
+        const m = P.metal[(o.colorIndex || 0) % 4], wall = h * .75; facade(m, w, wall, d);
+        const teeth = Math.max(3, Math.round(w / 11)), tw = w / teeth, rise = Math.min(4, h - wall);
+        for (let i = 0; i < teeth; i++) {
+          const x0 = -w / 2 + i * tw, slope = box(g, P.zinc, x0 + tw / 2, wall + rise / 2, 0, Math.hypot(tw, rise), .18, d);
+          slope.rotation.z = Math.atan2(rise, tw); box(g, P.glass, x0 + tw - .05, wall + rise / 2, 0, .1, rise, d - .4);
+        }
+        for (const s of [-1, 1]) box(g, P.glass, 0, wall * .62, s * (d / 2 + .03), w * .9, wall * .16, .06);
+        for (const s of [-1, 1]) box(g, P.dark, s * w * .3, 3.2, d / 2 + .04, 6, 6.4, .08);
+        break;
+      }
+      case 'chimney': cyl(g, P.brick, 0, h / 2, 0, w * .5, h, 'y', w * .32); cyl(g, P.red, 0, h - 2.5, 0, w * .35, 2); cyl(g, P.white, 0, h - 4.8, 0, w * .36, 2); break;
+      case 'coolingtower': {
+        const r = w / 2, profile = [[r, 0], [r * .82, h * .3], [r * .66, h * .62], [r * .63, h * .78], [r * .68, h]].map(([x, y]) => new THREE.Vector2(x, y));
+        addMesh(g, geometry('cooling-' + w + '-' + h, () => new THREE.LatheGeometry(profile, 28)), P.cooling, 0, 0, 0);
+        break;
+      }
+      case 'container': box(g, P.containers[(o.colorIndex || 0) % 4], 0, h / 2, 0, w, h, d); box(g, P.dark, w / 2 + .02, h / 2, 0, .04, h * .9, d * .9); break;
+      case 'silo': cyl(g, P.concrete, 0, h * .43, 0, w / 2, h * .86); addMesh(g, cone, P.zinc, 0, h * .93, 0, w / 2 + .1, h * .14, w / 2 + .1); break;
+      case 'silotower': facade(P.concrete, w, h, d); facade(P.concrete, w * .8, 4, d * .8, 0, 0, h); box(g, P.steel, w / 2 + 3, h * .8, 0, 6, .6, 1.2); break;
+      case 'storagetank': cyl(g, P.white, 0, h * .45, 0, w / 2, h * .9); addMesh(g, geometry('dome', () => new THREE.SphereGeometry(1, 16, 6, 0, TAU, 0, Math.PI / 2)), P.white, 0, h * .9, 0, w / 2, h * .12, w / 2); cyl(g, P.steel, 0, h * .9, 0, w / 2 + .1, .3); break;
+      case 'pipes': {
+        for (const [y, z] of [[1.1, -.6], [1.1, .6], [2.05, 0]]) cyl(g, (o.x > 0 ? P.white : P.steel), 0, y, z, .48, w, 'x');
+        for (let x = -w / 2 + 1; x < w / 2; x += 4) box(g, P.steel, x, .3, 0, .3, .6, 2.2);
+        break;
+      }
+      case 'windmill': {
+        cyl(g, P.white, 0, h * .36, 0, w * .44, h * .72, 'y', w * .3); addMesh(g, cone, P.darkWood, 0, h * .78, 0, w * .36, h * .14, w * .36);
+        for (const a of [Math.PI / 4, -Math.PI / 4]) { const s = box(g, P.wood, 0, h * .72, -w * .36, 1.4, h * .95, .12); s.rotation.z = a; }
+        break;
+      }
+      case 'pylon': {
+        cyl(g, P.steel, 0, h / 2, 0, 1.6, h, 'y', .25); for (const y of [h * .78, h * .95]) box(g, P.steel, 0, y, 0, 9 - (y > h * .9 ? 3 : 0), .25, .25);
+        break;
+      }
+      case 'wall': box(g, o.material === 'adobe' ? P.adobeWall : o.material === 'concrete' ? P.concrete : P.stone, 0, h / 2, 0, w, h, d); break;
+      case 'tower': {
+        facade(P.adobeWall, w, h, d); for (const sx of [-1, 1]) for (const sz of [-1, 1]) box(g, P.adobeWall, sx * (w / 2 - .5), h + .5, sz * (d / 2 - .5), 1, 1, 1);
+        for (const s of [-1, 1]) box(g, P.dark, s * (w / 2 + .02), h * .7, 0, .05, 1.2, .3);
+        break;
+      }
+      case 'well': cyl(g, P.stone, 0, .5, 0, w / 2, 1); cyl(g, P.water, 0, .9, 0, w / 2 - .35, .05); for (const s of [-1, 1]) box(g, P.wood, s * w * .42, 1.5, 0, .18, 3, .18); box(g, P.flat, 0, 3.05, 0, w + .4, .15, 1.2); break;
+      case 'wreck': {
+        const hull = box(g, P.charred, 0, .95, 0, w, 1.3, d * .95); hull.rotation.z = .05;
+        const t = box(g, P.charred, w * .1, 1.95, -d * .08, w * .62, .75, d * .36); t.rotation.y = .6;
+        const gun = cyl(g, P.charred, w * .5, 2, d * .1, .1, 3.2, 'z'); gun.rotation.y = .6;
+        for (const s of [-1, 1]) box(g, P.dark, s * (w / 2 - .2), .45, 0, .5, .9, d);
+        break;
+      }
+      case 'ruin': {
+        footing(); const m = o.material === 'sandstone' ? P.sandstone : o.material === 'brick' ? P.brick : P.desert ? P.adobeWall : P.stone;
+        facade(m, w, h * .62, d);
+        for (let i = 0; i < 4; i++) { const hx = (hash(o.x + i, o.z) - .5) * w * .7, hz = (hash(o.x, o.z - i) - .5) * d * .7, hh = h * (.2 + hash(o.x * i, o.z) * .45); box(g, m, hx, h * .62 + hh / 2, hz, Math.min(w, 2.4 + hash(i, o.x) * 4), hh, Math.min(d, 2.4 + hash(o.z, i) * 4)); }
+        if (o.material === 'brick') { box(g, P.charred, 0, h * .63, 0, w * .8, .1, d * .8); for (let i = 0; i < 2; i++) addMesh(g, ROCK(), P.brick, (i - .5) * w * .7, .5, d / 2 + 1, 1.6, 1, 1.2); }
+        break;
+      }
+      default: this.drawBuilding(g, o, P, map);
+    }
+  }
+
   buildZones(zones) {
     for (const zone of zones) {
       const group = new THREE.Group(); group.position.set(zone.x, this.heightAt(zone.x, zone.z) + .12, zone.z);
@@ -7399,8 +8903,11 @@ class Renderer {
       for (let i = 0; i < ringPos.count; i++) ringPos.setY(i, this.heightAt(zone.x + ringPos.getX(i), zone.z + ringPos.getZ(i)) - this.heightAt(zone.x, zone.z) + .02);
       const ring = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: '#c9ba84', transparent: true, opacity: .65, side: THREE.DoubleSide, depthWrite: false }));
       group.add(ring);
-      const pole = cyl(group, mat('#6d756d'), 0, 3.6, 0, .055, 7.2);
-      const flag = box(group, mat('#c9ba84', { side: THREE.DoubleSide }), .9, 6.55, 0, 1.8, 1, .025);
+      // On a memorial the flagpole stands on its turret instead of inside it.
+      const mast = new THREE.Group(); group.add(mast);
+      if ((this.map?.obstacles || []).some(o => o.landmark === 'monument' && o.zone === zone.id)) mast.position.y = 5.45;
+      const pole = cyl(mast, mat('#6d756d'), 0, 3.6, 0, .055, 7.2);
+      const flag = box(mast, mat('#c9ba84', { side: THREE.DoubleSide }), .9, 6.55, 0, 1.8, 1, .025);
       const beacon = new THREE.Mesh(new THREE.CylinderGeometry(.12, 2.3, 30, 16, 1, true), new THREE.MeshBasicMaterial({ color: '#dbc994', transparent: true, opacity: .065, side: THREE.DoubleSide, depthWrite: false }));
       beacon.position.y = 15;
       group.add(beacon);
@@ -7419,7 +8926,7 @@ class Renderer {
         ctx.fillText(zone.id, s / 2, s / 2 + 8);
       }, 256);
       const label = new THREE.Sprite(new THREE.SpriteMaterial({ map: labelTex, transparent: true, depthTest: false, depthWrite: false, opacity: .9 }));
-      label.position.y = 10;
+      label.position.y = 10 + mast.position.y;
       label.scale.set(3.2, 3.2, 1);
       group.add(label);
       const arc=ring.clone();
@@ -7661,7 +9168,8 @@ class Renderer {
     view.updateMatrixWorld();
     this.updateOpticalCamera(game);
     this.sun.target.position.set(p.x, y, p.z);
-    this.sun.position.set(p.x - 65, y + 100, p.z + 45);
+    const sun = this.sunOffset;
+    this.sun.position.set(p.x + (sun ? sun.x : -65), y + (sun ? sun.y : 100), p.z + (sun ? sun.z : 45));
     this.sun.target.updateMatrixWorld();
   }
 
@@ -7674,7 +9182,7 @@ class Renderer {
     out.set(anchor.x + Math.sin(this.cameraYaw) * flat, anchor.y + d * Math.sin(elevation), anchor.z + Math.cos(this.cameraYaw) * flat);
     // Lift only as much as the ground needs: under the camera and along the
     // boom, so a hill behind the tank never hides it.
-    const water = this.map?.water?.level ?? -Infinity, floor = (x, z) => Math.max(this.heightAt(x, z), water);
+    const id = this.map?.id, floor = (x, z) => { const h = this.heightAt(x, z); return h < (this.map?.waterTop ?? -Infinity) ? Math.max(h, waterLevel(id, x, z)) : h; };
     let y = Math.max(out.y, floor(out.x, out.z) + 1.1);
     for (let f = .4; f < .99; f += .15) {
       const need = floor(mix(anchor.x, out.x, f), mix(anchor.z, out.z, f)) + .6;
@@ -7686,8 +9194,9 @@ class Renderer {
     const direction = out.clone().sub(anchor), distance = direction.length();
     const cameraRay = new THREE.Ray(anchor.clone(), direction.normalize());
     let clearDistance = distance;
+    const reach = distance + 30;
     for (const obstacle of this.map?.obstacles || []) {
-      if (obstacle.type === 'tree') continue;
+      if (obstacle.type === 'tree' || Math.abs(obstacle.x - anchor.x) > reach || Math.abs(obstacle.z - anchor.z) > reach) continue;
       const hit = this.intersectBounds(cameraRay, obstacle.x, this.heightAt(obstacle.x, obstacle.z), obstacle.z, obstacle.rotation || 0, obstacle.w, obstacle.h, obstacle.d);
       if (hit) clearDistance = Math.min(clearDistance, Math.max(2, hit.distanceTo(anchor) - .7));
     }
@@ -7754,7 +9263,7 @@ class Renderer {
         this.buildProps(gameOrNull.map,key);this.spawnPuff(o.x,this.heightAt(o.x,o.z)+o.h*.4,o.z,'#aa9c84',3,12,.9);
       }
       for(const i of gameOrNull.brokenBridges||[]){
-        const b=gameOrNull.initialBridges[i],mesh=this.world.getObjectByName('deck:'+b.x);
+        const b=gameOrNull.initialBridges[i],mesh=this.world.getObjectByName('deck:'+b.id);
         if(mesh)mesh.visible=false;
       }
       this.syncSahurs(gameOrNull);const activeShells = new Set();
@@ -7787,6 +9296,7 @@ class Renderer {
       this.setXray(this.hangarTank, !!options.xray, null);
     }
     this.updateEffects(dt); this.flash.intensity *= Math.exp(-dt * 19);
+    if (this.sky) this.sky.position.copy(this.camera.position);
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -8526,7 +10036,7 @@ const {OnlineLeaderboard} = MODULES["online-leaderboard.js"];
 const {ONLINE_CONFIG} = MODULES["online-config.js"];
 const {LocalLeaderboard,cleanNick} = MODULES["leaderboard.js"];
 const {WorkshopEditor} = MODULES["workshop.js"];
-const {NATIONS,TANKS,MAPS,getTank,getMap,createBattleMap,terrainAt,terrainHeight,surfaceHeight,riverCenter} = MODULES["data.js"];
+const {NATIONS,TANKS,MAPS,getTank,getMap,createBattleMap,terrainAt,terrainHeight,surfaceHeight} = MODULES["data.js"];
 const {Game} = MODULES["simulation.js"];
 const {CAMOUFLAGES,normalizeAppearance,normalizeAppearances,importTankImage,DECAL_SURFACES} = MODULES["appearance.js"];
 const {ZombieGame,ZOMBIE_UPGRADES} = MODULES["zombies.js"];
@@ -8631,26 +10141,28 @@ function mapTexture(map){
    img.data[i+3]=255;
  }
  ctx.putImageData(img,0,0);
- if(map.streets){
-  for(const park of map.parks||[]){
-    ctx.fillStyle='#647e4e';
-    ctx.fillRect((park.x+map.size/2-park.w/2)/step,(park.z+map.size/2-park.d/2)/step,park.w/step,park.d/step);
-  }
-  for(const o of map.obstacles){
-    if(o.type!=='building')continue;
-    ctx.fillStyle='#202b28';
-    ctx.fillRect((o.x+map.size/2-o.w/2)/step+1,(o.z+map.size/2-o.d/2)/step+1,o.w/step,o.d/step);
-    ctx.fillStyle='#b8b29b';
-    ctx.fillRect((o.x+map.size/2-o.w/2)/step,(o.z+map.size/2-o.d/2)/step,o.w/step,o.d/step);
-  }
+ // Buildings and landmarks as rotated footprints, with a drop shadow.
+ const at=v=>(v+map.size/2)/step;
+ for(const [dx,fill] of [[1,'#202b28'],[0,'#b8b29b']]){
+  ctx.fillStyle=fill;ctx.beginPath();
+  for(const o of displayMap.obstacles)if(o.type==='building')obstaclePath(ctx,o,at(o.x)+dx,at(o.z)+dx,1/step);
+  ctx.fill();
  }
  ctx.fillStyle='#dec89a';ctx.strokeStyle='#3b3327';ctx.lineWidth=1;
  for(const b of map.bridges||[]){
-   const x=(b.x+map.size/2)/step,z=(b.z+map.size/2)/step;
-   ctx.fillRect(x-b.w/step/2,z-b.d/step/2,b.w/step,b.d/step);
-   ctx.strokeRect(x-b.w/step/2,z-b.d/step/2,b.w/step,b.d/step);
+   const x=at(b.x),z=at(b.z),w=(b.axis==='x'?b.d:b.w)/step,d=(b.axis==='x'?b.w:b.d)/step;
+   ctx.fillRect(x-w/2,z-d/2,w,d);
+   ctx.strokeRect(x-w/2,z-d/2,w,d);
  }
  mapTextureCache.set(map.id,c);return c;
+}
+// Adds an obstacle footprint (rotated rectangle or circle) to the current path.
+function obstaclePath(ctx,o,cx,cz,scale){
+ const hw=o.w*.5,hd=o.d*.5;
+ if(o.round){ctx.moveTo(cx+hw*scale,cz);ctx.arc(cx,cz,Math.max(.5,hw*scale),0,Math.PI*2);return;}
+ const c=Math.cos(o.rotation||0),s=Math.sin(o.rotation||0);
+ [[-hw,-hd],[hw,-hd],[hw,hd],[-hw,hd]].forEach(([lx,lz],i)=>{const x=cx+(lx*c+lz*s)*scale,z=cz+(lz*c-lx*s)*scale;i?ctx.lineTo(x,z):ctx.moveTo(x,z);});
+ ctx.closePath();
 }
 
 function deploymentSummary(){
@@ -9014,7 +10526,7 @@ function updateHUD(){
   $('#enemy-bar').style.transform=`scaleX(${Math.min(1,Math.max(0,game.mode==='deathmatch'?game.teamKills[1]:game.tickets[1])/game.initialTickets)})`;
   const remain=Math.max(0,Math.ceil(game.remaining));
   $('#battle-time').textContent=`${String(Math.floor(remain/60)).padStart(2,'0')}:${String(remain%60).padStart(2,'0')}`;
-  $('#zone-hud').innerHTML=game.zones.map(z=>`<div class="${z.owner===0?'blue':z.owner===1?'red':''} ${z.contested?'contested':''}" title="Zóna ${z.id}: ${z.contested?'boj o zónu':z.owner===0?'spojenci':z.owner===1?'nepřítel':'neutrální'}"><span>${z.id}</span></div>`).join('');
+  renderZoneHud();
   $('#ammo-name').textContent=t.weapon==='autocannon'?'30 mm AP':'APHE';
   const missileButton=$('#missile-button');
   missileButton.hidden=p.type!=='bmpt';
@@ -9050,6 +10562,55 @@ function updateHUD(){
   $('#kill-feed').innerHTML=feed.map(e=>`<div class="feed-item ${e.team===0?'ally':'enemy'}">${esc(e.text)}</div>`).join('');
   drawMinimap();
 }
+// Zone diamonds fill with capture progress and flash when a zone changes
+// hands; a banner under them shows the capture the player takes part in.
+const zoneHud={game:null,prev:new Map(),flash:null};
+const ZONE_BLUE='#5fb8c6',ZONE_RED='#dc7560';
+function renderZoneHud(){
+  const box=$('#zone-hud');if(!box)return;
+  if(zoneHud.game!==game||box.dataset.ids!==game.zones.map(z=>z.id).join()){
+    zoneHud.game=game;zoneHud.prev=new Map();zoneHud.flash=null;box.dataset.ids=game.zones.map(z=>z.id).join();
+    box.innerHTML=game.zones.map(z=>`<div data-zone="${z.id}"><b></b><span>${z.id}</span></div>`).join('');
+  }
+  let banner=$('#capture-banner');
+  if(!banner){banner=document.createElement('div');banner.id='capture-banner';banner.innerHTML='<div class="cb-text"><span></span><em></em></div><div class="bar"><i></i></div>';box.after(banner);}
+  const p=game.player,mine=p.team??0,now=performance.now();let focus=null,focusDir=0;
+  game.zones.forEach((z,i)=>{
+    const el=box.children[i];if(!el)return;
+    const progress=z.progress||0,last=zoneHud.prev.get(z.id),moving=last?Math.sign(progress-last.progress):0;
+    el.className=[z.owner===0?'blue':z.owner===1?'red':'',z.contested?'contested':'',moving&&!z.contested&&Math.abs(progress)<.999?'capturing':'',
+      zoneHud.flash?.id===z.id&&now<zoneHud.flash.until-1700?'flash':''].join(' ');
+    el.style.setProperty('--p',(Math.abs(progress)*100).toFixed(1)+'%');
+    el.style.setProperty('--c',progress>=0?ZONE_BLUE:ZONE_RED);
+    el.title=translate('Zóna')+' '+z.id+': '+translate(z.contested?'boj o zónu':z.owner===0?'spojenci':z.owner===1?'nepřítel':'neutrální');
+    if(last&&last.owner!==z.owner&&z.owner!==-1){
+      el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');
+      zoneHud.flash={id:z.id,until:now+2600,ours:z.owner===mine,owner:z.owner};
+    }
+    zoneHud.prev.set(z.id,{progress,owner:z.owner});
+    const inside=p.alive&&Math.hypot(p.x-z.x,p.z-z.z)<(z.radius||22);
+    if(inside&&(z.contested||moving||Math.abs(progress)<.999||z.owner!==mine)){focus=z;focusDir=moving;}
+    else if(!focus&&moving&&!z.contested&&z.owner===mine&&Math.sign(progress)!==0&&moving!==(mine===0?1:-1))focus={...z,threat:true};
+  });
+  const text=banner.querySelector('.cb-text span'),pct=banner.querySelector('.cb-text em'),bar=banner.querySelector('.bar i');
+  const flash=zoneHud.flash&&now<zoneHud.flash.until?zoneHud.flash:null;
+  if(p.alive&&p.drown>0){
+    banner.className='show contested drown';banner.style.setProperty('--c',ZONE_RED);
+    text.textContent=translate('TANK SE TOPÍ · VYJEĎ Z VODY');pct.textContent=Math.max(0,5-p.drown).toFixed(1)+' s';
+    bar.style.width=(Math.max(0,1-p.drown/5)*100).toFixed(1)+'%';
+  }else if(flash&&!focus?.contested){
+    banner.className='show done '+(flash.ours?'ours':'theirs');
+    text.textContent=translate(flash.ours?'ZÓNA OBSAZENA':'ZÓNA ZTRACENA')+' · '+flash.id;pct.textContent='';
+    bar.style.width='100%';banner.style.setProperty('--c',flash.owner===0?ZONE_BLUE:ZONE_RED);
+  }else if(focus){
+    const progress=focus.progress||0;
+    banner.className='show'+(focus.contested?' contested':'')+(focus.threat?' threat':'');
+    text.textContent=translate(focus.contested?'BOJ O ZÓNU':focus.threat?'NEPŘÍTEL OBSAZUJE ZÓNU':focusDir===0&&Math.abs(progress)<.001?'VSTUP DO ZÓNY':'OBSAZUJEŠ ZÓNU')+' · '+focus.id;
+    pct.textContent=Math.round(Math.abs(progress)*100)+' %';
+    bar.style.width=(Math.abs(progress)*100).toFixed(1)+'%';
+    banner.style.setProperty('--c',progress>=0?ZONE_BLUE:ZONE_RED);
+  }else banner.className='';
+}
 function drawMinimap(){
   const s=mini.width,scale=s/game.map.size;
   mc.drawImage(mapTexture(game.map),0,0,s,s);
@@ -9064,11 +10625,9 @@ function drawMinimap(){
     mc.lineTo(s,i*s/6);
     mc.stroke();
   }
-  mc.fillStyle='#131e1599';
-  game.map.obstacles.forEach(o=>{
-    if(o.type==='tree')return;
-    mc.fillRect(cv(o.x)-o.w*scale/2,cv(o.z)-o.d*scale/2,o.w*scale,o.d*scale);
-  });
+  mc.fillStyle='#131e1599';mc.beginPath();
+  for(const o of game.map.obstacles)if(o.type!=='tree')obstaclePath(mc,o,cv(o.x),cv(o.z),scale);
+  mc.fill();
   for(const z of game.zones){
     mc.beginPath();
     mc.arc(cv(z.x),cv(z.z),11,0,Math.PI*2);
