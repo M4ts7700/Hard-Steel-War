@@ -282,8 +282,9 @@ body.in-battle .topbar{display:none}
 .module-bar-row i{display:block;background:#93b87d;height:100%}
 .module-actions{display:flex;gap:10px;margin-top:13px;pointer-events:auto}
 .module-actions button{border:1px solid #617c4c;padding:7px 8px;font-size:8px;flex:1;background:#354a2dc7}
-#smoke-button.reloading{background:linear-gradient(90deg,#354a2dc7 var(--smoke-fill,0%),#141c11e6 var(--smoke-fill,0%))}
-#smoke-button.reloading:disabled{opacity:1}.driving-hud{text-align:center;color:#e1ebd7;text-shadow:0 2px 5px #000}
+#smoke-button.reloading{background:linear-gradient(90deg,#354a2dc7 var(--reload-fill,0%),#141c11e6 var(--reload-fill,0%))}
+.missile-action.reloading{background:linear-gradient(90deg,#66522bc7 var(--reload-fill,0%),#1a150ce6 var(--reload-fill,0%))}
+#smoke-button.reloading:disabled,.missile-action.reloading:disabled{opacity:1}.driving-hud{text-align:center;color:#e1ebd7;text-shadow:0 2px 5px #000}
 .speed{display:flex;justify-content:center;align-items:baseline;gap:8px}
 .speed strong{font-size:44px;font-weight:300;font-variant-numeric:tabular-nums}
 .speed>span{font-size:10px;color:#c2d0b5}
@@ -4132,11 +4133,24 @@ class Game {
     const ahead=surfaceHeight(this.map.id,t.x+Math.sin(t.angle)*4,t.z+Math.cos(t.angle)*4,t.y),
       behind=surfaceHeight(this.map.id,t.x-Math.sin(t.angle)*4,t.z-Math.cos(t.angle)*4,t.y);
     const slope=(ahead-behind)/8,uphill=Math.max(0,slope*Math.sign(throttle));
-    const max=((t.developer?350:spec.speed)/3.6)*(t.developer||t.type==='m18'?Math.min(1,ground.speed):ground.speed)*terrainBonus*engine*tracks*clamp(1-uphill*.85,.35,1);
+    // The M18's extreme top speed is for real players only; bots get 75 km/h forward, 20 km/h reverse.
+    const botM18=t.type==='m18'&&!t.developer&&!t.isPlayer&&!t.isHuman;
+    const top=t.developer?350:botM18?(throttle<0?20:75):spec.speed;
+    const max=(top/3.6)*(t.developer||t.type==='m18'?Math.min(1,ground.speed):ground.speed)*terrainBonus*engine*tracks*clamp(1-uphill*.85,.35,1);
     if(!t.isPlayer&&!t.isHuman&&engine&&tracks)t._slopeStall=uphill>.76&&Math.abs(throttle)>.15?(t._slopeStall||0)+dt:Math.max(0,(t._slopeStall||0)-dt*.4);
-    const desired=uphill>.8?0:max*throttle*(throttle<0?.42:1);
-    const accel=(t.developer?23:spec.acceleration??(spec.role==='Těžký tank'?3.3:4.7))*(Math.abs(desired)<Math.abs(t.speed)?2.3:1);
-    t.speed+=clamp(desired-t.speed,-accel*dt,accel*dt);
+    const desired=uphill>.8?0:max*throttle*(throttle<0&&!botM18?.42:1);
+    const baseAccel=t.developer?23:spec.acceleration??(spec.role==='Těžký tank'?3.3:4.7);
+    // The developer Maus and player-driven M18 get much stronger brakes, both when coasting
+    // and when the opposite direction is pressed (braking stops at zero before reversing).
+    const strongBrakes=t.developer||(t.type==='m18'&&(t.isPlayer||t.isHuman));
+    const opposing=Math.sign(desired)!==Math.sign(t.speed);
+    if(strongBrakes&&t.speed!==0&&(opposing||Math.abs(desired)<Math.abs(t.speed))){
+      const brake=baseAccel*7;
+      t.speed+=clamp((opposing?0:desired)-t.speed,-brake*dt,brake*dt);
+    } else {
+      const accel=baseAccel*(Math.abs(desired)<Math.abs(t.speed)?2.3:1);
+      t.speed+=clamp(desired-t.speed,-accel*dt,accel*dt);
+    }
     if(Math.abs(slope)>.8&&tracks&&engine)t.speed-=slope*3.5*dt;
     const agile=t.developer||t.type==='m18';
     const turn=(t.developer?3.2:spec.turnRate??(spec.role==='Těžký tank'?.69:.92))*tracks*engine*(spec.wheeled?Math.min(1,Math.abs(t.speed)/4):1)*(agile?1:1-.45*Math.min(1,Math.abs(t.speed)/(max||1)));
@@ -4257,6 +4271,7 @@ class Game {
     return true;
   }
   fireMachineGunPlayer(t=this.player){
+    if(t.developer)return this._fireDevAutocannon(t);
     if(this.finished||!t.alive||t.modules.crew<=0||t.modules.turret<=0||(t.mgCooldown||0)>0||t.mgOverheated)return false;
     const frame=weaponFrame(t,this.map.id),side=.35;
     const pivot={x:frame.pivot.x+Math.cos(t.turretAngle)*side,y:frame.pivot.y,z:frame.pivot.z-Math.sin(t.turretAngle)*side};
@@ -4268,6 +4283,39 @@ class Game {
     const blocked=this._traceSegment(pivot,muzzle,t.id);
     if(blocked)this._resolveImpact(shell,blocked,pivot,muzzle);else this.shells.push(shell);
     return true;
+  }
+  // The developer Maus swaps its coaxial machine gun for the BMPT's 30 mm
+  // 2A42: the same rate of fire, penetration and damage, and it never overheats.
+  _fireDevAutocannon(t){
+    t.mgHeat=0;t.mgOverheated=false;
+    if(this.finished||!t.alive||t.modules.crew<=0||t.modules.turret<=0||(t.mgCooldown||0)>0)return false;
+    // turretAngle and gunPitch are relative to the tilted hull, so the round
+    // follows the barrel axis from weaponFrame, parallel to the main gun.
+    const bmpt=getTank('bmpt'),speed=weaponGeometry('bmpt').speed,spread=Math.abs(t.speed)*.0001,side=.35;
+    const frame=weaponFrame(t,this.map.id,{yaw:t.turretAngle+(this._rand()-.5)*spread*2}),{direction}=frame;
+    const pivot={x:frame.pivot.x+Math.cos(t.turretAngle)*side,y:frame.pivot.y,z:frame.pivot.z-Math.sin(t.turretAngle)*side};
+    const muzzle={x:pivot.x+direction.x*1.6,y:pivot.y+direction.y*1.6,z:pivot.z+direction.z*1.6};
+    const shell={id:`ac-${++this._serial}`,...muzzle,vx:direction.x*speed,vy:direction.y*speed,vz:direction.z*speed,team:t.team,shooterId:t.id,penetration:bmpt.penetration,damageScale:bmpt.damageScale??1,overmatch:this._rand()<.02,weapon:'autocannon',missile:false,age:0,distance:0};
+    t.mgCooldown=bmpt.reload;
+    this._event({type:'shot',...muzzle,team:t.team,targetId:t.id,playerRelated:true,weapon:'autocannon',coax:true});
+    const blocked=this._traceSegment(pivot,muzzle,t.id);
+    if(blocked)this._resolveImpact(shell,blocked,pivot,muzzle);else this.shells.push(shell);
+    return true;
+  }
+  // Where the developer's 75 mm round lands, a Tung Tung Tung Sahur or a
+  // Brr Brr Patapim (even odds) appears instead of any damage. The nearest
+  // free spot is searched starting on the side the round came from.
+  _spawnFigureAt(point,shell){
+    const kind=this._rand()<.5?'sahur':'patapim',back=Math.atan2(-shell.vx,-shell.vz);
+    for(const r of [0,1.5,3,5,8,12,18])for(const side of [0,.7,-.7,1.5,-1.5,2.3,-2.3,3.14]){
+      const x=point.x+Math.sin(back+side)*r,z=point.z+Math.cos(back+side)*r;
+      if(!this._free(x,z,1)||this.sahurs.some(s=>Math.hypot(s.x-x,s.z-z)<2))continue;
+      // At the 32-figure limit the oldest figure makes room for the new one.
+      if(this.sahurs.length>=32)this.sahurs.shift();
+      this.sahurs.push({kind,id:'sahur-'+(++this._serial),x,z,y:surfaceHeight(this.map.id,x,z),angle:back,turn:2});
+      return true;
+    }
+    return false;
   }
   fireMissilePlayer() {return this._fireMissile(this.player);}
   canSeeTarget(tank) {return !!(this.player.alive&&tank?.alive&&this._visible(this.player,tank));}
@@ -4330,7 +4378,9 @@ class Game {
     const frame=weaponFrame(t,this.map.id,{secondary:true,yaw:t.turretAngle+(this._rand()-.5)*spread*2});
     const {direction,speed,muzzle}=frame;
     const shell={id:`shell-${++this._serial}`,...muzzle,vx:direction.x*speed,vy:direction.y*speed,vz:direction.z*speed,team:t.team,shooterId:t.id,penetration:spec.penetration,damageScale:spec.damageScale,weapon:'cannon',secondary:true,missile:false,age:0,distance:0};
-    t.secondaryReload=spec.reload*(1+(100-t.modules.breech)/160);
+    // The developer Maus loads a harmless figure round that takes 20 s.
+    if(t.developer)shell.figure=true;
+    t.secondaryReload=(t.developer?20:spec.reload)*(1+(100-t.modules.breech)/160);
     this._event({type:'shot',text:t.isPlayer?'Výstřel · 75 mm':'',...muzzle,team:t.team,targetId:t.id,playerRelated:t.isPlayer,weapon:'cannon',secondary:true,missile:false,barrel:1});
     const blocked=this._traceSegment(frame.pivot,frame.muzzle,t.id);
     if(blocked)this._resolveImpact(shell,blocked,frame.pivot,frame.muzzle);else this.shells.push(shell);
@@ -4467,6 +4517,11 @@ class Game {
 
   _resolveImpact(shell,hit,a,b) {
     const point={x:mix(a.x,b.x,hit.t),y:mix(a.y,b.y,hit.t),z:mix(a.z,b.z,hit.t)};
+    if(shell.figure){
+      this._spawnFigureAt(point,shell);
+      this._event({type:'impact',text:'',...point,team:shell.team,playerRelated:shell.shooterId==='player',missile:false,weapon:'machinegun'});
+      return;
+    }
     if(shell.developer&&hit.tank){this._destroy(hit.tank,shell.shooterId,'Ničivý zásah');return;}
     if(hit.sahur)this.sahurs=this.sahurs.filter(s=>s!==hit.sahur);
     if(hit.obstacle&&shell.developer&&hit.obstacle.type==='building')this.demolish(this.initialProps.indexOf(hit.obstacle));
@@ -7316,6 +7371,7 @@ class ZombieGame extends Game{
   return hit;
  }
  _resolveImpact(shell,hit,a,b){
+  if(shell.figure)return super._resolveImpact(shell,hit,a,b);
   const point={x:a.x+(b.x-a.x)*hit.t,y:a.y+(b.y-a.y)*hit.t,z:a.z+(b.z-a.z)*hit.t};
   if(hit.zombie)this._damageZombie(hit.zombie,shell.developer?Infinity:shell.weapon==='machinegun'?30:180);
   if(shell.weapon!=='machinegun')for(const z of this.zombies){
@@ -9255,10 +9311,9 @@ class Renderer {
     if (kind === 'pine') {
       const crown = h * .27; stem(.2, h * .5);
       const cone = geometry('pine', () => new THREE.ConeGeometry(1, 1, 7));
-      for (let j = 0; j < 3; j++) {
-        addMesh(g, cone, P.pine, 0, h * (.42 + j * .2), 0, crown * (.78 - j * .17), h * .46, crown * (.78 - j * .17));
-        if (P.winter) addMesh(g, cone, P.snow, 0, h * (.45 + j * .2), 0, crown * (.6 - j * .13), h * .38, crown * (.6 - j * .13));
-      }
+      // No inner snow cone in winter: it sat almost flush inside each tier, so it
+      // was hidden up close and only z-fought through as white flecks at range.
+      for (let j = 0; j < 3; j++) addMesh(g, cone, P.pine, 0, h * (.42 + j * .2), 0, crown * (.78 - j * .17), h * .46, crown * (.78 - j * .17));
     } else if (kind === 'palm') {
       let x = 0, y = 0; const lean = .1 + hash(o.x, o.z) * .12;
       for (let k = 0; k < 4; k++) { const len = h * .25, seg = stem(.22 - k * .025, len, P.palmTrunk, x + lean * len * .5, 0, y + len / 2); seg.rotation.z = -lean * (1 + k * .3); x += lean * len * (1 + k * .3); y += len * .97; }
@@ -10099,7 +10154,7 @@ class Renderer {
     if (event.type === 'shot') {
       let mx = x, mz = z, my = y;
       const tank = this.game?.tanks.find(t => t.id === event.targetId) || this.game?.tanks.find(t => Math.hypot(t.x - x, t.z - z) < 2 && t.alive);
-      if (tank&&!event.missile) {
+      if (tank&&!event.missile&&!event.coax) {
         const model = this.tankModels.get(tank.id),
           frame = weaponFrame(tank, this.map.id, {barrelIndex:event.barrel??0});
         mx = frame.muzzle.x;
@@ -11096,7 +11151,7 @@ function showZombieShop(){
  }).join('')}</div><div class="modal-actions"><button id="next-wave" class="primary-button">DALŠÍ VLNA →</button><button data-action="abandon" class="secondary-button">UKONČIT PŘEŽITÍ</button></div>`);
 }
 function showGuide(){
-  openModal('guide',`<span class="eyebrow">POLNÍ PŘÍRUČKA / ZÁKLADNÍ VÝCVIK</span><h2>Znát svůj tank. Ovládnout bojiště.</h2><p class="modal-intro">Původní prohlížečová hra inspirovaná tankovými simulátory. Model pancíře a modulů je zjednodušený pro krátké, taktické bitvy. Parametry strojů jsou herně vyvážené. BMPT Terminator je moderní ruský bonus na konci větve SSSR; odemkneš ho po IS-2. Ve větvích najdeš také Tiger II a M26 Pershing.</p><div class="guide-grid"><section><h3>Ovládání</h3><div class="controls-list"><span><kbd>W</kbd> / <kbd>S</kbd></span><span>Vpřed / zpátečka</span><span><kbd>E</kbd> / <kbd>Q</kbd></span><span>Tempomat vpřed / vzad. W nebo S jej zruší.</span><span><kbd>A</kbd> / <kbd>D</kbd></span><span>Plynulé řízení vlevo / vpravo; při couvání se korba stáčí jako u vozidla</span><span><kbd>MYŠ</kbd></span><span>Pohyb pohledu a zaměřování; věž zaměřovač dohání</span><span><kbd>LEVÉ TLAČÍTKO</kbd></span><span>Výstřel (lze držet)</span><span><kbd>MEZERNÍK</kbd></span><span>Kulomet; sleduj přehřátí. Silný pancíř neprostřelí.</span><span><kbd>N</kbd></span><span>Nuke za 10 bodů: každý kill +1, smrt −1. Body zůstávají mezi životy. Odpočet 8 s, potom vítězství.</span><span><kbd>PRAVÉ TLAČÍTKO</kbd></span><span>Podržet pro přiblížení</span><span><kbd>C</kbd></span><span>Podržet pro rozhlížení bez otáčení věže</span><span><kbd>KOLEČKO</kbd></span><span>Vzdálenost kamery / zvětšení zaměřovače</span><span><kbd>SHIFT</kbd></span><span>Přepnout do první osoby — optický zaměřovač střelce</span><span><kbd>PgUp / PgDn</kbd></span><span>Nástřel ±100 m; po nasazení 0 m</span><span><kbd>Y</kbd></span><span>Dálkoměr: nastaví nástřel na vzdálenost bodu pod zaměřovačem</span><span><kbd>F</kbd></span><span>Oprava modulů při zastavení. Míření a funkční zbraně zůstávají dostupné.</span><span><kbd>G</kbd></span><span>Kouřová clona — 5 na život</span><span><kbd>2</kbd></span><span>BMPT: naváděná raketa; po odpalu ji řídíš mířením</span><span><kbd>X</kbd></span><span>Podržet pro zobrazení modulů</span><span><kbd>R</kbd></span><span>Maus: druhý kanón 75 mm (lze držet). Po zničení: nasadit záložní tank.</span><span><kbd>TAB</kbd></span><span>Týmy a přezdívky v online bitvě</span><span><kbd>ESC</kbd></span><span>Pauza</span></div><p>Po nasazení je zaměřovač uprostřed obrazovky. Velký kroužek ukazuje, kam míříš. Menší kroužek ukazuje předpokládaný první dopad střely; překážka před hlavní může výstřel zastavit. V první osobě se kříž optiky pohybuje s hlavní a šedý kroužek ukazuje, kam míříš. Značky pod křížem (4, 8, 12, 16 = stovky metrů) ukazují, kam střela na danou vzdálenost dopadne. Pro neomezené otáčení klikni do bojiště; Esc uvolní myš a pozastaví hru. Citlivost nastavíš v nastavení.</p><p>Na dotykovém zařízení použij směrová tlačítka, dotyk bojiště pro míření a tlačítko PALBA. Nejlepší přehled máš na široké obrazovce.</p></section><section><h3>ZOMBIE · Přežití</h3><p>V hangáru vyber režim Zombie. Odraz vlny, střílej kulometem na mezerníku, používej výbuchy děla a přejížděj hordy. Mezi vlnami nakupuj za šrot. Auto kulomet za 1 800 šrotu míří nezávisle na tvé věži. Posádka má jeden život; upgrady a šrot platí jen do konce přežití. Nuke je dostupný v Nadvládě i týmovém deathmatchi.</p><h3>Nadvláda · 6 proti 6</h3><p>Ty a pět spojeneckých botů stejné země proti šesti tankům výhradně cizích zemí. Vjeď do kruhu A, B nebo C a drž pozici. Přítomnost nepřítele obsazování zastaví. Ovládané zóny ubírají soupeři body; vítězí tým, který vyčerpá jeho zásoby nebo vede po dvanácti minutách.</p><h3>Týmový deathmatch</h3><p>Bez obsazování. První tým s 30 killy vyhrává. Po 12 minutách rozhoduje počet killů; při shodě je remíza. Každý zničený nepřítel má stejnou hodnotu.</p><h3>Každý zásah má svou cestu</h3><p>Účinná tloušťka pancíře závisí na úhlu dopadu, straně korby i vzdálenosti. Prudký úhel může střelu odrazit. Průnik poškodí modul podle místa zásahu: pásy zastaví tank, motor omezí pohyb, věž zpomalí míření a závěr znemožní palbu. Zásah munice nebo vyřazení posádky může stroj zničit.</p><h3>Přežij další minutu</h3><p>Mapy zahrnují městské bloky, průmyslové dvory, otevřenou rovinu i krajinu s mnoha menšími kopci. Řeku přejížděj přes mosty; hluboká voda je neprůjezdná. Kryj boky a využívej terén i budovy. Kouř ztíží botům zaměřování a umožní opravu. Písek, bahno a hluboký sníh zpomalují přesun; cesty jsou rychlejší. Po zničení dostaneš další stroj za cenu týmových bodů.</p><h3>Postup zůstává u tebe</h3><p>Výzkum se ukládá automaticky v tomto prohlížeči. S hráčským účtem se ukládá i do cloudu, takže můžeš pokračovat na jiném zařízení. V nastavení lze stáhnout a později načíst zálohu postupu nebo změnit motiv. Vymazání dat webu smaže postup, který není uložený v účtu.</p></section></div>`);
+  openModal('guide',`<span class="eyebrow">POLNÍ PŘÍRUČKA / ZÁKLADNÍ VÝCVIK</span><h2>Znát svůj tank. Ovládnout bojiště.</h2><p class="modal-intro">Původní prohlížečová hra inspirovaná tankovými simulátory. Model pancíře a modulů je zjednodušený pro krátké, taktické bitvy. Parametry strojů jsou herně vyvážené. BMPT Terminator je moderní ruský bonus na konci větve SSSR; odemkneš ho po IS-2. Ve větvích najdeš také Tiger II a M26 Pershing.</p><div class="guide-grid"><section><h3>Ovládání</h3><div class="controls-list"><span><kbd>W</kbd> / <kbd>S</kbd></span><span>Vpřed / zpátečka</span><span><kbd>E</kbd> / <kbd>Q</kbd></span><span>Tempomat vpřed / vzad. W nebo S jej zruší.</span><span><kbd>A</kbd> / <kbd>D</kbd></span><span>Plynulé řízení vlevo / vpravo; při couvání se korba stáčí jako u vozidla</span><span><kbd>MYŠ</kbd></span><span>Pohyb pohledu a zaměřování; věž zaměřovač dohání</span><span><kbd>LEVÉ TLAČÍTKO</kbd></span><span>Výstřel (lze držet)</span><span><kbd>MEZERNÍK</kbd></span><span>Kulomet; sleduj přehřátí. Silný pancíř neprostřelí.</span><span><kbd>N</kbd></span><span>Nuke za 10 bodů: každý kill +1, smrt −1. Body zůstávají mezi životy. Odpočet 8 s, potom vítězství.</span><span><kbd>PRAVÉ TLAČÍTKO</kbd></span><span>Podržet pro přiblížení</span><span><kbd>C</kbd></span><span>Podržet pro rozhlížení bez otáčení věže</span><span><kbd>KOLEČKO</kbd></span><span>Vzdálenost kamery / zvětšení zaměřovače</span><span><kbd>SHIFT</kbd></span><span>Přepnout do první osoby — optický zaměřovač střelce</span><span><kbd>PgUp / PgDn</kbd></span><span>Nástřel ±100 m; po nasazení 0 m</span><span><kbd>Y</kbd></span><span>Dálkoměr: nastaví nástřel na vzdálenost bodu pod zaměřovačem</span><span><kbd>F</kbd></span><span>Oprava modulů při zastavení. Míření a funkční zbraně zůstávají dostupné.</span><span><kbd>G</kbd></span><span>Kouřová clona — 5 na život</span><span><kbd>X</kbd></span><span>Podržet pro zobrazení modulů</span><span><kbd>R</kbd></span><span>Maus: druhý kanón 75 mm (lze držet). Po zničení: nasadit záložní tank.</span><span><kbd>R</kbd></span><span>BMPT: naváděná raketa; po odpalu ji řídíš mířením</span><span><kbd>TAB</kbd></span><span>Týmy a přezdívky v online bitvě</span><span><kbd>ESC</kbd></span><span>Pauza</span></div><p>Po nasazení je zaměřovač uprostřed obrazovky. Velký kroužek ukazuje, kam míříš. Menší kroužek ukazuje předpokládaný první dopad střely; překážka před hlavní může výstřel zastavit. V první osobě se kříž optiky pohybuje s hlavní a šedý kroužek ukazuje, kam míříš. Značky pod křížem (4, 8, 12, 16 = stovky metrů) ukazují, kam střela na danou vzdálenost dopadne. Pro neomezené otáčení klikni do bojiště; Esc uvolní myš a pozastaví hru. Citlivost nastavíš v nastavení.</p><p>Na dotykovém zařízení použij směrová tlačítka, dotyk bojiště pro míření a tlačítko PALBA. Nejlepší přehled máš na široké obrazovce.</p></section><section><h3>ZOMBIE · Přežití</h3><p>V hangáru vyber režim Zombie. Odraz vlny, střílej kulometem na mezerníku, používej výbuchy děla a přejížděj hordy. Mezi vlnami nakupuj za šrot. Auto kulomet za 1 800 šrotu míří nezávisle na tvé věži. Posádka má jeden život; upgrady a šrot platí jen do konce přežití. Nuke je dostupný v Nadvládě i týmovém deathmatchi.</p><h3>Nadvláda · 6 proti 6</h3><p>Ty a pět spojeneckých botů stejné země proti šesti tankům výhradně cizích zemí. Vjeď do kruhu A, B nebo C a drž pozici. Přítomnost nepřítele obsazování zastaví. Ovládané zóny ubírají soupeři body; vítězí tým, který vyčerpá jeho zásoby nebo vede po dvanácti minutách.</p><h3>Týmový deathmatch</h3><p>Bez obsazování. První tým s 30 killy vyhrává. Po 12 minutách rozhoduje počet killů; při shodě je remíza. Každý zničený nepřítel má stejnou hodnotu.</p><h3>Každý zásah má svou cestu</h3><p>Účinná tloušťka pancíře závisí na úhlu dopadu, straně korby i vzdálenosti. Prudký úhel může střelu odrazit. Průnik poškodí modul podle místa zásahu: pásy zastaví tank, motor omezí pohyb, věž zpomalí míření a závěr znemožní palbu. Zásah munice nebo vyřazení posádky může stroj zničit.</p><h3>Přežij další minutu</h3><p>Mapy zahrnují městské bloky, průmyslové dvory, otevřenou rovinu i krajinu s mnoha menšími kopci. Řeku přejížděj přes mosty; hluboká voda je neprůjezdná. Kryj boky a využívej terén i budovy. Kouř ztíží botům zaměřování a umožní opravu. Písek, bahno a hluboký sníh zpomalují přesun; cesty jsou rychlejší. Po zničení dostaneš další stroj za cenu týmových bodů.</p><h3>Postup zůstává u tebe</h3><p>Výzkum se ukládá automaticky v tomto prohlížeči. S hráčským účtem se ukládá i do cloudu, takže můžeš pokračovat na jiném zařízení. V nastavení lze stáhnout a později načíst zálohu postupu nebo změnit motiv. Vymazání dat webu smaže postup, který není uložený v účtu.</p></section></div>`);
 }
 function showSettings(){
   if(game)paused=true;
@@ -11253,18 +11308,26 @@ function onGameEvent(e){
   }
 }
 const moduleNames={crew:'Posádka',engine:'Motor',tracks:'Pásy',turret:'Věž',breech:'Závěr',ammo:'Munice'};
-// Smoke reload fill, run every frame. The end time is kept locally so the bar
-// stays smooth even when the cooldown only arrives in coarse network snapshots.
-let smokeFillEnd=0;
-function updateSmokeFill(now){
-  const p=game?.player,btn=$('#smoke-button');if(!p||!btn||paused)return;
-  const cd=(p.smokes??5)>0&&p.alive?Math.max(0,p.smokeCooldown||0):0;
-  if(cd<=0){smokeFillEnd=0;btn.classList.remove('reloading');return;}
-  const target=now+cd*1000;
-  if(!smokeFillEnd||Math.abs(target-smokeFillEnd)>350)smokeFillEnd=target;
-  const fill=Math.max(0,Math.min(1,1-(smokeFillEnd-now)/5000));
+// Reload fills for smoke, the Maus 75 mm and BMPT missiles, run every frame.
+// Each button keeps its end time locally so the fill stays smooth even when
+// cooldowns only arrive in coarse network snapshots. A cooldown that jumps up
+// starts a new reload, and the bar spans that whole reload.
+const reloadFills=new Map();
+function updateReloadFill(btn,cd,now){
+  if(!btn)return;
+  if(cd<=0){reloadFills.delete(btn);btn.classList.remove('reloading');return;}
+  const target=now+cd*1000;let fill=reloadFills.get(btn);
+  if(!fill||cd>fill.last+.25)reloadFills.set(btn,fill={end:target,total:cd*1000,last:cd});
+  else if(Math.abs(target-fill.end)>350)fill.end=target;
+  fill.last=cd;
   btn.classList.add('reloading');
-  btn.style.setProperty('--smoke-fill',`${(fill*100).toFixed(2)}%`);
+  btn.style.setProperty('--reload-fill',`${(Math.max(0,Math.min(1,1-(fill.end-now)/fill.total))*100).toFixed(2)}%`);
+}
+function updateReloadFills(now){
+  const p=game?.player;if(!p||paused)return;
+  updateReloadFill($('#smoke-button'),(p.smokes??5)>0&&p.alive?Math.max(0,p.smokeCooldown||0):0,now);
+  updateReloadFill($('#secondary-button'),p.type==='maus'&&p.alive?Math.max(0,p.secondaryReload||0):0,now);
+  updateReloadFill($('#missile-button'),p.type==='bmpt'&&p.alive&&(p.missiles??0)>0?Math.max(0,p.missileReload||0):0,now);
 }
 function updateHUD(){
   if(!game)return;
@@ -11278,8 +11341,8 @@ function updateHUD(){
   const n=game.nuke,nb=$('#nuke-button');
   nb.disabled=!n.ready||!game.player.alive;
   nb.textContent=n.state==='incoming'?'☢ ÚDER ZA '+Math.ceil(n.timer)+' s':n.state==='detonated'?'☢ JADERNÝ ÚDER':n.ready?'[N] ☢ VYPUSTIT NUKE':'☢ BODY '+Math.min(game.killStreak,n.required)+' / '+n.required;
-  $('#mg-status').textContent=game.player.mgOverheated?'KULOMET · CHLADÍ SE':'KULOMET';
-  $('#mg-heat').style.width=((game.player.mgHeat||0)*100)+'%';
+  $('#mg-status').textContent=game.player.developer?'30 mm 2A42':game.player.mgOverheated?'KULOMET · CHLADÍ SE':'KULOMET';
+  $('#mg-heat').style.width=(game.player.developer?0:(game.player.mgHeat||0)*100)+'%';
   const p=game.player,t=getTank(p.type);
   $('#battle-tank-name').textContent=p.drone?'FPV DRON':p.developer?'DEV MAUS':fullName(t);
   $('#friendly-score').textContent=game.mode==='deathmatch'?game.teamKills[0]+' / '+game.killLimit:Math.ceil(Math.max(0,game.tickets[0]));
@@ -11293,10 +11356,10 @@ function updateHUD(){
   const missileButton=$('#missile-button');
   missileButton.hidden=p.type!=='bmpt';
   missileButton.disabled=!p.alive||p.missiles<=0||p.missileReload>0||p.modules.breech<=0||p.modules.turret<=0;
-  missileButton.textContent=`[2] RAKETA ${p.missiles??0}/4${p.missileReload>0?' · '+p.missileReload.toFixed(1)+' s':' · PŘIPRAVENA'}`;
+  missileButton.textContent=`[R] RAKETA ${p.missiles??0}/4${p.missileReload>0?' · '+p.missileReload.toFixed(1)+' s':' · PŘIPRAVENA'}`;
   $('#secondary-button').hidden=p.type!=='maus';
   $('#secondary-button').disabled=!p.alive||p.secondaryReload>0||p.modules.breech<=0;
-  $('#secondary-button').textContent='[R] 75 mm · '+(p.secondaryReload>0?p.secondaryReload.toFixed(1)+' s':translate('PŘIPRAVENO'));
+  $('#secondary-button').textContent=(p.developer?'[R] 75 mm SAHUR · ':'[R] 75 mm · ')+(p.secondaryReload>0?p.secondaryReload.toFixed(1)+' s':translate('PŘIPRAVENO'));
   $('#cruise-status').hidden=!cruise.direction;
   $('#cruise-status').textContent=translate(cruise.direction>0?'TEMPOMAT VPŘED · W/S ZRUŠÍ':'TEMPOMAT VZAD · W/S ZRUŠÍ');
   $('#speed-value').textContent=Math.round((p.drone?p.drone.speed||0:p.speed)*3.6);
@@ -11735,8 +11798,8 @@ document.addEventListener('keydown',e=>{
     if(e.code==='KeyC')renderer.setFreeLook(true);
     if(e.code==='KeyF')game.repairPlayer();
     if(e.code==='KeyG')game.smokePlayer();
-    if(e.code==='Digit2'||e.code==='Numpad2')game.fireMissilePlayer();
-    if(e.code==='KeyR'){if(game.player.alive)secondaryRequested=true;else respawn();}
+    // R is each tank's extra weapon: the Maus 75 mm (held) or a BMPT missile.
+    if(e.code==='KeyR'){if(!game.player.alive)respawn();else if(game.player.type==='bmpt')game.fireMissilePlayer();else secondaryRequested=true;}
   }
 });
 document.addEventListener('keyup',e=>{keys.delete(e.code);if(e.code==='KeyC')renderer?.setFreeLook(false);});
@@ -11881,7 +11944,7 @@ function loop(now){
       const viewText=cinematic?'JADERNÝ ÚDER':keys.has('KeyC')?'VOLNÝ POHLED':view.scope?'OPTIKA STŘELCE':'';
       $('#view-status').hidden=paused||!game.player.alive||!viewText;
       $('#view-status').textContent=viewText;
-      drawTags();updateSmokeFill(now);if(now-lastHud>90){updateHUD();lastHud=now;}
+      drawTags();updateReloadFills(now);if(now-lastHud>90){updateHUD();lastHud=now;}
     }
   }catch(err){
     console.error('Hard Steel War runtime error',err);
