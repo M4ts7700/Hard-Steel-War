@@ -2032,9 +2032,9 @@ Cena při uložení	Cost when saved
 3D doplňky	3D accessories
 Vlastní 3D model	Custom 3D model
 Odemčení importu	Unlock imports
-Jednorázové odemčení. Na každý tank lze umístit jeden model OBJ do 64 kB. Použije se geometrie a zvolená barva.	One-time unlock. Mount one OBJ model up to 64 kB per tank. The game uses its geometry and your chosen color.
+Jednorázové odemčení. Na každý tank lze umístit jeden model OBJ. Použije se geometrie a zvolená barva.	One-time unlock. Mount one OBJ model per tank. The game uses its geometry and your chosen color.
 Přidat model OBJ	Import OBJ model
-Vyber soubor OBJ do 64 kB.	Choose an OBJ file up to 64 kB.
+Vyber soubor OBJ.	Choose an OBJ file.
 OBJ musí obsahovat platné plochy, nejvýše 3 000 vrcholů a 6 000 trojúhelníků.	OBJ must contain valid faces and at most 3,000 vertices and 6,000 triangles.
 Model se nepodařilo načíst.	Could not load the model.
 Načítám model…	Loading model…
@@ -4968,7 +4968,6 @@ const MODEL_LICENSE={id:'model-import',cost:12000};
 const PAINT_SIDES=['right','left','front','back','top'];
 const PAINT_SURFACES=['hull','turret'].flatMap(part=>PAINT_SIDES.map(side=>part+'-'+side));
 const PAINT_EXTENT=6, MAX_STROKES=120, MAX_PAINT_POINTS=2400;
-const MAX_OBJ_SIZE=64*1024;
 const MAX_DECAL_LENGTH=120000;
 const color=(value,fallback)=>typeof value==='string'&&/^#[0-9a-f]{6}$/i.test(value)?value.toLowerCase():fallback;
 const bounded=(value,fallback,min,max)=>Number.isFinite(value)?Math.max(min,Math.min(max,value)):fallback;
@@ -4993,10 +4992,10 @@ function normalizePaint(value){
 }
 // Read the geometry only. OBJ material and texture paths are never loaded.
 function parseWorkshopOBJ(source){
- if(typeof source!=='string'||source.length>MAX_OBJ_SIZE)return null;
+ if(typeof source!=='string')return null;
  const positions=[],indices=[];
- for(const line of source.split(/\r?\n/)){
-  const [kind,...fields]=line.split('#',1)[0].trim().split(/\s+/);
+ for(const [,kind,line] of source.matchAll(/^[^\S\r\n]*(v|f)(?=[^\S\r\n]|#|$)([^#\r\n]*)/gm)){
+  const fields=line.trim().split(/\s+/);
   if(kind==='v'){
    const vertex=fields.slice(0,3).map(Number);
    if(vertex.length!==3||vertex.some(n=>!Number.isFinite(n)||Math.abs(n)>1e7)||positions.length>=9000)return null;
@@ -5030,10 +5029,14 @@ function normalizeWorkshopModel(value){
   size:bounded(value.size,.85,.15,2),rotation:bounded(value.rotation,0,-180,180),color:color(value.color,'#77836a')};
 }
 async function importWorkshopModel(file){
- if(!/\.obj$/i.test(file.name)||file.size>MAX_OBJ_SIZE)throw Error('Vyber soubor OBJ do 64 kB.');
- const model=normalizeWorkshopModel({source:await file.text(),name:file.name});
- if(!model)throw Error('OBJ musí obsahovat platné plochy, nejvýše 3 000 vrcholů a 6 000 trojúhelníků.');
- return model;
+ if(!/\.obj$/i.test(file.name))throw Error('Vyber soubor OBJ.');
+ const geometry=parseWorkshopOBJ(await file.text());
+ if(!geometry)throw Error('OBJ musí obsahovat platné plochy, nejvýše 3 000 vrcholů a 6 000 trojúhelníků.');
+ // Store only the rendered mesh, so unused texture data and comments do not fill the save.
+ const {positions,indices}=geometry,lines=[];
+ for(let i=0;i<positions.length;i+=3)lines.push(`v ${positions[i]} ${positions[i+1]} ${positions[i+2]}`);
+ for(let i=0;i<indices.length;i+=3)lines.push(`f ${indices[i]+1} ${indices[i+1]+1} ${indices[i+2]+1}`);
+ return normalizeWorkshopModel({source:lines.join('\n'),name:file.name});
 }
 function workshopItems(appearance){
  return [...SKINS.filter(s=>s.id===appearance.skin),...ACCESSORIES.filter(a=>appearance[a.id]),...(appearance.model?[MODEL_LICENSE]:[])];
@@ -11014,7 +11017,7 @@ function renderWorkshopShop(paintControls){
  <fieldset><legend>3D doplňky</legend>
  ${ACCESSORIES.map(item=>`<label class="custom-check"><input type="checkbox" id="custom-${item.id}" ${customDraft[item.id]?'checked':''}>${item.name}<small>${cosmeticPrice(item)}</small></label>`).join('')}</fieldset>
  <fieldset><legend>Vlastní 3D model</legend><p>Odemčení importu · ${cosmeticPrice(MODEL_LICENSE)}</p>
- <p class="custom-note">Jednorázové odemčení. Na každý tank lze umístit jeden model OBJ do 64 kB. Použije se geometrie a zvolená barva.</p>
+ <p class="custom-note">Jednorázové odemčení. Na každý tank lze umístit jeden model OBJ. Použije se geometrie a zvolená barva.</p>
  <label>Přidat model OBJ<input id="custom-model-file" type="file" accept=".obj"></label>
  <p id="custom-model-status" role="status">${esc(customImporting==='model'?customImportStatus:'')}</p>
  ${model?`<strong class="custom-model-label" translate="no">${esc(model.name)}</strong>
