@@ -902,6 +902,10 @@ button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid #efd
 .mp-match-info strong{color:#ecd7b3}
 .mp-match-info span{margin-left:auto}
 #mp-status{color:var(--accent-text);line-height:1.7;font-size:13px;min-height:20px}
+#fps-counter{
+  position:fixed;left:6px;top:4px;z-index:9999;pointer-events:none;padding:2px 6px;border-radius:3px;
+  background:#000a;color:#c8f0b4;font:11px/1.3 monospace;
+}
 #network-hud{
   position:absolute;right:25px;top:85px;background:#14251be6;border:1px solid #8dbd9b77;border-radius:4px;padding:10px 13px;
   color:#a9e4cc;font:10px monospace;z-index:5;pointer-events:none;max-width:40vw;line-height:1.6;
@@ -1815,6 +1819,8 @@ VYPNUTO	OFF
 Grafika	Graphics
 Při nízkém výkonu hra sníží rozlišení 3D obrazu. Úsporná grafika vypíná stíny.	The game lowers 3D resolution when performance is low. Low quality disables shadows.
 Automatická	Automatic
+Počítadlo FPS	FPS counter
+Ukáže snímky za sekundu v levém horním rohu	Shows frames per second in the top left corner
 Vysoká	High
 Úsporná	Low
 Citlivost myši	Mouse sensitivity
@@ -8639,10 +8645,12 @@ function gableGeometry(w,d,h,rise,alongX){
   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(v,3));
   geo.computeVertexNormals();return geo;
 }
+// Automatic starts as sharp as high and only lowers the render resolution
+// (see observeFrame) while the frame rate is actually low.
 const GRAPHICS={
-  auto:{maxRatio:1,maxPixels:1600*900,shadowSize:1024,shadowInterval:1/20},
-  high:{maxRatio:1.4,maxPixels:2560*1440,shadowSize:2048,shadowInterval:1/30},
-  low:{maxRatio:.85,maxPixels:1280*720,shadowSize:0,shadowInterval:0}
+  auto:{maxRatio:1.4,maxPixels:2560*1440,shadowSize:2048},
+  high:{maxRatio:1.4,maxPixels:2560*1440,shadowSize:2048},
+  low:{maxRatio:.85,maxPixels:1280*720,shadowSize:0}
 };
 const RENDER_SCALES=[1,.82,.67,.55];
 class Renderer {
@@ -8679,14 +8687,13 @@ class Renderer {
     this.hitPosition = new THREE.Vector3();
     this.unitScale = new THREE.Vector3(1, 1, 1);
     try {
-      this.renderer = new THREE.WebGLRenderer({ canvas, antialias: quality==='high', alpha: false, powerPreference: 'high-performance' });
+      this.renderer = new THREE.WebGLRenderer({ canvas, antialias: quality!=='low', alpha: false, powerPreference: 'high-performance' });
     }
     catch (error) { onError?.(error); throw error; }
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.13;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.renderer.shadowMap.autoUpdate = false;
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(43, 1, .06, 2100);
     this.aimCamera = this.camera.clone();
@@ -8766,7 +8773,6 @@ class Renderer {
     this.zoneMeshes.clear();
     this.shellMeshes.clear();
     this.hangarTank = null;
-    this.lastShadowAt = -Infinity;
     this.terrain = null;
     this.sky = null;
     this.surfaceMask?.dispose(); this.surfaceMask = null;
@@ -8821,7 +8827,6 @@ class Renderer {
       previous.removeFromParent();
       this.disposeRenderTrees(previous);
     }
-    this.lastShadowAt=-Infinity;
   }
 
   updateWorkshopCamera(){
@@ -8919,7 +8924,7 @@ class Renderer {
     this.renderer.toneMappingExposure = theme.exposure;
     // The land runs out to the horizon, so the view distance reaches past it.
     for (const c of [this.camera, this.aimCamera]) { c.far = 6000; c.updateProjectionMatrix(); }
-    this.sky = skyDome(skyTexture(map.theme || 'valley', theme, this.quality === 'high' ? 4096 : 2048));
+    this.sky = skyDome(skyTexture(map.theme || 'valley', theme, this.detailed() ? 4096 : 2048));
     this.world.add(this.sky);
     this.buildTerrain(map); this.buildBridges(map); this.buildProps(map); this.buildZones(game.zones);
     this.resetView(game);
@@ -8927,7 +8932,6 @@ class Renderer {
   }
 
   resetView(game) {
-    this.gunPrediction = null;
     this.cameraYaw = (game.player?.angle || 0) + Math.PI;
     this.chaseBoom = null;
     this.savedSightAim = null;
@@ -8972,7 +8976,7 @@ class Renderer {
   }
 
   buildTerrain(map) {
-    const size = map.size || 1000, segments = this.quality === 'high' ? 300 : 200;
+    const size = map.size || 1000, segments = this.detailed() ? 300 : 200;
     const geo = terrainGeometry(map, segments);
     this.paintGround(geo, map);
     const tex = groundTexture().clone();
@@ -9021,7 +9025,7 @@ class Renderer {
     // Cover the networks a little past the battlefield, where they run on into the apron.
     let reach = 0;
     for (const path of [...vis.roads, ...vis.rails, ...vis.streets]) for (const p of path.pts) reach = Math.max(reach, Math.abs(p[0]), Math.abs(p[1]));
-    const half = map.size / 2, E = clamp(reach + 30, half + 60, half + 600), N = this.quality === 'high' ? 2048 : 1024, texel = 2 * E / N, R = SURFACE_RANGE;
+    const half = map.size / 2, E = clamp(reach + 30, half + 60, half + 600), N = this.detailed() ? 2048 : 1024, texel = 2 * E / N, R = SURFACE_RANGE;
     const canvas = document.createElement('canvas'); canvas.width = canvas.height = N;
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = '#000'; ctx.fillRect(0, 0, N, N);
@@ -9092,7 +9096,7 @@ class Renderer {
     for (let j = 1; j < zs.length; j++) ring.push([half, zs[j]]);
     for (let i = xs.length - 2; i >= 0; i--) ring.push([xs[i], half]);
     for (let j = zs.length - 2; j > 0; j--) ring.push([-half, zs[j]]);
-    const P = ring.length, K = this.quality === 'high' ? 34 : 22, R = 5400, size = half * 2;
+    const P = ring.length, K = this.detailed() ? 34 : 22, R = 5400, size = half * 2;
     const pos = new Float32Array(P * (K + 1) * 3), uv = new Float32Array(P * (K + 1) * 2), index = [];
     for (let k = 0; k <= K; k++) {
       const s = (half + (R - half) * Math.pow(k / K, 2.1)) / half;
@@ -9117,7 +9121,7 @@ class Renderer {
 
   // Woods, rocks or rooftops beyond the boundary, so the land does not look empty.
   buildBackdrop(map) {
-    const kind = this.theme.backdrop, half = map.size / 2, low = this.quality !== 'high', rng = random(4401 + map.size);
+    const kind = this.theme.backdrop, half = map.size / 2, low = !this.detailed(), rng = random(4401 + map.size);
     const patch = (x, z) => Math.sin(x * .0041 + 1.3) * Math.sin(z * .0047 + .4) + .6 * Math.sin(x * .011 - z * .008 + 2) + .3 * Math.sin(x * .031 + z * .027);
     const sample = (n, near, far, accept) => {
       const out = [];
@@ -9291,7 +9295,7 @@ class Renderer {
 
   buildClutter(map) {
     const rng = random(6127), desert = map.biome === 'desert', winter = map.biome === 'winter';
-    const count = this.quality === 'high' ? 3600 : 1200, p = [], n = [];
+    const count = this.detailed() ? 3600 : 1200, p = [], n = [];
     for (const angle of [0, Math.PI / 3, Math.PI * 2 / 3]) {
       const x = Math.cos(angle) * .5, z = Math.sin(angle) * .5;
       p.push(-x, 0, -z, x, 0, z, .03, 1, -.03); n.push(0, 1, 0, 0, 1, 0, 0, 1, 0);
@@ -10044,11 +10048,6 @@ class Renderer {
     }
     this.updateEffects(dt); this.flash.intensity *= Math.exp(-dt * 19);
     if (this.sky) this.sky.position.copy(this.camera.position);
-    const shadows=this.renderer.shadowMap;
-    if(shadows.enabled&&this.clock-this.lastShadowAt>=GRAPHICS[this.quality].shadowInterval){
-      shadows.needsUpdate=true;
-      this.lastShadowAt=this.clock;
-    }
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -10136,14 +10135,10 @@ class Renderer {
 
   // The second marker is the first impact of the actual ballistic trajectory,
   // including intervening hills and cover, not a guessed point at cursor range.
-  getGunMarker(game, aim = this.aimFromCenter(), now = performance.now()) {
+  getGunMarker(game, aim = this.aimFromCenter()) {
     const p = game?.player;
     if (!p?.alive || !aim) return { x: 0, y: 0, visible: false, aligned: false };
-    // Cache the world-space impact at 30 Hz, but project it on every frame.
-    if(this.gunPrediction?.game!==game||now-this.gunPrediction.time>=32){
-      this.gunPrediction={game,time:now,impact:game.predictShot(p)};
-    }
-    const {impact}=this.gunPrediction,solution=game.gunSolution(p);
+    const impact = game.predictShot(p), solution = game.gunSolution(p);
     const delta = Math.atan2(Math.sin(solution.desiredYaw - (p.turretAngle ?? p.angle)), Math.cos(solution.desiredYaw - (p.turretAngle ?? p.angle)));
     const point = new THREE.Vector3(impact.x, impact.y, impact.z).project(this.camera);
     // Prediction distance starts at the muzzle, but selected range starts at
@@ -10376,14 +10371,45 @@ class Renderer {
     this.frameMs=0;this.frames=0;this.slowFrames=0;
   }
 
+  // Judged once per second of live play: a slow second lowers the render
+  // resolution a step, a run of smooth seconds raises it again. Falling back
+  // soon after a raise doubles the wait, so a machine on the edge settles
+  // instead of flickering between two sizes.
+  // Map detail (grass, woods, terrain mesh, sky and road textures) is built
+  // once per battle. Automatic builds it in full unless the previous battle
+  // had to drop to the shadowless resolution steps.
+  detailed() {
+    return this.quality==='high'||(this.quality==='auto'&&this.renderTier<2);
+  }
+
+  // A battle's first seconds stall on shader and texture uploads; they say
+  // nothing about the frame rate of actual play, so they are not judged.
+  startObserving() {
+    this.warmupMs=2000;
+    this.resetFrameBudget();
+  }
+
   observeFrame(elapsed) {
-    if(elapsed<=0||this.renderTier===RENDER_SCALES.length-1)return;
+    if(elapsed<=0)return;
+    if(this.warmupMs>0){this.warmupMs-=elapsed;return;}
     this.frameMs+=Math.min(elapsed,250);
     this.frames++;
     if(elapsed>22)this.slowFrames++;
     if(this.frameMs<1000)return;
-    if(this.frames*1000<48*this.frameMs&&this.slowFrames>this.frames*.35){
-      this.renderTier++;
+    const fps=this.frames*1000/this.frameMs;
+    const slow=fps<48&&this.slowFrames>this.frames*.35,smooth=fps>=55&&this.slowFrames<=this.frames*.05;
+    this.sinceRaise++;
+    if(slow){
+      this.smoothSeconds=0;
+      if(this.renderTier<RENDER_SCALES.length-1){
+        if(this.sinceRaise<10)this.raiseAfter=Math.min(this.raiseAfter*2,64);
+        this.renderTier++;
+        this.updateGraphics();
+      }
+    }else if(!smooth)this.smoothSeconds=0;
+    else if(this.renderTier>0&&++this.smoothSeconds>=this.raiseAfter){
+      this.smoothSeconds=0;this.sinceRaise=0;
+      this.renderTier--;
       this.updateGraphics();
     }
     this.resetFrameBudget();
@@ -10392,6 +10418,7 @@ class Renderer {
   setQuality(quality) {
     this.quality=Object.hasOwn(GRAPHICS,quality)?quality:'auto';
     this.renderTier=0;
+    this.smoothSeconds=0;this.raiseAfter=4;this.sinceRaise=Infinity;
     this.resetFrameBudget();
     this.updateGraphics();
   }
@@ -10406,7 +10433,6 @@ class Renderer {
     if(useShadows)shadow.mapSize.set(shadowSize,shadowSize);
     this.sun.castShadow=useShadows;
     this.renderer.shadowMap.enabled=useShadows;
-    this.lastShadowAt=-Infinity;
     this.resize();
   }
   rotateCamera(dx, dy, { sensitivity = 1 } = {}) {
@@ -10878,7 +10904,7 @@ const {AudioEngine} = MODULES["audio.js"];
 const {keyboardInput,bindMouseButtons,CruiseControl,MouseLock,edgeLookDelta} = MODULES["controls.js"];
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const STORAGE='iron-front-progress-v1',
-  defaults={xp:0,unlocked:['pz4f2','m4a1','t341941'],selected:'pz4f2',nation:'de',map:'valley',battles:0,wins:0,kills:0,settings:{sound:true,quality:'auto',sensitivity:1}};
+  defaults={xp:0,unlocked:['pz4f2','m4a1','t341941'],selected:'pz4f2',nation:'de',map:'valley',battles:0,wins:0,kills:0,settings:{sound:true,quality:'auto',sensitivity:1,fps:false}};
 let progress,lastSavedProgress=null;
 try{
   lastSavedProgress=localStorage.getItem(STORAGE);
@@ -11273,7 +11299,7 @@ function showGuide(){
 }
 function showSettings(){
   if(game)paused=true;
-  openModal('settings',`<span class="eyebrow">NASTAVENÍ / TVŮJ POLYGON</span><h2>Připravit k boji.</h2><div class="settings-row"><div>Jazyk<p>Automaticky podle domény; ruční volba zůstane uložená.</p></div><select data-language-picker aria-label="Jazyk"><option value="auto" ${getLanguagePreference()==='auto'?'selected':''}>Automaticky</option><option value="cs" ${getLanguagePreference()==='cs'?'selected':''}>Čeština</option><option value="en" ${getLanguagePreference()==='en'?'selected':''}>English</option></select></div><div class="settings-row"><div><label for="theme-select">Motiv</label><p>Barvy nabídek, hangáru a oken</p></div><select id="theme-select">${[['default','Výchozí'],['light','Světlý'],['m90','Švédské M90']].map(([v,n])=>`<option value="${v}" ${getTheme()===v?'selected':''}>${n}</option>`).join('')}</select></div><div class="settings-row"><div>Zvuk<p>Motor, výstřely a události bitvy</p></div><button class="toggle" id="sound-toggle">${progress.settings.sound?'ZAPNUTO':'VYPNUTO'}</button></div><div class="settings-row"><div>Grafika<p>Při nízkém výkonu hra sníží rozlišení 3D obrazu. Úsporná grafika vypíná stíny.</p></div><select id="quality-select"><option value="auto" ${progress.settings.quality==='auto'?'selected':''}>Automatická</option><option value="high" ${progress.settings.quality==='high'?'selected':''}>Vysoká</option><option value="low" ${progress.settings.quality==='low'?'selected':''}>Úsporná</option></select></div><div class="settings-row"><div><label for="sensitivity-select">Citlivost myši</label><p>Stejný směr myši a pohledu; jemnější míření při přiblížení</p></div><select id="sensitivity-select">${[[.5,"Nízká"],[1,"Normální"],[1.5,"Vyšší"],[2,"Vysoká"]].map(([v,n])=>`<option value="${v}" ${Number(progress.settings.sensitivity)===v?"selected":""}>${n}</option>`).join("")}</select></div>${accountUI?.settingsRow()||''}<div class="settings-row"><div>Lokální postup<p>${progress.battles} bitev · ${progress.kills} zničených cílů · ${progress.unlocked.length}/${TANKS.length} strojů</p></div><button class="secondary-button" id="export-save">Zálohovat</button></div><div class="settings-row"><div>Obnovit zálohu<p>Nahradí aktuální výzkum uloženým postupem</p></div><label class="secondary-button" style="cursor:pointer">Načíst soubor<input id="import-save" type="file" accept="application/json,.json" hidden></label></div><div class="modal-actions"><button class="primary-button" data-action="close">HOTOVO →</button></div>`);
+  openModal('settings',`<span class="eyebrow">NASTAVENÍ / TVŮJ POLYGON</span><h2>Připravit k boji.</h2><div class="settings-row"><div>Jazyk<p>Automaticky podle domény; ruční volba zůstane uložená.</p></div><select data-language-picker aria-label="Jazyk"><option value="auto" ${getLanguagePreference()==='auto'?'selected':''}>Automaticky</option><option value="cs" ${getLanguagePreference()==='cs'?'selected':''}>Čeština</option><option value="en" ${getLanguagePreference()==='en'?'selected':''}>English</option></select></div><div class="settings-row"><div><label for="theme-select">Motiv</label><p>Barvy nabídek, hangáru a oken</p></div><select id="theme-select">${[['default','Výchozí'],['light','Světlý'],['m90','Švédské M90']].map(([v,n])=>`<option value="${v}" ${getTheme()===v?'selected':''}>${n}</option>`).join('')}</select></div><div class="settings-row"><div>Zvuk<p>Motor, výstřely a události bitvy</p></div><button class="toggle" id="sound-toggle">${progress.settings.sound?'ZAPNUTO':'VYPNUTO'}</button></div><div class="settings-row"><div>Grafika<p>Při nízkém výkonu hra sníží rozlišení 3D obrazu. Úsporná grafika vypíná stíny.</p></div><select id="quality-select"><option value="auto" ${progress.settings.quality==='auto'?'selected':''}>Automatická</option><option value="high" ${progress.settings.quality==='high'?'selected':''}>Vysoká</option><option value="low" ${progress.settings.quality==='low'?'selected':''}>Úsporná</option></select></div><div class="settings-row"><div>Počítadlo FPS<p>Ukáže snímky za sekundu v levém horním rohu</p></div><button class="toggle" id="fps-toggle">${progress.settings.fps?'ZAPNUTO':'VYPNUTO'}</button></div><div class="settings-row"><div><label for="sensitivity-select">Citlivost myši</label><p>Stejný směr myši a pohledu; jemnější míření při přiblížení</p></div><select id="sensitivity-select">${[[.5,"Nízká"],[1,"Normální"],[1.5,"Vyšší"],[2,"Vysoká"]].map(([v,n])=>`<option value="${v}" ${Number(progress.settings.sensitivity)===v?"selected":""}>${n}</option>`).join("")}</select></div>${accountUI?.settingsRow()||''}<div class="settings-row"><div>Lokální postup<p>${progress.battles} bitev · ${progress.kills} zničených cílů · ${progress.unlocked.length}/${TANKS.length} strojů</p></div><button class="secondary-button" id="export-save">Zálohovat</button></div><div class="settings-row"><div>Obnovit zálohu<p>Nahradí aktuální výzkum uloženým postupem</p></div><label class="secondary-button" style="cursor:pointer">Načíst soubor<input id="import-save" type="file" accept="application/json,.json" hidden></label></div><div class="modal-actions"><button class="primary-button" data-action="close">HOTOVO →</button></div>`);
 }
 function pause(){
   if(!game||game.finished)return;
@@ -11789,6 +11815,12 @@ document.addEventListener('click',e=>{
    save();
    b.textContent=progress.settings.sound?'ZAPNUTO':'VYPNUTO';
  }
+ if(b.id==='fps-toggle'){
+   progress.settings.fps=!progress.settings.fps;
+   showFpsCounter(progress.settings.fps);
+   save();
+   b.textContent=progress.settings.fps?'ZAPNUTO':'VYPNUTO';
+ }
  if(b.id==='export-save'){
    const blob=new Blob([JSON.stringify({...progress,format:'iron-front-save-v1'},null,2)],{type:'application/json'}),
      url=URL.createObjectURL(blob),a=document.createElement('a');
@@ -11976,6 +12008,7 @@ window.addEventListener('blur',()=>{
 document.addEventListener('visibilitychange',()=>{
   wasLiveFrame=false;
   lastTime=performance.now();
+  resetFpsCounter();
   multiplayerUI?.room?.setHidden(document.hidden);
   if(document.hidden&&game&&game.mode!=='multiplayer'&&!paused&&!game.finished)pause();
 });
@@ -12002,6 +12035,26 @@ for(const name of ['pointerup','pointercancel','lostpointercapture'])$('#touch-f
 });
 $('#touch-scope').addEventListener('click',()=>{if(!paused)scope=!scope;});
 let wasLiveFrame=false;
+// Counts the frames the game actually draws, so it also shows the lower
+// frame rate the menu and pause screen are limited to.
+const fpsCounter=document.createElement('div');
+fpsCounter.id='fps-counter';fpsCounter.translate=false;fpsCounter.hidden=true;
+document.body.append(fpsCounter);
+let fpsFrames=0,fpsSince=0;
+function resetFpsCounter(){fpsFrames=0;fpsSince=performance.now();}
+function showFpsCounter(on){
+  fpsCounter.hidden=!on;
+  fpsCounter.textContent='… FPS';
+  resetFpsCounter();
+}
+function countFps(now){
+  if(fpsCounter.hidden)return;
+  fpsFrames++;
+  if(now-fpsSince<500)return;
+  fpsCounter.textContent=Math.round(fpsFrames*1000/(now-fpsSince))+' FPS';
+  fpsFrames=0;fpsSince=now;
+}
+showFpsCounter(!!progress.settings.fps);
 function loop(now){
   requestAnimationFrame(loop);
   if(!renderer||document.hidden)return;
@@ -12009,9 +12062,10 @@ function loop(now){
   const elapsed=Math.max(0,now-lastTime),interval=game?(live?0:80):32;
   if(elapsed<interval)return;
   const dt=Math.min(elapsed/1000,.05);lastTime=now;
+  countFps(now);
   try{
     if(live){
-      if(wasLiveFrame)renderer.observeFrame(elapsed);else renderer.resetFrameBudget();
+      if(wasLiveFrame)renderer.observeFrame(elapsed);else renderer.startObserving();
     }
     wasLiveFrame=live;
     if(game&&!paused&&!game.finished&&!touchAim&&document.pointerLockElement!==canvas){
@@ -12051,7 +12105,7 @@ function loop(now){
       reticle.style.left=(touchAim?pointer.x:rect.left+rect.width/2)+'px';
       reticle.style.top=(touchAim?pointer.y:rect.top+rect.height/2)+'px';
       reticle.hidden=cinematic||!game.player.alive||paused||keys.has('KeyC');
-      const gun=!reticle.hidden&&lastAim&&!game.player.flight&&!game.player.drone?renderer.getGunMarker(game,lastAim,now):null;
+      const gun=!reticle.hidden&&lastAim&&!game.player.flight&&!game.player.drone?renderer.getGunMarker(game,lastAim):null;
       const scoped=view.scope&&!cinematic&&!paused;
       // Third person: the outer ring is the aim, the inner ring the gun. In the
       // scope the reticle itself follows the gun and a grey ring marks the aim.
