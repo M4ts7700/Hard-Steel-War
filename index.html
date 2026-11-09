@@ -1408,7 +1408,7 @@ try{const theme=localStorage.getItem('hsw-theme');if(theme==='light'||theme==='m
 </div>
 <footer><span>HARD STEEL WAR <b> / </b> EXPERIMENTÁLNÍ TANKOVÝ POLYGON</span><span class="text-button">OFFLINE EDICE · VŠE V TOMTO SOUBORU</span><button class="text-button" data-view="guide">Ovládání a mechaniky ↗</button></footer></div>
 </main>
-<section id="battle" hidden><div id="battle-scene"></div><div class="battle-top"><button id="pause-button" class="hud-button">Ⅱ <span>ESC</span></button><div class="battle-score"><div class="score-row"><span class="team-blue">SPOJENCI <b id="friendly-score">2000</b></span><span id="battle-time">12:00</span><span class="team-red"><b id="enemy-score">2000</b> NEPŘÍTEL</span></div><div class="ticket-bars"><i id="friendly-bar"></i><i id="enemy-bar"></i></div><div id="zone-hud" class="zone-hud"></div></div><span class="battle-map-label" id="battle-map-label"></span></div><div id="network-hud" hidden></div><section id="server-chat" hidden><button id="server-chat-toggle" type="button">CHAT · ENTER</button><div id="server-chat-body" hidden><div id="server-chat-log" role="log" aria-label="Chat" aria-live="polite"></div><form id="server-chat-form"><input id="server-chat-input" aria-label="Zpráva" placeholder="Napiš zprávu…" maxlength="180" autocomplete="off"><button type="submit">ODESLAT</button></form><small>Enter · odeslat / Esc · zavřít</small></div></section><aside id="team-roster" hidden></aside><div id="name-tags"></div><div id="zombie-hud" hidden></div><div id="scope-overlay" class="scope-overlay" hidden><canvas id="scope-canvas" aria-hidden="true"></canvas></div><div id="view-status" class="view-status"></div><button id="camera-mode-button" class="camera-mode-button">[SHIFT] 1. OSOBA</button><div id="gun-marker" hidden></div><div id="reticle"><span></span></div><div id="hit-notice" aria-live="polite"></div><div id="kill-confirmation" class="kill-confirmation" hidden><span>✦</span><strong>CÍL ZNIČEN</strong><small></small></div><div id="kill-feed" class="kill-feed"></div><div class="battle-objective" id="battle-objective">OBSAĎ A UDRŽ ZÓNY</div><div id="damage-flash"></div><div id="nuke-flash"></div><button id="nuke-button" disabled>☢ BODY 0 / 10</button><div class="battle-bottom"><div class="module-panel"><div class="hud-caption"><span id="battle-tank-name"></span><span id="crew-label">POSÁDKA</span></div><div class="module-layout"><div id="tank-diagram" class="tank-diagram"><div class="track left"></div><div class="hull"><div class="engine-block"></div><div class="turret-block"><div class="gun-block"></div></div><div class="ammo-block"></div></div><div class="track right"></div></div><div id="module-bars"></div></div><div class="module-actions"><button id="repair-button">[F] Opravit</button><button id="smoke-button">[G] Kouř <span>3</span></button></div><button id="secondary-button" class="missile-action" hidden>[R] 75 mm · PŘIPRAVENO</button><button id="missile-button" class="missile-action" hidden>[2] RAKETA 4/4</button></div><div class="driving-hud"><small id="cruise-status" hidden></small><div class="speed"><strong id="speed-value">0</strong><span>km/h</span></div><div class="ammo-hud"><div class="shell-icon"></div><div><strong id="ammo-name">APHE</strong><small id="reload-label">PŘIPRAVENO</small><div class="reload-track"><i id="reload-bar"></i></div></div><span id="reload-count"></span></div><div class="mg-hud"><span id="mg-status">MEZERNÍK · KULOMET</span><div><i id="mg-heat"></i></div></div><div class="key-hints"><span><kbd>W A S D</kbd> Pohyb</span><span><kbd>MYŠ</kbd> Míření</span><span><kbd>SHIFT</kbd> Zaměřovač</span><span><kbd>C</kbd> Rozhlížení</span></div></div><div class="minimap-wrap"><canvas id="minimap" width="300" height="300" aria-label="Taktická mapa bojiště"></canvas></div></div><div id="respawn-panel" hidden><span class="eyebrow">STROJ VYŘAZEN</span><h2>Bitva ještě nekončí.</h2><p id="death-killer" translate="no"></p><p id="respawn-text">Připravuje se záložní tank…</p><button id="respawn-button" class="primary-button">ZPĚT DO BOJE →</button></div><div class="touch-controls"><div class="touch-pad"><button data-key="KeyW">▲</button><button data-key="KeyA">◀</button><button data-key="KeyS">▼</button><button data-key="KeyD">▶</button></div><div class="touch-aim-actions"><button id="touch-scope">ZAMĚŘOVAČ</button><button id="touch-fire">PALBA</button></div></div></section>
+<section id="battle" hidden><div id="battle-scene"></div><div class="battle-top"><button id="pause-button" class="hud-button">Ⅱ</button><div class="battle-score"><div class="score-row"><span class="team-blue">SPOJENCI <b id="friendly-score">2000</b></span><span id="battle-time">12:00</span><span class="team-red"><b id="enemy-score">2000</b> NEPŘÍTEL</span></div><div class="ticket-bars"><i id="friendly-bar"></i><i id="enemy-bar"></i></div><div id="zone-hud" class="zone-hud"></div></div><span class="battle-map-label" id="battle-map-label"></span></div><div id="network-hud" hidden></div><section id="server-chat" hidden><button id="server-chat-toggle" type="button">CHAT · ENTER</button><div id="server-chat-body" hidden><div id="server-chat-log" role="log" aria-label="Chat" aria-live="polite"></div><form id="server-chat-form"><input id="server-chat-input" aria-label="Zpráva" placeholder="Napiš zprávu…" maxlength="180" autocomplete="off"><button type="submit">ODESLAT</button></form></div></section><aside id="team-roster" hidden></aside><div id="name-tags"></div><div id="zombie-hud" hidden></div><div id="scope-overlay" class="scope-overlay" hidden><canvas id="scope-canvas" aria-hidden="true"></canvas></div><div id="view-status" class="view-status"></div><button id="camera-mode-button" class="camera-mode-button">1. OSOBA</button><div id="gun-marker" hidden></div><div id="reticle"><span></span></div><div id="hit-notice" aria-live="polite"></div><div id="kill-confirmation" class="kill-confirmation" hidden><span>✦</span><strong>CÍL ZNIČEN</strong><small></small></div><div id="kill-feed" class="kill-feed"></div><div class="battle-objective" id="battle-objective">OBSAĎ A UDRŽ ZÓNY</div><div id="damage-flash"></div><div id="nuke-flash"></div><button id="nuke-button" disabled>☢ BODY 0 / 10</button><div class="battle-bottom"><div class="module-panel"><div class="hud-caption"><span id="battle-tank-name"></span><span id="crew-label">POSÁDKA</span></div><div class="module-layout"><div id="tank-diagram" class="tank-diagram"><div class="track left"></div><div class="hull"><div class="engine-block"></div><div class="turret-block"><div class="gun-block"></div></div><div class="ammo-block"></div></div><div class="track right"></div></div><div id="module-bars"></div></div><div class="module-actions"><button id="repair-button">[F] Opravit</button><button id="smoke-button">[G] Kouř <span>3</span></button></div><button id="secondary-button" class="missile-action" hidden>[R] 75 mm · PŘIPRAVENO</button><button id="missile-button" class="missile-action" hidden>[2] RAKETA 4/4</button></div><div class="driving-hud"><small id="cruise-status" hidden></small><div class="speed"><strong id="speed-value">0</strong><span>km/h</span></div><div class="ammo-hud"><div class="shell-icon"></div><div><strong id="ammo-name">APHE</strong><small id="reload-label">PŘIPRAVENO</small><div class="reload-track"><i id="reload-bar"></i></div></div><span id="reload-count"></span></div><div class="mg-hud"><span id="mg-status">KULOMET</span><div><i id="mg-heat"></i></div></div></div><div class="minimap-wrap"><canvas id="minimap" width="300" height="300" aria-label="Taktická mapa bojiště"></canvas></div></div><div id="respawn-panel" hidden><span class="eyebrow">STROJ VYŘAZEN</span><h2>Bitva ještě nekončí.</h2><p id="death-killer" translate="no"></p><p id="respawn-text">Připravuje se záložní tank…</p><button id="respawn-button" class="primary-button">ZPĚT DO BOJE →</button></div><div class="touch-controls"><div class="touch-pad"><button data-key="KeyW">▲</button><button data-key="KeyA">◀</button><button data-key="KeyS">▼</button><button data-key="KeyD">▶</button></div><div class="touch-aim-actions"><button id="touch-scope">ZAMĚŘOVAČ</button><button id="touch-fire">PALBA</button></div></div></section>
 <div id="modal" class="modal-backdrop" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button id="close-modal" class="modal-close" aria-label="Zavřít">×</button><div id="modal-content"></div></section></div>
 <section id="workshop" hidden><div id="custom-preview"></div><aside><span class="eyebrow">DÍLNA / VLASTNÍ VZHLED</span><h2 id="custom-title"></h2><p>Vyber nálepku přímo na 3D tanku. Táhni po pancíři, rohy měň velikost, horním úchytem otáčej. Pravým tlačítkem si tank prohlédni ze všech stran.</p><div id="custom-form"></div><button id="custom-reset" class="text-button">Obnovit původní vzhled</button><div class="custom-actions"><button id="custom-save" class="primary-button">ULOŽIT VZHLED</button><button id="custom-cancel" class="secondary-button">ZRUŠIT</button></div><small>Vzhled je zdarma a nemění bojové vlastnosti. Ukládá se pro každý tank zvlášť v tomto prohlížeči.</small></aside></section><div id="toast" role="status"></div>
 </div>
@@ -1955,6 +1955,13 @@ VLNA	WAVE
 ZBÝVÁ	REMAINING
 ŠROTU	SCRAP
 AUTO KULOMET AKTIVNÍ	AUTO MACHINE GUN ACTIVE
+PŘEŽIJ HORDU · PŘEJÍŽDĚJ ZOMBÍKY	SURVIVE THE HORDE · RUN OVER ZOMBIES
+KULOMET	MACHINE GUN
+VOLNÝ POHLED	FREE LOOK
+OPTIKA STŘELCE	GUNNER OPTICS
+1. OSOBA	GUNNER VIEW
+3. OSOBA	THIRD PERSON
+Záložní tank je připraven.	Reserve ready.
 MEZERNÍK · KULOMET / LMB · DĚLO	SPACE · MACHINE GUN / LMB · CANNON
 Načítám…	Loading…
 OBNOVIT	REFRESH
@@ -4410,7 +4417,7 @@ class Game {
     if(sourceId==='player'&&t.team!==this.player.team){
       this.stats.kills++;this.killStreak++;this._recalculateXP();
       if(this.killStreak>=this.nuke.required&&this.nuke.state==='locked'){
-        this.nuke.ready=true;this.nuke.state='ready';this._message('NUKE PŘIPRAVEN · stiskni N pro jaderný úder');
+        this.nuke.ready=true;this.nuke.state='ready';this._message('NUKE PŘIPRAVEN');
       }
     }
     const shooter=this.tanks.find(o=>o.id===sourceId),sourceNick=shooter?.nick||'',targetNick=t.nick||'';
@@ -10404,7 +10411,7 @@ function startBattle(){
   pointer.y=innerHeight*.48;
   pointer.down=false;
   $('#battle-map-label').textContent=game.map.name.toUpperCase();
-  $('#battle-objective').textContent=game.mode==='zombies'?'PŘEŽIJ HORDU · MEZERNÍK KULOMET · PŘEJÍŽDĚJ ZOMBÍKY':game.mode==='deathmatch'?'TÝMOVÝ DEATHMATCH · PRVNÍ TÝM S 30 KILLY VYHRÁVÁ':'OBSAĎ A UDRŽ ZÓNY';
+  $('#battle-objective').textContent=game.mode==='zombies'?'PŘEŽIJ HORDU · PŘEJÍŽDĚJ ZOMBÍKY':game.mode==='deathmatch'?'TÝMOVÝ DEATHMATCH · PRVNÍ TÝM S 30 KILLY VYHRÁVÁ':'OBSAĎ A UDRŽ ZÓNY';
   $('#zombie-hud').hidden=game.mode!=='zombies';
   $('#nuke-button').hidden=game.mode==='zombies';
   $('.battle-score').hidden=game.mode==='zombies';
@@ -10511,12 +10518,12 @@ function updateHUD(){
   roster.hidden=game.mode!=='multiplayer'||paused||!keys.has('Tab');
   if(!roster.hidden)roster.innerHTML='<strong>'+translate('TÝMY · TAB')+'</strong><div>'+[0,1].map(team=>'<section><h3>'+translate(team===0?'SPOJENCI':'NEPŘÍTEL')+'</h3>'+game.tanks.filter(t=>t.isHuman&&t.team===team).map(t=>'<p><b translate="no">'+esc(t.nick)+'</b><span translate="no">'+esc(fullName(getTank(t.type)))+'</span>'+(!t.alive?'<small>'+translate('ZNIČEN')+'</small>':'')+'</p>').join('')+'</section>').join('')+'</div>';
   if(game.mode==='zombies'){
-    $('#zombie-hud').innerHTML='<strong>☣ VLNA '+game.wave+'</strong><span>'+game.zombies.filter(z=>z.alive).length+' ZBÝVÁ · '+game.credits+' ŠROTU</span><small>'+ (game.upgrades.auto?'AUTO KULOMET AKTIVNÍ':'MEZERNÍK · KULOMET / LMB · DĚLO')+'</small>';
+    $('#zombie-hud').innerHTML='<strong>☣ VLNA '+game.wave+'</strong><span>'+game.zombies.filter(z=>z.alive).length+' ZBÝVÁ · '+game.credits+' ŠROTU</span>'+(game.upgrades.auto?'<small>AUTO KULOMET AKTIVNÍ</small>':'');
   }
   const n=game.nuke,nb=$('#nuke-button');
   nb.disabled=!n.ready||!game.player.alive;
   nb.textContent=n.state==='incoming'?'☢ ÚDER ZA '+Math.ceil(n.timer)+' s':n.state==='detonated'?'☢ JADERNÝ ÚDER':n.ready?'[N] ☢ VYPUSTIT NUKE':'☢ BODY '+Math.min(game.killStreak,n.required)+' / '+n.required;
-  $('#mg-status').textContent=game.player.mgOverheated?'KULOMET · CHLADÍ SE':'MEZERNÍK · KULOMET';
+  $('#mg-status').textContent=game.player.mgOverheated?'KULOMET · CHLADÍ SE':'KULOMET';
   $('#mg-heat').style.width=((game.player.mgHeat||0)*100)+'%';
   const p=game.player,t=getTank(p.type);
   $('#battle-tank-name').textContent=p.drone?'FPV DRON':p.developer?'DEV MAUS':fullName(t);
@@ -10555,7 +10562,7 @@ function updateHUD(){
   if(!p.alive){
     const killer=p.lastKiller;
     $('#death-killer').textContent=killer?translate('Zničil tě:')+' '+(killer.nick?killer.nick+' · ':'')+(killer.tankName||translate(killer.reason||'Prostředí')):'';
-    $('#respawn-text').textContent=p.respawnIn>0?`Záložní tank připraven za ${Math.ceil(p.respawnIn)} s`:'Záložní tank je připraven. Stiskni R nebo pokračuj tlačítkem.';
+    $('#respawn-text').textContent=p.respawnIn>0?`Záložní tank připraven za ${Math.ceil(p.respawnIn)} s`:'Záložní tank je připraven.';
     $('#respawn-button').disabled=p.respawnIn>0;
   }
   feed=feed.filter(e=>performance.now()-e.time<6500);
@@ -10652,14 +10659,19 @@ function drawMinimap(){
     mc.save();
     mc.translate(cv(t.x),cv(t.z));
     mc.rotate(-t.angle);
-    mc.fillStyle=t.isPlayer?'#ffd58d':t.team===0?'#8ad6e7':'#f7967c';
+    // Saturated fills with a dark outline so markers stand out on the terrain.
+    mc.fillStyle=t.isPlayer?'#ffe100':t.team===0?'#00d4ff':'#ff3b2f';
+    mc.strokeStyle='#050805e6';
+    mc.lineWidth=1.5;
+    mc.lineJoin='round';
     mc.beginPath();
-    mc.moveTo(0,5);
-    mc.lineTo(-3,-3);
-    mc.lineTo(3,-3);
+    mc.moveTo(0,7);
+    mc.lineTo(-4.5,-4);
+    mc.lineTo(4.5,-4);
     mc.closePath();
+    mc.stroke();
     mc.fill();
-    if(t.isPlayer){mc.strokeStyle='#fff9da';mc.beginPath();mc.arc(0,0,7,0,Math.PI*2);mc.stroke()}
+    if(t.isPlayer){mc.strokeStyle='#ffffff';mc.beginPath();mc.arc(0,0,9,0,Math.PI*2);mc.stroke()}
     mc.restore();
   }
   for(const z of game.zombies||[]){
@@ -11097,16 +11109,17 @@ function loop(now){
         marker.classList.toggle('aligned',gun.aligned);
       }
       const info=$('#reticle>span');
-      info.textContent=game.player.drone?'FPV DRON · WASD / MYŠ · SPACE / CTRL · LMB DETONACE · V ZRUŠIT':(gun?.limited?'MEZ NÁMĚRU · ':gun?.blocked?'PŘEKÁŽKA · ':'')+'NÁSTŘEL '+(game.player.sightRange||0)+' m';
+      info.textContent=game.player.drone?'FPV DRON':(gun?.limited?'MEZ NÁMĚRU · ':gun?.blocked?'PŘEKÁŽKA · ':'')+'NÁSTŘEL '+(game.player.sightRange||0)+' m';
       $('.turret-block').style.transform='rotate('+(-(game.player.turretAngle-game.player.angle)*180/Math.PI)+'deg)';
       $('#scope-overlay').hidden=!scoped;
       const place=scoped?drawScope(rect,parseFloat(reticle.style.left),parseFloat(reticle.style.top),!reticle.hidden):null;
       info.style.left=place?place.left:'';info.style.top=place?place.top:'';
-      $('#camera-mode-button').textContent=view.scope?'[SHIFT] 3. OSOBA':'[SHIFT] 1. OSOBA';
+      $('#camera-mode-button').textContent=view.scope?'3. OSOBA':'1. OSOBA';
       $('#camera-mode-button').setAttribute('aria-pressed',String(view.scope));
       $('#camera-mode-button').hidden=paused||!game.player.alive;
-      $('#view-status').hidden=paused||!game.player.alive;
-      $('#view-status').textContent=cinematic?'JADERNÝ ÚDER · MYŠÍ OTÁČEJ KAMEROU':keys.has('KeyC')?'VOLNÝ POHLED · UVOLNI C PRO NÁVRAT':view.scope?'OPTIKA STŘELCE · SHIFT ZPĚT':!touchAim&&document.pointerLockElement!==canvas?'KLIKNI PRO ZACHYCENÍ MYŠI · U OKRAJŮ SE POHLED OTÁČÍ':'MYŠ MÍŘÍ · C ROZHLÍŽENÍ · ESC PAUZA';
+      const viewText=cinematic?'JADERNÝ ÚDER':keys.has('KeyC')?'VOLNÝ POHLED':view.scope?'OPTIKA STŘELCE':'';
+      $('#view-status').hidden=paused||!game.player.alive||!viewText;
+      $('#view-status').textContent=viewText;
       drawTags();if(now-lastHud>90){updateHUD();lastHud=now;}
     }
   }catch(err){
