@@ -350,6 +350,7 @@ body.in-battle .topbar{display:none}
 .error-panel p{max-width:550px;color:#b9c5ac;line-height:1.7}
 .error-panel h2{font-size:28px}
 .scope-overlay{position:absolute;inset:0;pointer-events:none}
+.scope-overlay:before{content:'';position:absolute;inset:0;background:radial-gradient(circle var(--scope-radius,35vh) at center,transparent 78%,#0009 91.2%,#000 100%)}
 @media(min-width:1500px){
   h1{font-size:78px}
 }
@@ -1812,7 +1813,8 @@ Motor, výstřely a události bitvy	Engine, gunfire and battle events
 ZAPNUTO	ON
 VYPNUTO	OFF
 Grafika	Graphics
-Nižší kvalita omezí stíny a rozlišení	Lower quality reduces shadows and render resolution
+Při nízkém výkonu hra sníží rozlišení 3D obrazu. Úsporná grafika vypíná stíny.	The game lowers 3D resolution when performance is low. Low quality disables shadows.
+Automatická	Automatic
 Vysoká	High
 Úsporná	Low
 Citlivost myši	Mouse sensitivity
@@ -8602,8 +8604,11 @@ float surfHash(vec2 p){vec3 q=fract(vec3(p.xyx)*.1031);q+=dot(q,q.yzx+33.33);ret
 float surfNoise(vec2 p){vec2 i=floor(p),f=fract(p),u=f*f*(3.-2.*f);
   return mix(mix(surfHash(i),surfHash(i+vec2(1,0)),u.x),mix(surfHash(i+vec2(0,1)),surfHash(i+vec2(1,1)),u.x),u.y);}
 void surfacePaint(inout vec3 col,vec3 tex){
-  vec3 f=(texture2D(uSurfMask,vSurf*uSurfScale+.5).rgb-.5)*${(2*SURFACE_RANGE).toFixed(1)};
   float px=length(fwidth(vSurf)),aa=px*.7,fade=1.-smoothstep(.3,1.5,px);
+  vec3 mask=texture2D(uSurfMask,vSurf*uSurfScale+.5).rgb;
+  // Most ground has no road, rails or street and needs no procedural detail.
+  if(all(lessThanEqual(mask,vec3(0.))))return;
+  vec3 f=(mask-.5)*${(2*SURFACE_RANGE).toFixed(1)};
   float n1=surfNoise(vSurf*.45),n2=surfNoise(vSurf*1.7),n3=surfNoise(vSurf*.08);
   float wob=(n1*1.4+n2*.6-1.)*mix(.35,1.,fade);
   // Roads: uRoadStyle = (edge wobble m, edge softness m, unpaved 0/1, edge lines 0/1).
@@ -8634,11 +8639,19 @@ function gableGeometry(w,d,h,rise,alongX){
   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(v,3));
   geo.computeVertexNormals();return geo;
 }
+const GRAPHICS={
+  auto:{maxRatio:1,maxPixels:1600*900,shadowSize:1024,shadowInterval:1/20},
+  high:{maxRatio:1.4,maxPixels:2560*1440,shadowSize:2048,shadowInterval:1/30},
+  low:{maxRatio:.85,maxPixels:1280*720,shadowSize:0,shadowInterval:0}
+};
+const RENDER_SCALES=[1,.82,.67,.55];
 class Renderer {
-  constructor(canvas, { onError } = {}) {
+  constructor(canvas, { onError, quality='auto' } = {}) {
     this.canvas = canvas;
     this.onError = onError;
-    this.quality = 'high';
+    this.quality = 'auto';
+    this.renderTier = 0;
+    this.resetFrameBudget();
     this.mode = 'hangar';
     this.clock = 0;
     this.effects = [];
@@ -8666,14 +8679,14 @@ class Renderer {
     this.hitPosition = new THREE.Vector3();
     this.unitScale = new THREE.Vector3(1, 1, 1);
     try {
-      this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
+      this.renderer = new THREE.WebGLRenderer({ canvas, antialias: quality==='high', alpha: false, powerPreference: 'high-performance' });
     }
     catch (error) { onError?.(error); throw error; }
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.13;
-    this.renderer.shadowMap.enabled = true; this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.shadowMap.autoUpdate = false;
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(43, 1, .06, 2100);
     this.aimCamera = this.camera.clone();
@@ -8682,7 +8695,6 @@ class Renderer {
     this.sun = new THREE.DirectionalLight('#fff0cc', 3.4);
     this.sun.position.set(-70, 100, 55);
     this.sun.castShadow = true;
-    this.sun.shadow.mapSize.set(2048, 2048);
     this.sun.shadow.camera.left = -85;
     this.sun.shadow.camera.right = 85;
     this.sun.shadow.camera.top = 85;
@@ -8698,24 +8710,35 @@ class Renderer {
     this.scene.add(this.fill);
     this.flash = new THREE.PointLight('#ffc46f', 0, 24, 1.2); this.scene.add(this.flash);
     this.resizeObserver = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => this.resize()) : null;
-    this.resizeObserver?.observe(canvas.parentElement || canvas);
-    this.resize();
+    this.setQuality(quality);
   }
 
   resize() {
     if (this.disposed) return;
-    const rect = this.canvas.parentElement?.getBoundingClientRect() || this.canvas.getBoundingClientRect();
-    this.width = Math.max(1, Math.round(rect.width)); this.height = Math.max(1, Math.round(rect.height));
-    this.renderer.setSize(this.width, this.height, false); this.camera.aspect = this.width / this.height;
+    const parent = this.canvas.parentElement || this.canvas;
+    if (parent !== this.resizeParent) {
+      this.resizeObserver?.disconnect();
+      this.resizeObserver?.observe(parent);
+      this.resizeParent = parent;
+    }
+    const rect = parent.getBoundingClientRect(), width = Math.max(1, Math.round(rect.width)), height = Math.max(1, Math.round(rect.height));
+    const {maxRatio,maxPixels}=GRAPHICS[this.quality];
+    const ratio=Math.max(1/Math.min(width,height),
+      Math.min(window.devicePixelRatio||1,maxRatio,Math.sqrt(maxPixels/(width*height)))*RENDER_SCALES[this.renderTier]);
+    if (this.width===width&&this.height===height&&this.renderer.getPixelRatio()===ratio) return;
+    this.width=width;this.height=height;
+    this.renderer.setDrawingBufferSize(width,height,ratio);
+    this.camera.aspect = width / height;
     this.camera.clearViewOffset();
     this.camera.updateProjectionMatrix();
   }
 
-  clearWorld() {
-    const materials = new Set(), geometries = new Set(), textures = new Set(), cachedTextures = new Set(TEX.values());
-    for (const root of [this.world, this.dynamic]) {
+  disposeRenderTrees(...roots) {
+    const materials = new Set(), geometries = new Set(), textures = new Set(), cachedTextures = new Set(TEX.values()), cachedGeometries = new Set(GEO.values());
+    for (const root of roots) {
       root.traverse(o => {
-        if (o.geometry && ![...GEO.values()].includes(o.geometry)) geometries.add(o.geometry);
+        if (o.isInstancedMesh) o.dispose();
+        if (o.geometry && !cachedGeometries.has(o.geometry)) geometries.add(o.geometry);
         if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => materials.add(m));
       });
       root.clear();
@@ -8727,6 +8750,10 @@ class Renderer {
       m.dispose();
     });
     textures.forEach(t => t.dispose());
+  }
+
+  clearWorld() {
+    this.disposeRenderTrees(this.world,this.dynamic);
     this.droneModels=new Map();
     this.sahurModels=new Map();
     this.drawnDemolitions=new Set();
@@ -8739,6 +8766,7 @@ class Renderer {
     this.zoneMeshes.clear();
     this.shellMeshes.clear();
     this.hangarTank = null;
+    this.lastShadowAt = -Infinity;
     this.terrain = null;
     this.sky = null;
     this.surfaceMask?.dispose(); this.surfaceMask = null;
@@ -8779,12 +8807,22 @@ class Renderer {
     }
     for (let i = 0; i < 4; i++) cyl(this.world, mat('#475345'), 8 + i * .9, .64, -9, .4, 1.28);
     mergeStatic(this.world);
-    this.hangarTank = makeTank(tankId,appearance,this.canvas.parentElement?.id==='custom-preview');
-    this.hangarTank.group.rotation.y = -.32;
-    this.world.add(this.hangarTank.group);
+    this.setHangarAppearance(tankId,appearance);
     this.camera.fov = 34; this.camera.position.set(10.5, 6.3, 11.8); this.camera.lookAt(0, 1.25, 0); this.resize();
+    this.camera.updateProjectionMatrix();
   }
 
+  setHangarAppearance(tankId,appearance) {
+    const previous=this.hangarTank?.group;
+    this.hangarTank=makeTank(tankId,appearance,this.canvas.parentElement?.id==='custom-preview');
+    this.hangarTank.group.rotation.y=this.hangarYaw;
+    this.world.add(this.hangarTank.group);
+    if(previous){
+      previous.removeFromParent();
+      this.disposeRenderTrees(previous);
+    }
+    this.lastShadowAt=-Infinity;
+  }
 
   updateWorkshopCamera(){
     const o=this.workshopOrbit??={yaw:.73,pitch:.32,distance:17};
@@ -8881,7 +8919,7 @@ class Renderer {
     this.renderer.toneMappingExposure = theme.exposure;
     // The land runs out to the horizon, so the view distance reaches past it.
     for (const c of [this.camera, this.aimCamera]) { c.far = 6000; c.updateProjectionMatrix(); }
-    this.sky = skyDome(skyTexture(map.theme || 'valley', theme, this.quality === 'low' ? 2048 : 4096));
+    this.sky = skyDome(skyTexture(map.theme || 'valley', theme, this.quality === 'high' ? 4096 : 2048));
     this.world.add(this.sky);
     this.buildTerrain(map); this.buildBridges(map); this.buildProps(map); this.buildZones(game.zones);
     this.resetView(game);
@@ -8889,6 +8927,7 @@ class Renderer {
   }
 
   resetView(game) {
+    this.gunPrediction = null;
     this.cameraYaw = (game.player?.angle || 0) + Math.PI;
     this.chaseBoom = null;
     this.savedSightAim = null;
@@ -8914,7 +8953,7 @@ class Renderer {
   // Vertex colours from the surface types; steep faces turn to bare rock.
   // Roads, rails and streets are left out: paintSurfaces draws them sharply.
   paintGround(geo, map) {
-    geo.computeVertexNormals();
+    if (!geo.attributes.normal) geo.computeVertexNormals();
     const pos = geo.attributes.position, nrm = geo.attributes.normal, colors = new Float32Array(pos.count * 3), base = new THREE.Color(), rock = color(this.theme.rock);
     for (let i = 0; i < pos.count; i++) {
       const x = pos.getX(i), z = pos.getZ(i), terrain = bareTerrainAt(map.id, x, z);
@@ -8933,7 +8972,7 @@ class Renderer {
   }
 
   buildTerrain(map) {
-    const size = map.size || 1000, segments = this.quality === 'low' ? 200 : 300;
+    const size = map.size || 1000, segments = this.quality === 'high' ? 300 : 200;
     const geo = terrainGeometry(map, segments);
     this.paintGround(geo, map);
     const tex = groundTexture().clone();
@@ -8942,14 +8981,37 @@ class Renderer {
     tex.needsUpdate = true;
     const material = mat('#ffffff', { vertexColors: true, map: tex, roughness: 1, metalness: 0 });
     this.paintSurfaces(material, map);
-    this.terrain = new THREE.Mesh(geo, material);
-    this.terrain.receiveShadow = true;
+    this.terrain = this.terrainTiles(geo, material);
     this.world.add(this.terrain);
     this.buildApron(map, geo, material);
     this.buildBackdrop(map);
     this.buildWater(map);
     this.buildRoads(map);
     if (map.kind !== 'urban') this.buildClutter(map);
+  }
+
+  terrainTiles(geo, material) {
+    const {xs,zs}=geo.userData,columns=xs.length-1,rows=zs.length-1,tileSize=96;
+    const source=geo.index.array,position=geo.attributes.position,vertex=new THREE.Vector3(),group=new THREE.Group();
+    // Share the original vertices, including normals and UVs, across tile edges.
+    for(let top=0;top<rows;top+=tileSize)for(let left=0;left<columns;left+=tileSize){
+      const right=Math.min(left+tileSize,columns),bottom=Math.min(top+tileSize,rows),stride=(right-left)*6;
+      const indices=new source.constructor((bottom-top)*stride),bounds=new THREE.Box3();
+      for(let z=top;z<bottom;z++){
+        const offset=(z*columns+left)*6;
+        indices.set(source.subarray(offset,offset+stride),(z-top)*stride);
+      }
+      for(let z=top;z<=bottom;z++)for(let x=left;x<=right;x++){
+        bounds.expandByPoint(vertex.fromBufferAttribute(position,z*xs.length+x));
+      }
+      const tile=new THREE.BufferGeometry();
+      for(const [name,attribute] of Object.entries(geo.attributes))tile.setAttribute(name,attribute);
+      tile.setIndex(new THREE.BufferAttribute(indices,1));
+      tile.boundingSphere=bounds.getBoundingSphere(new THREE.Sphere());
+      const mesh=new THREE.Mesh(tile,material);
+      mesh.receiveShadow=true;group.add(mesh);
+    }
+    return group;
   }
 
   // Bakes the road, rail and street distance field (see SURFACE_GLSL) and has
@@ -8959,7 +9021,7 @@ class Renderer {
     // Cover the networks a little past the battlefield, where they run on into the apron.
     let reach = 0;
     for (const path of [...vis.roads, ...vis.rails, ...vis.streets]) for (const p of path.pts) reach = Math.max(reach, Math.abs(p[0]), Math.abs(p[1]));
-    const half = map.size / 2, E = clamp(reach + 30, half + 60, half + 600), N = this.quality === 'low' ? 1024 : 2048, texel = 2 * E / N, R = SURFACE_RANGE;
+    const half = map.size / 2, E = clamp(reach + 30, half + 60, half + 600), N = this.quality === 'high' ? 2048 : 1024, texel = 2 * E / N, R = SURFACE_RANGE;
     const canvas = document.createElement('canvas'); canvas.width = canvas.height = N;
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = '#000'; ctx.fillRect(0, 0, N, N);
@@ -9030,7 +9092,7 @@ class Renderer {
     for (let j = 1; j < zs.length; j++) ring.push([half, zs[j]]);
     for (let i = xs.length - 2; i >= 0; i--) ring.push([xs[i], half]);
     for (let j = zs.length - 2; j > 0; j--) ring.push([-half, zs[j]]);
-    const P = ring.length, K = this.quality === 'low' ? 22 : 34, R = 5400, size = half * 2;
+    const P = ring.length, K = this.quality === 'high' ? 34 : 22, R = 5400, size = half * 2;
     const pos = new Float32Array(P * (K + 1) * 3), uv = new Float32Array(P * (K + 1) * 2), index = [];
     for (let k = 0; k <= K; k++) {
       const s = (half + (R - half) * Math.pow(k / K, 2.1)) / half;
@@ -9055,7 +9117,7 @@ class Renderer {
 
   // Woods, rocks or rooftops beyond the boundary, so the land does not look empty.
   buildBackdrop(map) {
-    const kind = this.theme.backdrop, half = map.size / 2, low = this.quality === 'low', rng = random(4401 + map.size);
+    const kind = this.theme.backdrop, half = map.size / 2, low = this.quality !== 'high', rng = random(4401 + map.size);
     const patch = (x, z) => Math.sin(x * .0041 + 1.3) * Math.sin(z * .0047 + .4) + .6 * Math.sin(x * .011 - z * .008 + 2) + .3 * Math.sin(x * .031 + z * .027);
     const sample = (n, near, far, accept) => {
       const out = [];
@@ -9068,15 +9130,26 @@ class Renderer {
       return out;
     };
     const instanced = (geo, material, list, scale, tint) => {
-      if (!list.length) return;
-      const mesh = new THREE.InstancedMesh(geo, material, list.length), c = new THREE.Color();
-      list.forEach((p, i) => {
-        const [sx, sy, sz, yaw] = scale(p, i);
-        DUMMY.position.set(p[0], p[1] + sy * .5 - .4, p[2]); DUMMY.rotation.set(0, yaw ?? rng() * TAU, 0); DUMMY.scale.set(sx, sy, sz); DUMMY.updateMatrix();
-        mesh.setMatrixAt(i, DUMMY.matrix);
-        if (tint) { c.set(tint(p, i)); mesh.setColorAt(i, c); }
-      });
-      mesh.computeBoundingSphere(); this.world.add(mesh);
+      // A single instance batch spans the whole horizon. Spatial batches let
+      // Three.js skip entire groups of trees or buildings outside the camera.
+      const chunks=new Map(),c=new THREE.Color();
+      for(const p of list){
+        const key=Math.floor(p[0]/1200)+','+Math.floor(p[2]/1200);
+        if(!chunks.has(key))chunks.set(key,[]);
+        chunks.get(key).push(p);
+      }
+      for(const points of chunks.values()){
+        const mesh=new THREE.InstancedMesh(geo,material,points.length);
+        points.forEach((p,i)=>{
+          const [sx,sy,sz,yaw]=scale(p);
+          DUMMY.position.set(p[0],p[1]+sy*.5-.4,p[2]);
+          DUMMY.rotation.set(0,yaw??rng()*TAU,0);
+          DUMMY.scale.set(sx,sy,sz);DUMMY.updateMatrix();
+          mesh.setMatrixAt(i,DUMMY.matrix);
+          if(tint){c.set(tint(p));mesh.setColorAt(i,c);}
+        });
+        mesh.computeBoundingSphere();this.world.add(mesh);
+      }
     };
     const leafy = mat('#ffffff', { roughness: 1, metalness: 0, vertexColors: true });
     if (kind === 'forest' || kind === 'groves' || kind === 'pines') {
@@ -9218,7 +9291,7 @@ class Renderer {
 
   buildClutter(map) {
     const rng = random(6127), desert = map.biome === 'desert', winter = map.biome === 'winter';
-    const count = this.quality === 'low' ? 1200 : 3600, p = [], n = [];
+    const count = this.quality === 'high' ? 3600 : 1200, p = [], n = [];
     for (const angle of [0, Math.PI / 3, Math.PI * 2 / 3]) {
       const x = Math.cos(angle) * .5, z = Math.sin(angle) * .5;
       p.push(-x, 0, -z, x, 0, z, .03, 1, -.03); n.push(0, 1, 0, 0, 1, 0, 0, 1, 0);
@@ -9971,6 +10044,11 @@ class Renderer {
     }
     this.updateEffects(dt); this.flash.intensity *= Math.exp(-dt * 19);
     if (this.sky) this.sky.position.copy(this.camera.position);
+    const shadows=this.renderer.shadowMap;
+    if(shadows.enabled&&this.clock-this.lastShadowAt>=GRAPHICS[this.quality].shadowInterval){
+      shadows.needsUpdate=true;
+      this.lastShadowAt=this.clock;
+    }
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -10058,10 +10136,14 @@ class Renderer {
 
   // The second marker is the first impact of the actual ballistic trajectory,
   // including intervening hills and cover, not a guessed point at cursor range.
-  getGunMarker(game, aim = this.aimFromCenter()) {
+  getGunMarker(game, aim = this.aimFromCenter(), now = performance.now()) {
     const p = game?.player;
     if (!p?.alive || !aim) return { x: 0, y: 0, visible: false, aligned: false };
-    const impact = game.predictShot(p), solution = game.gunSolution(p);
+    // Cache the world-space impact at 30 Hz, but project it on every frame.
+    if(this.gunPrediction?.game!==game||now-this.gunPrediction.time>=32){
+      this.gunPrediction={game,time:now,impact:game.predictShot(p)};
+    }
+    const {impact}=this.gunPrediction,solution=game.gunSolution(p);
     const delta = Math.atan2(Math.sin(solution.desiredYaw - (p.turretAngle ?? p.angle)), Math.cos(solution.desiredYaw - (p.turretAngle ?? p.angle)));
     const point = new THREE.Vector3(impact.x, impact.y, impact.z).project(this.camera);
     // Prediction distance starts at the muzzle, but selected range starts at
@@ -10290,10 +10372,41 @@ class Renderer {
     }
   }
 
+  resetFrameBudget() {
+    this.frameMs=0;this.frames=0;this.slowFrames=0;
+  }
+
+  observeFrame(elapsed) {
+    if(elapsed<=0||this.renderTier===RENDER_SCALES.length-1)return;
+    this.frameMs+=Math.min(elapsed,250);
+    this.frames++;
+    if(elapsed>22)this.slowFrames++;
+    if(this.frameMs<1000)return;
+    if(this.frames*1000<48*this.frameMs&&this.slowFrames>this.frames*.35){
+      this.renderTier++;
+      this.updateGraphics();
+    }
+    this.resetFrameBudget();
+  }
+
   setQuality(quality) {
-    this.quality = quality;
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, quality === 'low' ? 1 : 1.6));
-    this.renderer.shadowMap.enabled = quality !== 'low';
+    this.quality=Object.hasOwn(GRAPHICS,quality)?quality:'auto';
+    this.renderTier=0;
+    this.resetFrameBudget();
+    this.updateGraphics();
+  }
+
+  updateGraphics() {
+    const {shadowSize}=GRAPHICS[this.quality],shadow=this.sun.shadow;
+    const useShadows=!!shadowSize&&(this.quality==='high'||this.renderTier<2);
+    if(shadow.map&&(!useShadows||shadow.mapSize.x!==shadowSize)){
+      shadow.map.dispose();
+      shadow.map=null;
+    }
+    if(useShadows)shadow.mapSize.set(shadowSize,shadowSize);
+    this.sun.castShadow=useShadows;
+    this.renderer.shadowMap.enabled=useShadows;
+    this.lastShadowAt=-Infinity;
     this.resize();
   }
   rotateCamera(dx, dy, { sensitivity = 1 } = {}) {
@@ -10765,7 +10878,7 @@ const {AudioEngine} = MODULES["audio.js"];
 const {keyboardInput,bindMouseButtons,CruiseControl,MouseLock,edgeLookDelta} = MODULES["controls.js"];
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const STORAGE='iron-front-progress-v1',
-  defaults={xp:0,unlocked:['pz4f2','m4a1','t341941'],selected:'pz4f2',nation:'de',map:'valley',battles:0,wins:0,kills:0,settings:{sound:true,quality:'high',sensitivity:1}};
+  defaults={xp:0,unlocked:['pz4f2','m4a1','t341941'],selected:'pz4f2',nation:'de',map:'valley',battles:0,wins:0,kills:0,settings:{sound:true,quality:'auto',sensitivity:1}};
 let progress,lastSavedProgress=null;
 try{
   lastSavedProgress=localStorage.getItem(STORAGE);
@@ -10852,7 +10965,11 @@ function tankSVG(t){
 }
 
 
-const mapTextureCache=new Map();
+const mapTextureCache=new Map(),mapThumbnails=new Map();
+function mapThumbnail(map){
+ if(!mapThumbnails.has(map.id))mapThumbnails.set(map.id,mapTexture(map).toDataURL());
+ return mapThumbnails.get(map.id);
+}
 function mapTexture(map){
  if(mapTextureCache.has(map.id))return mapTextureCache.get(map.id);
  const displayMap=map.kind==='hills'&&!map.baseId?createBattleMap(map.id,202621):map;
@@ -10935,7 +11052,7 @@ function renderHangar(){
  }).join('');
  $('#tank-specs').innerHTML=[['Kanón',caliber(tank)/122,`${caliber(tank)} mm`],['Pancíř',tank.armor.front/150,`${tank.armor.front} mm`],['Rychlost',tank.speed/65,`${tank.speed} km/h`],['Nabíjení',1-tank.reload/15,`${tank.reload.toFixed(1)} s`]].map(([name,ratio,value])=>`<div class="spec-row"><span>${name}</span><div class="spec-bar"><i style="width:${Math.max(0,Math.min(1,ratio))*100}%"></i></div><b>${value}</b></div>`).join('');
  $('#tank-description').textContent=tank.description;
- $('#map-cards').innerHTML=MAPS.filter(m=>mapFilter==='all'||m.kind===mapFilter).map(m=>`<button class="map-card ${m.id===progress.map?'selected':''}" data-map="${m.id}" aria-pressed="${m.id===progress.map}"><div class="map-art ${m.biome}" style="background-image:url(${mapTexture(m).toDataURL()});background-size:cover"></div><span class="map-check">${m.id===progress.map?'✓':''}</span><span class="map-size">${m.size} × ${m.size} m</span><span class="map-title"><strong>${m.name}</strong><small>${m.subtitle}</small></span></button>`).join('');
+ $('#map-cards').innerHTML=MAPS.filter(m=>mapFilter==='all'||m.kind===mapFilter).map(m=>`<button class="map-card ${m.id===progress.map?'selected':''}" data-map="${m.id}" aria-pressed="${m.id===progress.map}"><div class="map-art ${m.biome}" style="background-image:url(${mapThumbnail(m)});background-size:cover"></div><span class="map-check">${m.id===progress.map?'✓':''}</span><span class="map-size">${m.size} × ${m.size} m</span><span class="map-title"><strong>${m.name}</strong><small>${m.subtitle}</small></span></button>`).join('');
 }
 function selectTank(id){
   const t=getTank(id);
@@ -10985,7 +11102,7 @@ function showCustomization(){
  $('#hangar').hidden=true;
  $('#custom-preview').append(canvas);
  renderCustomizationForm();
- previewCustomization();
+ renderer.setHangar(progress.selected,customDraft);
  workshopEditor??=new WorkshopEditor({canvas,renderer,getDraft:()=>customDraft,onChange:()=>renderCustomizationForm()});
  workshopEditor.open();
  $('#custom-title').textContent=fullName(getTank(progress.selected));
@@ -11034,10 +11151,8 @@ function renderCustomizationForm(){
 }
 function previewCustomization(){
   if(!customDraft)return;
-  const yaw=renderer.hangarYaw;
-  renderer.setHangar(progress.selected,customDraft);
-  renderer.hangarYaw=yaw;
-  renderer.resize();
+  renderer.setHangarAppearance(progress.selected,customDraft);
+  renderer.updateWorkshopCamera();
 }
 function closeCustomization(commit){
  if(!customDraft||(commit&&customImporting))return;
@@ -11158,7 +11273,7 @@ function showGuide(){
 }
 function showSettings(){
   if(game)paused=true;
-  openModal('settings',`<span class="eyebrow">NASTAVENÍ / TVŮJ POLYGON</span><h2>Připravit k boji.</h2><div class="settings-row"><div>Jazyk<p>Automaticky podle domény; ruční volba zůstane uložená.</p></div><select data-language-picker aria-label="Jazyk"><option value="auto" ${getLanguagePreference()==='auto'?'selected':''}>Automaticky</option><option value="cs" ${getLanguagePreference()==='cs'?'selected':''}>Čeština</option><option value="en" ${getLanguagePreference()==='en'?'selected':''}>English</option></select></div><div class="settings-row"><div><label for="theme-select">Motiv</label><p>Barvy nabídek, hangáru a oken</p></div><select id="theme-select">${[['default','Výchozí'],['light','Světlý'],['m90','Švédské M90']].map(([v,n])=>`<option value="${v}" ${getTheme()===v?'selected':''}>${n}</option>`).join('')}</select></div><div class="settings-row"><div>Zvuk<p>Motor, výstřely a události bitvy</p></div><button class="toggle" id="sound-toggle">${progress.settings.sound?'ZAPNUTO':'VYPNUTO'}</button></div><div class="settings-row"><div>Grafika<p>Nižší kvalita omezí stíny a rozlišení</p></div><select id="quality-select"><option value="high" ${progress.settings.quality==='high'?'selected':''}>Vysoká</option><option value="low" ${progress.settings.quality==='low'?'selected':''}>Úsporná</option></select></div><div class="settings-row"><div><label for="sensitivity-select">Citlivost myši</label><p>Stejný směr myši a pohledu; jemnější míření při přiblížení</p></div><select id="sensitivity-select">${[[.5,"Nízká"],[1,"Normální"],[1.5,"Vyšší"],[2,"Vysoká"]].map(([v,n])=>`<option value="${v}" ${Number(progress.settings.sensitivity)===v?"selected":""}>${n}</option>`).join("")}</select></div>${accountUI?.settingsRow()||''}<div class="settings-row"><div>Lokální postup<p>${progress.battles} bitev · ${progress.kills} zničených cílů · ${progress.unlocked.length}/${TANKS.length} strojů</p></div><button class="secondary-button" id="export-save">Zálohovat</button></div><div class="settings-row"><div>Obnovit zálohu<p>Nahradí aktuální výzkum uloženým postupem</p></div><label class="secondary-button" style="cursor:pointer">Načíst soubor<input id="import-save" type="file" accept="application/json,.json" hidden></label></div><div class="modal-actions"><button class="primary-button" data-action="close">HOTOVO →</button></div>`);
+  openModal('settings',`<span class="eyebrow">NASTAVENÍ / TVŮJ POLYGON</span><h2>Připravit k boji.</h2><div class="settings-row"><div>Jazyk<p>Automaticky podle domény; ruční volba zůstane uložená.</p></div><select data-language-picker aria-label="Jazyk"><option value="auto" ${getLanguagePreference()==='auto'?'selected':''}>Automaticky</option><option value="cs" ${getLanguagePreference()==='cs'?'selected':''}>Čeština</option><option value="en" ${getLanguagePreference()==='en'?'selected':''}>English</option></select></div><div class="settings-row"><div><label for="theme-select">Motiv</label><p>Barvy nabídek, hangáru a oken</p></div><select id="theme-select">${[['default','Výchozí'],['light','Světlý'],['m90','Švédské M90']].map(([v,n])=>`<option value="${v}" ${getTheme()===v?'selected':''}>${n}</option>`).join('')}</select></div><div class="settings-row"><div>Zvuk<p>Motor, výstřely a události bitvy</p></div><button class="toggle" id="sound-toggle">${progress.settings.sound?'ZAPNUTO':'VYPNUTO'}</button></div><div class="settings-row"><div>Grafika<p>Při nízkém výkonu hra sníží rozlišení 3D obrazu. Úsporná grafika vypíná stíny.</p></div><select id="quality-select"><option value="auto" ${progress.settings.quality==='auto'?'selected':''}>Automatická</option><option value="high" ${progress.settings.quality==='high'?'selected':''}>Vysoká</option><option value="low" ${progress.settings.quality==='low'?'selected':''}>Úsporná</option></select></div><div class="settings-row"><div><label for="sensitivity-select">Citlivost myši</label><p>Stejný směr myši a pohledu; jemnější míření při přiblížení</p></div><select id="sensitivity-select">${[[.5,"Nízká"],[1,"Normální"],[1.5,"Vyšší"],[2,"Vysoká"]].map(([v,n])=>`<option value="${v}" ${Number(progress.settings.sensitivity)===v?"selected":""}>${n}</option>`).join("")}</select></div>${accountUI?.settingsRow()||''}<div class="settings-row"><div>Lokální postup<p>${progress.battles} bitev · ${progress.kills} zničených cílů · ${progress.unlocked.length}/${TANKS.length} strojů</p></div><button class="secondary-button" id="export-save">Zálohovat</button></div><div class="settings-row"><div>Obnovit zálohu<p>Nahradí aktuální výzkum uloženým postupem</p></div><label class="secondary-button" style="cursor:pointer">Načíst soubor<input id="import-save" type="file" accept="application/json,.json" hidden></label></div><div class="modal-actions"><button class="primary-button" data-action="close">HOTOVO →</button></div>`);
 }
 function pause(){
   if(!game||game.finished)return;
@@ -11511,20 +11626,19 @@ function drawMinimap(){
   mc.textAlign='right';
   mc.fillText('1 km',s-5,s-6);
 }
-const scopeCanvas=$('#scope-canvas'),sc=scopeCanvas.getContext('2d');
+const scopeOverlay=$('#scope-overlay'),scopeCanvas=$('#scope-canvas'),sc=scopeCanvas.getContext('2d');
+let scopeRadius=0;
 // Gunner optic: a black surround fading into the view, a crosshair hung on
 // the gun's sight line with range marks for shell drop below it, and a grey
 // ring where the player is aiming. Returns where the range readout goes,
 // relative to the aim point: inside the optic, left of centre.
 function drawScope(rect,aimX,aimY,showAim){
-  const box=$('#scope-overlay').getBoundingClientRect(),w=box.width,h=box.height,dpr=Math.min(2,devicePixelRatio||1);
+  const box=scopeOverlay.getBoundingClientRect(),w=box.width,h=box.height,dpr=renderer.renderer.getPixelRatio();
   const pw=Math.round(w*dpr),ph=Math.round(h*dpr);
   if(scopeCanvas.width!==pw||scopeCanvas.height!==ph){scopeCanvas.width=pw;scopeCanvas.height=ph;}
   sc.setTransform(dpr,0,0,dpr,0,0);sc.clearRect(0,0,w,h);
   const cx=rect.left+rect.width/2-box.left,cy=rect.top+rect.height/2-box.top,R=Math.min(rect.width,rect.height)*.47;
-  const fade=sc.createRadialGradient(cx,cy,R*.78,cx,cy,R);
-  fade.addColorStop(0,'rgba(0,0,0,0)');fade.addColorStop(.6,'rgba(0,0,0,.62)');fade.addColorStop(1,'#000');
-  sc.fillStyle=fade;sc.fillRect(0,0,w,h);
+  if(scopeRadius!==R){scopeRadius=R;scopeOverlay.style.setProperty('--scope-radius',R+'px');}
   const cross=renderer.getSightCross(game);
   if(cross){
     const gx=rect.left+cross.x-box.left,gy=rect.top+cross.y-box.top;
@@ -11860,6 +11974,8 @@ window.addEventListener('blur',()=>{
   if(game&&game.mode!=='multiplayer'&&!paused&&!game.finished)pause();
 });
 document.addEventListener('visibilitychange',()=>{
+  wasLiveFrame=false;
+  lastTime=performance.now();
   multiplayerUI?.room?.setHidden(document.hidden);
   if(document.hidden&&game&&game.mode!=='multiplayer'&&!paused&&!game.finished)pause();
 });
@@ -11885,11 +12001,19 @@ for(const name of ['pointerup','pointercancel','lostpointercapture'])$('#touch-f
   touchCannon=false;
 });
 $('#touch-scope').addEventListener('click',()=>{if(!paused)scope=!scope;});
+let wasLiveFrame=false;
 function loop(now){
   requestAnimationFrame(loop);
-  const dt=Math.min((now-lastTime)/1000,.05);lastTime=now;
-  if(!renderer)return;
+  if(!renderer||document.hidden)return;
+  const live=!!game&&!game.finished&&(!paused||game.mode==='multiplayer');
+  const elapsed=Math.max(0,now-lastTime),interval=game?(live?0:80):32;
+  if(elapsed<interval)return;
+  const dt=Math.min(elapsed/1000,.05);lastTime=now;
   try{
+    if(live){
+      if(wasLiveFrame)renderer.observeFrame(elapsed);else renderer.resetFrameBudget();
+    }
+    wasLiveFrame=live;
     if(game&&!paused&&!game.finished&&!touchAim&&document.pointerLockElement!==canvas){
       const delta=edgeLookDelta(pointer,canvas.getBoundingClientRect(),dt);
       if(delta.x||delta.y)renderer?.rotateCamera(delta.x,delta.y,{sensitivity:Number(progress.settings.sensitivity)||1});
@@ -11898,8 +12022,10 @@ function loop(now){
     if(game){
       renderer.updateView(paused?0:dt,game,view);
       if((!paused||game.mode==='multiplayer')&&!game.finished){
-        const aimRect=canvas.getBoundingClientRect();
-        if(!paused)lastAim=renderer.aimForSight(touchAim?(pointer.x-aimRect.left)/aimRect.width*2-1:0,touchAim?1-(pointer.y-aimRect.top)/aimRect.height*2:0);
+        if(!paused){
+          const rect=touchAim?canvas.getBoundingClientRect():null;
+          lastAim=rect?renderer.aimForSight((pointer.x-rect.left)/rect.width*2-1,1-(pointer.y-rect.top)/rect.height*2):renderer.aimForSight();
+        }
         if(!game.player.alive)cruise.reset();
         const driving=keyboardInput(keys,game.player.repair>0?0:cruise.direction);
         const input=(paused||chatTyping)?(game.mode==='multiplayer'?multiplayerUI.room.idleInput():{}):{...driving,...((game.player.flight||game.player.drone)?{throttle:keyboardInput(keys).throttle,flyYaw:renderer.cameraYaw+Math.PI,flyPitch:-renderer.cameraPitch,lift:Number(keys.has('Space'))-Number(keys.has('ControlLeft')||keys.has('ControlRight'))}:{}),aimX:lastAim?.x??game.player._aimX,aimY:lastAim?.y??game.player._aimY,aimZ:lastAim?.z??game.player._aimZ,fire:fireRequested||pointer.down||touchCannon,machineGun:mgRequested||driving.machineGun,secondaryFire:secondaryRequested||(game.player.alive&&keys.has('KeyR'))};
@@ -11909,7 +12035,8 @@ function loop(now){
           if(!wasAlive&&game.player.alive){scope=false;game.player.sightRange=0;renderer.resetView(game);}
           const hud=$('#network-hud');
           hud.hidden=false;
-          hud.textContent=(multiplayerUI?.status()||'')+' · '+translate('TÝMY · TAB');
+          const status=(multiplayerUI?.status()||'')+' · '+translate('TÝMY · TAB');
+          if(hud.textContent!==status)hud.textContent=status;
         }else game.update(dt,input);
         fireRequested=false;mgRequested=false;secondaryRequested=false;
         if(game.finished)finishBattle(game.finished);else if(game.mode==='zombies'&&game.phase==='shop')showZombieShop();
@@ -11924,7 +12051,7 @@ function loop(now){
       reticle.style.left=(touchAim?pointer.x:rect.left+rect.width/2)+'px';
       reticle.style.top=(touchAim?pointer.y:rect.top+rect.height/2)+'px';
       reticle.hidden=cinematic||!game.player.alive||paused||keys.has('KeyC');
-      const gun=lastAim&&!game.player.flight&&!game.player.drone?renderer.getGunMarker(game,lastAim):null;
+      const gun=!reticle.hidden&&lastAim&&!game.player.flight&&!game.player.drone?renderer.getGunMarker(game,lastAim,now):null;
       const scoped=view.scope&&!cinematic&&!paused;
       // Third person: the outer ring is the aim, the inner ring the gun. In the
       // scope the reticle itself follows the gun and a grey ring marks the aim.
@@ -11936,17 +12063,20 @@ function loop(now){
         marker.classList.toggle('aligned',gun.aligned);
       }
       const info=$('#reticle>span');
-      info.textContent=game.player.drone?'FPV DRON':(gun?.limited?'MEZ NÁMĚRU · ':gun?.blocked?'PŘEKÁŽKA · ':'')+'NÁSTŘEL '+(game.player.sightRange||0)+' m';
+      const sightText=translate(game.player.drone?'FPV DRON':(gun?.limited?'MEZ NÁMĚRU · ':gun?.blocked?'PŘEKÁŽKA · ':'')+'NÁSTŘEL '+(game.player.sightRange||0)+' m');
+      if(info.textContent!==sightText)info.textContent=sightText;
       $('.turret-block').style.transform='rotate('+(-(game.player.turretAngle-game.player.angle)*180/Math.PI)+'deg)';
-      $('#scope-overlay').hidden=!scoped;
+      scopeOverlay.hidden=!scoped;
       const place=scoped?drawScope(rect,parseFloat(reticle.style.left),parseFloat(reticle.style.top),!reticle.hidden):null;
       info.style.left=place?place.left:'';info.style.top=place?place.top:'';
-      $('#camera-mode-button').textContent=view.scope?'3. OSOBA':'1. OSOBA';
-      $('#camera-mode-button').setAttribute('aria-pressed',String(view.scope));
-      $('#camera-mode-button').hidden=paused||!game.player.alive;
-      const viewText=cinematic?'JADERNÝ ÚDER':keys.has('KeyC')?'VOLNÝ POHLED':view.scope?'OPTIKA STŘELCE':'';
-      $('#view-status').hidden=paused||!game.player.alive||!viewText;
-      $('#view-status').textContent=viewText;
+      const cameraButton=$('#camera-mode-button'),cameraText=translate(view.scope?'3. OSOBA':'1. OSOBA');
+      if(cameraButton.textContent!==cameraText)cameraButton.textContent=cameraText;
+      const pressed=String(view.scope);
+      if(cameraButton.getAttribute('aria-pressed')!==pressed)cameraButton.setAttribute('aria-pressed',pressed);
+      cameraButton.hidden=paused||!game.player.alive;
+      const viewStatus=$('#view-status'),viewText=translate(cinematic?'JADERNÝ ÚDER':keys.has('KeyC')?'VOLNÝ POHLED':view.scope?'OPTIKA STŘELCE':'');
+      viewStatus.hidden=paused||!game.player.alive||!viewText;
+      if(viewStatus.textContent!==viewText)viewStatus.textContent=viewText;
       drawTags();updateReloadFills(now);if(now-lastHud>90){updateHUD();lastHud=now;}
     }
   }catch(err){
@@ -11959,9 +12089,8 @@ function loop(now){
 
 renderHangar();
 try{
-  renderer=new Renderer(canvas);
+  renderer=new Renderer(canvas,{quality:progress.settings.quality});
   renderer.appearances=progress.appearances;
-  renderer.setQuality(progress.settings.quality);
   renderer.setHangar(progress.selected);
   renderer.resize();
   renderer.render(.016,null);
