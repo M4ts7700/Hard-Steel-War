@@ -2522,41 +2522,168 @@ const MAP_SPECS={};
 const variants=new Map();
 const specFor=id=>variants.get(id)?.spec||MAP_SPECS[id]||MAP_SPECS[String(id).split(':')[0]]||MAP_SPECS.valley;
 function groundHeight(mapId,x,z){return landHeight(specFor(mapId),x,z);}
+// A bridge span has two surfaces: the deck and the ground beneath it. Height
+// queries for a tank pass its current height y: within DECK_LAYER of the deck
+// (or no y at all) it is on the deck, lower down it is underneath.
+const DECK_LAYER=1.5,BRIDGE_FILL=12;
+const underDeck=(s,b,y)=>s.missingDecks?.has(b.id)||y<b.height-DECK_LAYER;
 function terrainHeight(mapId,x,z) {
   const s=specFor(mapId);let y=landHeight(s,x,z);
   // Earth approach embankments end at the abutments. The span itself remains
   // open above the riverbed and is supplied separately by surfaceHeight.
   for(const b of s.bridges){
     bridgeLocal(b,x,z);const u=BU,v=BV,du=Math.abs(u),dv=Math.abs(v);
-    if(du<b.w*.5+10&&dv>=b.d*.5-1e-6&&dv<=b.d*.5+b.ramp+1e-6)y=mix(y,rampHeight(mapId,b,u,v),1-smooth((du-b.w*.5)/10));
+    if(du>=b.w*.5+10||dv>b.d*.5+b.ramp+1e-6)continue;
+    const side=1-smooth((du-b.w*.5)/10);
+    if(dv>=b.d*.5-1e-6)y=mix(y,rampHeight(mapId,b,u,v),side);
+    // Fill slopes run on from the embankment beneath the deck ends, so the
+    // shoulders beside an abutment fall away as a slope, never a cliff.
+    else if(dv>b.d*.5-BRIDGE_FILL)y=mix(y,Math.max(y,b.height),side*smooth((dv-b.d*.5+BRIDGE_FILL)/BRIDGE_FILL));
   }
   return y;
 }
-function surfaceHeight(mapId,x,z) {
+function surfaceHeight(mapId,x,z,y) {
   const s=specFor(mapId);
   for(const b of s.bridges){
     bridgeLocal(b,x,z);if(Math.abs(BU)>b.w*.5)continue;
     const u=BU,v=BV,dv=Math.abs(v);
-    if(dv<=b.d*.5)return s.missingDecks?.has(b.id)?terrainHeight(mapId,x,z):b.height;
+    if(dv<=b.d*.5)return underDeck(s,b,y)?terrainHeight(mapId,x,z):b.height;
     if(dv<=b.d*.5+b.ramp)return rampHeight(mapId,b,u,v);
   }
   return terrainHeight(mapId,x,z);
 }
-function terrainAt(mapId,x,z) {
+function terrainAt(mapId,x,z,y) {
   const s=specFor(mapId);
   for(const b of s.bridges){
     bridgeLocal(b,x,z);if(Math.abs(BU)>b.w*.5)continue;
-    const dv=Math.abs(BV);if(dv<=b.d*.5&&s.missingDecks?.has(b.id))continue;
+    const dv=Math.abs(BV);if(dv<=b.d*.5&&underDeck(s,b,y))continue;
     if(dv<=b.d*.5+b.ramp)return dv<=b.d*.5?TERRAIN.bridge:TERRAIN.approach;
   }
   return waterAt(s,x,z)||s.surface(x,z);
 }
+// Bridges as solid structures for a tank at height y moving from (ox,oz) to
+// (x,z). On a deck the parapets hold the hull in (it may still move along or
+// back inward); beneath one it needs headroom and keeps clear of the piers,
+// trestle posts and abutments. The ramps are ordinary ground.
+// How far a hull (half extents ru across, rv along the span) beneath a deck
+// intrudes into its structure: 0 when clear.
+function underIntrusion(mapId,b,x,z,ru,rv,height){
+  bridgeLocal(b,x,z);const u=BU,v=BV,du=Math.abs(u),dv=Math.abs(v);
+  if(du>=b.w*.5+ru||dv>b.d*.5)return 0;
+  let bad=Math.max(0,dv-(b.d*.5-3.1-rv)),roof=b.height-(b.style==='wood'?.85:1.55);
+  if(b.style==='wood'){
+    for(let p=-b.d*.5+8;p<b.d*.5-4;p+=12)bad+=Math.max(0,Math.min(rv+.3-Math.abs(v-p),ru+.3-Math.abs(du-b.w*.33)));
+  }else{
+    // Piers stand between the spans; the arch rings hang lower beside them.
+    const spans=Math.max(2,Math.round(b.d/22));
+    for(let i=1;i<spans;i++){
+      const q=Math.abs(v+b.d*.5-i*b.d/spans)-rv;
+      if(q<1.8)bad+=1.8-q;
+      if(q<7.4)roof=Math.min(roof,b.height-(q<4.2?3.75:q<5.8?2.85:1.95));
+    }
+  }
+  // Headroom over the highest ground under the covered part of the hull (the
+  // fill rises along the span).
+  const su=Math.sign(u)*Math.min(du,b.w*.5),at=w=>terrainHeight(mapId,b.axis==='x'?b.x+w:b.x+su,b.axis==='x'?b.z+su:b.z+w);
+  bad+=Math.max(0,height-roof+Math.max(at(v),at(v+rv),at(v-rv)));
+  // Reaching further in beneath the deck always counts as worse.
+  return bad>0?bad+b.w*.5+ru-du:0;
+}
+// Where a tank beneath a deck leaves its footprint sideways, or null when it
+// is not beneath one. Route planning knows only the deck surface.
+function underDeckExit(mapId,x,z,y){
+  const s=specFor(mapId);
+  for(const b of s.bridges){
+    if(s.missingDecks?.has(b.id)||!underDeck(s,b,y))continue;
+    bridgeLocal(b,x,z);if(Math.abs(BU)>b.w*.5+1||Math.abs(BV)>b.d*.5)continue;
+    const u=(BU<0?-1:1)*(b.w*.5+8);
+    return b.axis==='x'?{x,z:b.z+u}:{x:b.x+u,z};
+  }
+  return null;
+}
+function bridgeAllows(mapId,ox,oz,x,z,y,{width,length,angle,height}){
+  const s=specFor(mapId);
+  for(const b of s.bridges){
+    if(s.missingDecks?.has(b.id))continue;
+    bridgeLocal(b,x,z);const du=Math.abs(BU),dv=Math.abs(BV);
+    // Hull half extents across (reach) and along the span.
+    const along=b.axis==='x'?angle-Math.PI/2:angle,sa=Math.abs(Math.sin(along)),ca=Math.abs(Math.cos(along)),
+      reach=length*.5*sa+width*.5*ca,lengthwise=length*.5*ca+width*.5*sa;
+    if(!underDeck(s,b,y)){
+      if(dv>b.d*.5+.5)continue;
+      if(du>b.w*.5){
+        // Beside the deck on its level (the fill shoulders by the ends): the
+        // parapet is solid from outside too. Moving along it or away is fine.
+        if(du-reach>=b.w*.5)continue;
+        bridgeLocal(b,ox,oz);
+        if(Math.abs(BU)>b.w*.5&&du>=Math.abs(BU)-1e-4)continue;
+        return false;
+      }
+      if(du<=b.w*.5-(b.style==='wood'?.35:.85)-reach)continue;
+      bridgeLocal(b,ox,oz);
+      if(Math.abs(BU)<=b.w*.5&&Math.abs(BV)<=b.d*.5+.5&&du<=Math.abs(BU)+1e-4)continue;
+      return false;
+    }
+    // A hull already wedged in (a turn in place can do that) may make any move
+    // that does not push it further in, so it can always work its way out.
+    const bad=underIntrusion(mapId,b,x,z,reach,lengthwise,height);
+    if(bad>0&&bad>underIntrusion(mapId,b,ox,oz,reach,lengthwise,height)+1e-6)return false;
+  }
+  return true;
+}
+// Route planning: a straight leg may not pass through a deck's long sides
+// (the parapets), only through its open ends.
+function parapetCrossed(mapId,ax,az,bx,bz){
+  const s=specFor(mapId);
+  for(const b of s.bridges){
+    if(s.missingDecks?.has(b.id))continue;
+    bridgeLocal(b,ax,az);const u0=BU,v0=BV;bridgeLocal(b,bx,bz);const u1=BU,v1=BV;
+    for(const e of [-b.w*.5,b.w*.5]){
+      const p0=u0-e,p1=u1-e;if(p0*p1>0||p0===p1)continue;
+      if(Math.abs(v0+(v1-v0)*p0/(p0-p1))<=b.d*.5+.5)return true;
+    }
+  }
+  return false;
+}
+// A leg that enters or leaves a deck through an end gets waypoints on the
+// bridge axis: out on the ramp, then just inside the deck, so the tank lines
+// up with the lane instead of meeting a parapet end at an angle. A waypoint is
+// added only where it lies between the leg's ends along the axis (or the leg
+// starts beside the ramp, which must back out to the axis first).
+const FUNNEL_OUT=16,FUNNEL_IN=7;
+function deckFunnel(mapId,ax,az,bx,bz){
+  const s=specFor(mapId),out=[];
+  for(const b of s.bridges){
+    if(s.missingDecks?.has(b.id))continue;
+    bridgeLocal(b,ax,az);const u0=BU,v0=BV;bridgeLocal(b,bx,bz);const u1=BU,v1=BV,half=b.d*.5;
+    const at=v=>b.axis==='x'?{x:b.x+v,z:b.z}:{x:b.x,z:b.z+v};
+    for(const side of [-1,1]){
+      const p0=side*v0-half,p1=side*v1-half;if(p0*p1>0||p0===p1)continue;
+      const t=p0/(p0-p1);if(Math.abs(u0+(u1-u0)*t)>b.w*.5)continue;
+      const vOut=half+FUNNEL_OUT,vIn=half-FUNNEL_IN;
+      if(p0>0){// entering
+        if(side*v0>vOut+2||Math.abs(u0)>b.w*.5)out.push({t:t-.01,...at(side*vOut)});
+        if(side*v1<vIn-2)out.push({t:t+.01,...at(side*vIn)});
+      }else{// leaving
+        if(side*v0<vIn-2)out.push({t:t-.01,...at(side*vIn)});
+        if(side*v1>vOut+2)out.push({t:t+.01,...at(side*vOut)});
+      }
+    }
+  }
+  return out.sort((a,b)=>a.t-b.t).map(({x,z})=>({x,z}));
+}
+// The ground beneath roads, rails and streets, for painting the terrain: the
+// ground shader draws those networks itself from a sharp distance field.
+function bareTerrainAt(mapId,x,z){
+  const t=terrainAt(mapId,x,z);if(t.bridge||t.water||t===TERRAIN.bank||t===TERRAIN.icyBank)return t;
+  return specFor(mapId).surface(x,z,true);
+}
 // Only open water ever blocks a tank, so movement checks skip the surface types.
-function blockedAt(mapId,x,z){
+function blockedAt(mapId,x,z,y){
   const s=specFor(mapId);if(!s.rivers.length&&!s.lakes.length)return false;
   for(const b of s.bridges){
     bridgeLocal(b,x,z);if(Math.abs(BU)>b.w*.5)continue;
-    const dv=Math.abs(BV);if(dv<=b.d*.5+b.ramp&&!(dv<=b.d*.5&&s.missingDecks?.has(b.id)))return false;
+    const dv=Math.abs(BV);if(dv<=b.d*.5+b.ramp&&!(dv<=b.d*.5&&underDeck(s,b,y)))return false;
   }
   const w=waterAt(s,x,z);return !!w&&w.passable===false;
 }
@@ -2764,10 +2891,12 @@ function orchard(P,cx,cz,rot,cols,rows,step=11){
     [610,10,46],[690,150,46],[800,250,46],[930,285,46],[1100,300,46],[1400,320,50],[1750,330,52]];
   const river=makeLines([{points:riverPath}],{reach:96,step:25}),wide=makeLines([{points:riverPath}],{reach:400,step:40});
   const zW=zAtX(river,-260),zE=zAtX(river,260),fW=zAtX(river,-930),fE=zAtX(river,930);
+  // Roads run dead straight over every bridge: two collinear points beyond
+  // each ramp end hold the spline on the deck axis across ramps and deck.
   const half=[
     [[-1150,-700],[-780,-720],[-560,-690],[-250,-700],[0,-680],[260,-660],[560,-700],[860,-650],[1150,-680]],
-    [[-560,-690],[-540,-470],[-500,-230],[-455,-60],[-430,30],[-330,75],[-262,118],[-260,zW],[-258,335],[-240,500],[-260,665]],
-    [[0,-680],[-60,-460],[-150,-250],[-215,-80],[-205,0],[-100,0],[0,0]],
+    [[-560,-690],[-540,-470],[-500,-230],[-455,-60],[-430,30],[-330,70],[-260,zW-150],[-260,zW-125],[-260,zW],[-260,zW+125],[-260,zW+150],[-240,500],[-260,665]],
+    [[0,-680],[-60,-460],[-150,-250],[-215,-80],[-200,0],[-180,0],[-95,0],[0,0]],
     [[-780,-720],[-860,-500],[-930,fW],[-900,-60],[-790,180],[-700,420],[-560,690]],
   ];
   const roads=makeLines([...half,...half.map(flipPoints)].map(points=>({points,width:9})),{reach:40,step:20});
@@ -2797,8 +2926,8 @@ function orchard(P,cx,cz,rot,cols,rows,step=11){
       {id:'e',axis:'z',x:260,z:zE,w:16,d:94,height:9,ramp:72,style:'stone'},
     ],
     roads,forests,
-    surface(x,z){
-      if(lineEdge(roads,x,z)<0)return TERRAIN.dirt;
+    surface(x,z,bare){
+      if(!bare&&lineEdge(roads,x,z)<0)return TERRAIN.dirt;
       for(const f of forests)if((x-f.x)**2+(z-f.z)**2<f.r2)return TERRAIN.forest;
       const n=vnoise(x/85,z/85,5);
       return n>.58?TERRAIN.mud:n<-.5?TERRAIN.meadow:TERRAIN.grass;
@@ -2893,9 +3022,9 @@ function orchard(P,cx,cz,rot,cols,rows,step=11){
     pads:[{x:-410,z:-230,r:52,blend:50},{x:420,z:230,r:60,blend:60},{x:0,z:0,r:70,blend:60},...spawnPads([-500,0,500],680)],
     lakes:[{x:oasis.x,z:oasis.z,rx:52,rz:34,rot:.4,drop:1.6,depth:2.5,bank:18,type:TERRAIN.spring}],
     roads,
-    surface(x,z){
+    surface(x,z,bare){
       if(Math.abs(x)<44&&Math.abs(z)<44)return TERRAIN.sandYard;
-      if(lineEdge(roads,x,z)<0)return TERRAIN.firm;
+      if(!bare&&lineEdge(roads,x,z)<0)return TERRAIN.firm;
       if(lineEdge(wadi,x,z)<4)return TERRAIN.wadi;
       for(const f of this.mesas){const m=mesaMask(f,x,z);if(m>.93)return TERRAIN.mesaTop;if(m>.05)return TERRAIN.cliff;}
       if((x-oasis.x)**2+(z-oasis.z)**2<118**2)return TERRAIN.oasis;
@@ -2975,10 +3104,10 @@ function orchard(P,cx,cz,rot,cols,rows,step=11){
     pads:[{x:-500,z:-265,w:110,d:430,blend:45},{x:500,z:250,r:70,blend:60},{x:0,z:0,r:46,blend:70},...spawnPads([-500,0,500],720)],
     lakes:[{x:lake.x,z:lake.z,rx:lake.rx,rz:lake.rz,rot:lake.rot,ice:true,drop:.4,bank:45}],
     roads,rails,forests,
-    surface(x,z){
+    surface(x,z,bare){
       if(ellipseRho(lake,x,z)<1)return TERRAIN.ice;
-      if(lineEdge(rails,x,z)<1.6||Math.abs(x+500)<46&&z>-448&&z<-92)return TERRAIN.rail;
-      if(lineEdge(roads,x,z)<0)return TERRAIN.packed;
+      if(!bare&&lineEdge(rails,x,z)<1.6||Math.abs(x+500)<46&&z>-448&&z<-92)return TERRAIN.rail;
+      if(!bare&&lineEdge(roads,x,z)<0)return TERRAIN.packed;
       if(Math.abs(x)<300&&Math.abs(z)<720&&spurHeight(x,z)>44&&ridged(x/60,z/60,8,2)>.55)return TERRAIN.rock;
       if(Math.abs(x)>930&&vnoise(x/60,z/60,6)>.3)return TERRAIN.rock;
       // Wind-blown drifts: elongated along x, irregular from domain warping.
@@ -3059,11 +3188,11 @@ function orchard(P,cx,cz,rot,cols,rows,step=11){
     id:'city',kind:'urban',biome:'summer',theme:'city',size:900,spawnZ:388,lanes:[-180,0,180],plain:true,flat:7,
     zones:[{id:'A',x:-250,z:-130},{id:'B',x:0,z:0},{id:'C',x:250,z:130}],
     relief:()=>7,streets,areas,
-    surface(x,z){
+    surface(x,z,bare){
       const e=lineEdge(streets,x,z);
-      if(e<0)return TERRAIN.street;
+      if(!bare&&e<0)return TERRAIN.street;
       for(const a of squares)if(rectDistance(a,x,z)<0)return TERRAIN.square;
-      if(e<3.2)return TERRAIN.sidewalk;
+      if(!bare&&e<3.2)return TERRAIN.sidewalk;
       for(const a of parks)if(rectDistance(a,x,z)<0)return TERRAIN.park;
       return TERRAIN.yard;
     },
@@ -3154,9 +3283,9 @@ function cityBlocks(s,r,{squares,parks,landmarks,heights=(d)=>d<165?[9,14]:d<265
     id:'works',kind:'urban',biome:'desert',theme:'works',size:720,spawnZ:316,lanes:[-160,0,160],flat:7,
     zones:[{id:'A',x:-170,z:-110},{id:'B',x:0,z:0},{id:'C',x:170,z:110}],
     relief:()=>7,hills:heaps,roads,rails,areas:[{...plaza,kind:'concrete'},{...loading,kind:'concrete'},{...tankyard,kind:'concrete'}],
-    surface(x,z){
-      if(lineEdge(rails,x,z)<1.6)return TERRAIN.rail;
-      if(lineEdge(roads,x,z)<0)return TERRAIN.asphalt;
+    surface(x,z,bare){
+      if(!bare&&lineEdge(rails,x,z)<1.6)return TERRAIN.rail;
+      if(!bare&&lineEdge(roads,x,z)<0)return TERRAIN.asphalt;
       if(rectDistance(plaza,x,z)<0||rectDistance(loading,x,z)<0||rectDistance(tankyard,x,z)<0)return TERRAIN.concrete;
       for(const f of heaps)if(ellipseRho(f,x,z)<1.15)return TERRAIN.slag;
       return TERRAIN.dust;
@@ -3215,8 +3344,8 @@ function cityBlocks(s,r,{squares,parks,landmarks,heights=(d)=>d<165?[9,14]:d<265
     pads:[{x:-340,z:-130,r:50,blend:50},{x:340,z:130,r:50,blend:50},{x:0,z:0,r:40,blend:50},...spawnPads([-400,0,400],650)],
     lakes:both([{x:-392,z:-182,rx:20,rz:13,rot:.4,drop:1,depth:1.8,bank:12}],flipHill).map(L=>({...L,type:TERRAIN.pond})),
     roads,
-    surface(x,z){
-      if(lineEdge(roads,x,z)<0)return TERRAIN.dirt;
+    surface(x,z,bare){
+      if(!bare&&lineEdge(roads,x,z)<0)return TERRAIN.dirt;
       const [i,j,lx,lz]=fieldOf(x,z),ex=Math.min(lx-i*FW,(i+1)*FW-lx),ez=Math.min(lz-j*FD,(j+1)*FD-lz);
       if(ex<3||ez<3)return TERRAIN.grass;
       return crops[Math.floor(lattice(i,j,77)*crops.length)];
@@ -3352,7 +3481,7 @@ function removeBridgeDeck(map,bridge){
 }
 function releaseBattleMap(id) { if(typeof id==='string'&&id.includes(':'))variants.delete(id); }
 
-return {NATIONS,TANKS,TERRAIN,terrainHeight,surfaceHeight,terrainAt,blockedAt,waterNearSegment,waterLevel,waterBetween,MAPS,getTank,createBattleMap,getMap,removeBridgeDeck,releaseBattleMap};
+return {NATIONS,TANKS,TERRAIN,BRIDGE_FILL,terrainHeight,surfaceHeight,terrainAt,bareTerrainAt,bridgeAllows,parapetCrossed,deckFunnel,underDeckExit,blockedAt,waterNearSegment,waterLevel,waterBetween,MAPS,getTank,createBattleMap,getMap,removeBridgeDeck,releaseBattleMap};
 })();
 MODULES["tactics.js"]=(()=>{
 const {getTank,waterBetween} = MODULES["data.js"];
@@ -3601,9 +3730,13 @@ function weaponGeometry(type) {
 
 function hullPose(tank,mapId){
  const old=tank._terrainPose;if(old&&old.x===tank.x&&old.z===tank.z&&old.yaw===tank.angle&&old.mapId===mapId)return old;
- const a=tank.angle||0,s=Math.sin(a),c=Math.cos(a),height=(x,z)=>surfaceHeight(mapId,x,z);
- const front=height(tank.x+s*2.4,tank.z+c*2.4),rear=height(tank.x-s*2.4,tank.z-c*2.4);
- const left=height(tank.x-c*1.4,tank.z+s*1.4),right=height(tank.x+c*1.4,tank.z-s*1.4);
+ // Samples read the tank's own layer (deck or the ground beneath it). A sample
+ // across a sheer step (more than 45 degrees away) cannot carry the hull, so
+ // it is held level with the centre instead of flipping the tank.
+ const a=tank.angle||0,s=Math.sin(a),c=Math.cos(a),centre=surfaceHeight(mapId,tank.x,tank.z,tank.y);
+ const height=(x,z,reach)=>{const h=surfaceHeight(mapId,x,z,tank.y);return Math.abs(h-centre)>reach?centre:h;};
+ const front=height(tank.x+s*2.4,tank.z+c*2.4,2.4),rear=height(tank.x-s*2.4,tank.z-c*2.4,2.4);
+ const left=height(tank.x-c*1.4,tank.z+s*1.4,1.4),right=height(tank.x+c*1.4,tank.z-s*1.4,1.4);
  const pitch=-Math.atan2(front-rear,4.8),roll=Math.atan2(right-left,2.8),cp=Math.cos(pitch),sp=Math.sin(pitch),
    cr=Math.cos(roll),sr=Math.sin(roll);
  const transform=v=>{
@@ -3622,7 +3755,7 @@ function weaponFrame(tank,mapId,options={}){
  const pose=hullPose(tank,mapId),localYaw=yaw-(tank.angle||0),s=Math.sin(localYaw),c=Math.cos(localYaw);
  const side=secondary?secondary.offsetX:tank.type==='bmpt'?((options.barrelIndex??tank._barrelIndex??0)===0?-.22:.22):0;
  const rootOffset=pose.transform({x:0,y:geometry.turretBaseY,z:geometry.turretOffsetZ});
- const root={x:tank.x+rootOffset.x,y:(tank.fall?tank.y:surfaceHeight(mapId,tank.x,tank.z))+.035+rootOffset.y,z:tank.z+rootOffset.z};
+ const root={x:tank.x+rootOffset.x,y:(tank.fall?tank.y:surfaceHeight(mapId,tank.x,tank.z,tank.y))+.035+rootOffset.y,z:tank.z+rootOffset.z};
  const direction=pose.transform({x:s*Math.cos(pitch),y:Math.sin(pitch),z:c*Math.cos(pitch)});
  const vertical=secondary?.offsetY||0,forward=geometry.mantletZ-vertical*Math.sin(pitch);
  const shift=pose.transform({x:s*forward+c*side,y:geometry.gunY+vertical*Math.cos(pitch),z:c*forward-s*side});
@@ -3677,7 +3810,7 @@ const {TacticalDirector} = MODULES["tactics.js"];
 const {ObstacleIndex,Lattice} = MODULES["spatial.js"];
 // Tanks with deep-wading gear (Maus, both Tiger I variants); the rest drown.
 const WADERS=new Set(['maus','tigerh1','tigere']),DROWN_TIME=5;
-const { TANKS, getTank, getMap, createBattleMap, removeBridgeDeck, terrainHeight, terrainAt, surfaceHeight, waterLevel, blockedAt, waterNearSegment } = MODULES["data.js"];
+const { TANKS, getTank, getMap, createBattleMap, removeBridgeDeck, terrainHeight, terrainAt, surfaceHeight, bridgeAllows, parapetCrossed, deckFunnel, underDeckExit, waterLevel, blockedAt, waterNearSegment } = MODULES["data.js"];
 const { weaponFrame, weaponGeometry, secondaryWeaponGeometry, solveWeaponAim, GRAVITY } = MODULES["ballistics.js"];
 const TAU = Math.PI * 2;
 const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
@@ -3887,9 +4020,9 @@ class Game {
         }
       }
       if(t.drone)this.flyDrone(t,dt,t.isPlayer?input:this.time-(t._lastNetworkInput??-10)<.35?t._remoteInput||{}:{});else if(t.isPlayer)this._playerControl(t,dt,input);else if(t.isHuman)this._playerControl(t,dt,this.time-(t._lastNetworkInput??-10)<.35?t._remoteInput||{}:{});else this._botControl(t,dt);
-      t.y=surfaceHeight(this.map.id,t.x,t.z);t.health=t.modules.crew;
+      t.y=surfaceHeight(this.map.id,t.x,t.z,t.y);t.health=t.modules.crew;
       // Deep water: the Maus and the Tiger I wade through, every other tank drowns.
-      if(!t.flight&&!t.developer&&!WADERS.has(t.type)&&blockedAt(this.map.id,t.x,t.z)){
+      if(!t.flight&&!t.developer&&!WADERS.has(t.type)&&blockedAt(this.map.id,t.x,t.z,t.y)){
         t.drown=(t.drown||0)+dt;
         if(t.drown>=DROWN_TIME){t.modules.crew=0;this._destroy(t,null,'Tank utonul');continue;}
       }else t.drown=0;
@@ -3950,12 +4083,12 @@ class Game {
   }
 
   _move(t,dt,throttle,steer) {
-    const spec=getTank(t.type),ground=terrainAt(this.map.id,t.x,t.z);
+    const spec=getTank(t.type),ground=terrainAt(this.map.id,t.x,t.z,t.y);
     const engine=t.modules.engine<=0?0:.25+.75*t.modules.engine/100;
     const tracks=t.modules.tracks<=0?0:.4+.6*t.modules.tracks/100;
     const terrainBonus=spec.nation==='ussr'&&ground.speed<.9?1.1:1;
-    const ahead=surfaceHeight(this.map.id,t.x+Math.sin(t.angle)*4,t.z+Math.cos(t.angle)*4),
-      behind=surfaceHeight(this.map.id,t.x-Math.sin(t.angle)*4,t.z-Math.cos(t.angle)*4);
+    const ahead=surfaceHeight(this.map.id,t.x+Math.sin(t.angle)*4,t.z+Math.cos(t.angle)*4,t.y),
+      behind=surfaceHeight(this.map.id,t.x-Math.sin(t.angle)*4,t.z-Math.cos(t.angle)*4,t.y);
     const slope=(ahead-behind)/8,uphill=Math.max(0,slope*Math.sign(throttle));
     const max=((t.developer?350:spec.speed)/3.6)*(t.developer||t.type==='m18'?Math.min(1,ground.speed):ground.speed)*terrainBonus*engine*tracks*clamp(1-uphill*.85,.35,1);
     if(!t.isPlayer&&!t.isHuman&&engine&&tracks)t._slopeStall=uphill>.76&&Math.abs(throttle)>.15?(t._slopeStall||0)+dt:Math.max(0,(t._slopeStall||0)-dt*.4);
@@ -3975,7 +4108,8 @@ class Game {
       nz=clamp(oz+Math.cos(t.angle)*t.speed*dt,-bound,bound);
     // Players and wading bots may enter deep water; other bots keep to the banks.
     const wade=t.isPlayer||t.isHuman||t.developer||WADERS.has(t.type);
-    const free=(x,z)=>this._free(x,z,t.width*.52,wade)&&(surfaceHeight(this.map.id,x,z)-surfaceHeight(this.map.id,ox,oz)<=Math.hypot(x-ox,z-oz)*.85+.03)&&!this.tanks.some(other=>other!==t&&!other.fall&&!other.flight&&other.alive&&Math.hypot(other.x-x,other.z-z)<(other.width+t.width)*.61);
+    const geometry=weaponGeometry(t.type),body={width:t.width,length:t.length,angle:t.angle,height:geometry.turretBaseY+(geometry.turretHeight??1)};
+    const free=(x,z)=>this._free(x,z,t.width*.52,wade)&&(surfaceHeight(this.map.id,x,z,t.y)-surfaceHeight(this.map.id,ox,oz,t.y)<=Math.hypot(x-ox,z-oz)*.85+.03)&&bridgeAllows(this.map.id,ox,oz,x,z,t.y,body)&&!this.tanks.some(other=>other!==t&&!other.fall&&!other.flight&&other.alive&&Math.hypot(other.x-x,other.z-z)<(other.width+t.width)*.61);
     if(free(nx,nz)){t.x=nx;t.z=nz;}
     else if(free(nx,oz)){t.x=nx;t.speed*=.8;}
     else if(free(ox,nz)){t.z=nz;t.speed*=.8;}
@@ -4215,7 +4349,7 @@ class Game {
     let closest=null;
     if(includeTanks)for(const t of this.tanks) {
       if(t.flight||!t.alive||t.id===ignoreTankId||pointSegmentDistance(t.x,t.z,a.x,a.z,b.x,b.z)>t.length*.7)continue;
-      const base=(t.fall?t.y:surfaceHeight(this.map.id,t.x,t.z))+.035,geometry=weaponGeometry(t.type),
+      const base=(t.fall?t.y:surfaceHeight(this.map.id,t.x,t.z,t.y))+.035,geometry=weaponGeometry(t.type),
         frame=weaponFrame(t,this.map.id);
       const localYaw=t.turretAngle-t.angle,cs=Math.cos(localYaw),sn=Math.sin(localYaw);
       const turretPose={inverse:v=>{const q=frame.pose.inverse(v);return {x:q.x*cs-q.z*sn,y:q.y,z:q.x*sn+q.z*cs};}};
@@ -4621,6 +4755,7 @@ class Game {
     const radius=2.5,bound=this.map.size*.5-5-radius,id=this.map.id;
     // The playable square is convex, so checking both ends covers every sample.
     if(Math.abs(a.x)>bound||Math.abs(a.z)>bound||Math.abs(b.x)>bound||Math.abs(b.z)>bound)return false;
+    if(parapetCrossed(id,a.x,a.z,b.x,b.z))return false;
     const d=distance(a,b),steps=Math.ceil(d/3),rise=d/Math.max(1,steps)*.72;
     // Each candidate is tested only at the samples that can come within its reach.
     for(const o of this._obstaclesAlong(a,b,radius)){
@@ -4643,17 +4778,22 @@ class Game {
     return true;
   }
   _buildNav() {
-    const step=10,offset=-this.map.size*.5+10,size=Math.floor((this.map.size-20)/step)+1,cells=[];
+    const step=10,offset=-this.map.size*.5+10,size=Math.floor((this.map.size-20)/step)+1,cells=[],decks=this.map.bridges||[];
     for(let z=0;z<size;z++)for(let x=0;x<size;x++){
       const wx=offset+x*step,wz=offset+z*step;
-      cells.push({x:wx,z:wz,height:surfaceHeight(this.map.id,wx,wz),open:this._free(wx,wz,3.3),cost:1/terrainAt(this.map.id,wx,wz).speed});
+      // Cells by a deck check their links against its parapets.
+      const deck=decks.some(b=>Math.abs(b.axis==='x'?wz-b.z:wx-b.x)<b.w*.5+step*1.5&&Math.abs(b.axis==='x'?wx-b.x:wz-b.z)<b.d*.5+step*1.5);
+      cells.push({x:wx,z:wz,height:surfaceHeight(this.map.id,wx,wz),open:this._free(wx,wz,3.3),cost:1/terrainAt(this.map.id,wx,wz).speed,deck});
     }
     return {size,step,offset,cells};
   }
   _pathfind(start,goal) {
+    // Beneath a deck the grid's deck cells do not apply: leave sideways first.
+    const exit=Number.isFinite(start.y)&&underDeckExit(this.map.id,start.x,start.z,start.y);
+    if(exit)return [exit,...this._pathfind({x:exit.x,z:exit.z,_avoidSlope:start._avoidSlope},goal)];
     const bad=start._avoidSlope?.until>this.time?start._avoidSlope:null;
     const clear=(a,b)=>(!bad||pointSegmentDistance(bad.x,bad.z,a.x,a.z,b.x,b.z)>5)&&this._lineFree(a,b);
-    if(clear(start,goal))return [{...goal}];
+    if(clear(start,goal))return this._funnel(start,[{...goal}]);
     const {size,step,offset,cells}=this._nav;
     const nearest=p=>{
       const x=clamp(Math.round((p.x-offset)/step),0,size-1),z=clamp(Math.round((p.z-offset)/step),0,size-1),at=z*size+x;
@@ -4680,6 +4820,7 @@ class Game {
         if(!dx&&!dz)continue;const nx=x+dx,nz=z+dz;if(nx<0||nz<0||nx>=size||nz>=size)continue;
         const ni=nz*size+nx;if(closed[ni]||!cells[ni].open)continue;
         if(dx&&dz&&(!cells[z*size+nx].open||!cells[nz*size+x].open))continue;
+        if((cells[id].deck||cells[ni].deck)&&parapetCrossed(this.map.id,cells[id].x,cells[id].z,cells[ni].x,cells[ni].z))continue;
         const length=step*(dx&&dz?1.414:1),grade=(cells[ni].height-cells[id].height)/length;
         if(grade>.72||bad&&distance(cells[ni],bad)<6)continue;
         const ng=g[id]+(dx&&dz?1.414:1)*cells[ni].cost*(1+2*Math.max(0,grade)**2);
@@ -4699,7 +4840,13 @@ class Game {
       index=far+1;
     }
     if(clear(anchor,goal))smooth.push({...goal});
-    return smooth;
+    return this._funnel(start,smooth);
+  }
+  // Line up with the lane on the bridge axis before driving onto or off a deck.
+  _funnel(start,path) {
+    const out=[];let from=start;
+    for(const p of path){out.push(...deckFunnel(this.map.id,from.x,from.z,p.x,p.z),p);from=p;}
+    return out;
   }
 }
 
@@ -5056,7 +5203,7 @@ class ReplicaBattle extends Game{
      if(error>.12){p.x=mix(p.x,tx,blend);p.z=mix(p.z,tz,blend);}
      p.angle=angle(p.angle,s.angle+s.yawVelocity*age,blend);
    }
-   p.y=surfaceHeight(this.map.id,p.x,p.z);p._terrainPose=null;
+   p.y=surfaceHeight(this.map.id,p.x,p.z,p.y);p._terrainPose=null;
   }
  }
  repairPlayer(){this.onCommand('repair');return true;}
@@ -6921,7 +7068,7 @@ class ZombieGame extends Game{
   this.smokeClouds=this.smokeClouds.filter(c=>c.life>0);
   this.walkSahurs(dt);
   if(p.drone)this.flyDrone(p,dt,input);else this._playerControl(p,dt,input);
-  p.y=surfaceHeight(this.map.id,p.x,p.z);
+  p.y=surfaceHeight(this.map.id,p.x,p.z,p.y);
   for(const z of this.zombies){
    if(!z.alive)continue;
    const dist=Math.hypot(z.x-p.x,z.z-p.z);
@@ -6944,7 +7091,7 @@ class ZombieGame extends Game{
     const slowed=this.smokeClouds.some(c=>Math.hypot(c.x-z.x,c.z-z.z)<c.radius)?.45:1,step=Math.min(d,z.speed*dt*slowed),
       nx=z.x+dx/d*step,nz=z.z+dz/d*step;
     if(this._free(nx,nz,.5)){z.x=nx;z.z=nz;}else z.pathAge=4;
-    z.y=surfaceHeight(this.map.id,z.x,z.z);
+    z.y=surfaceHeight(this.map.id,z.x,z.z,z.y);
    }
   }
   if(!p.flight&&!p.fall)this._autoGun(dt);this._updateShells(dt);
@@ -7013,7 +7160,7 @@ return {ZOMBIE_UPGRADES,ZombieGame};
 MODULES["renderer.js"]=(()=>{
 
 const {normalizeAppearance} = MODULES["appearance.js"];
-const { getTank, getMap, terrainHeight, surfaceHeight, terrainAt, waterLevel, TERRAIN } = MODULES["data.js"];
+const { getTank, getMap, terrainHeight, surfaceHeight, terrainAt, bareTerrainAt, waterLevel, TERRAIN, BRIDGE_FILL } = MODULES["data.js"];
 const { weaponFrame, weaponGeometry, hullPose, GRAVITY } = MODULES["ballistics.js"];
 // All geometry and surface textures are generated locally. No runtime asset requests.
 const TAU = Math.PI * 2;
@@ -7036,7 +7183,9 @@ function terrainGeometry(map,segments=300){
     const values=Array.from({length:segments+1},(_,i)=>-half+i*size/segments).filter(v=>!fixed.some(f=>Math.abs(f-v)<.05));
     return [...values,...fixed].sort((a,b)=>a-b);
   };
-  const across=(c,w)=>[c-w/2-10,c-w/2,c,c+w/2,c+w/2+10],along=(c,b)=>[-1,1].flatMap(s=>[c+s*b.d/2,c+s*(b.d/2+b.ramp)]);
+  // Extra rows follow the embankment shoulders and the fill slopes under the deck ends.
+  const across=(c,w)=>[c-w/2-10,c-w/2-6.7,c-w/2-3.3,c-w/2,c,c+w/2,c+w/2+3.3,c+w/2+6.7,c+w/2+10],
+    along=(c,b)=>[-1,1].flatMap(s=>[c+s*(b.d/2-BRIDGE_FILL),c+s*(b.d/2-BRIDGE_FILL*2/3),c+s*(b.d/2-BRIDGE_FILL/3),c+s*b.d/2,c+s*(b.d/2+b.ramp)]);
   const xs=axis((map.bridges||[]).flatMap(b=>b.axis==='x'?along(b.x,b):across(b.x,b.w)));
   const zs=axis((map.bridges||[]).flatMap(b=>b.axis==='x'?across(b.z,b.w):along(b.z,b)));
   const geo=new THREE.PlaneGeometry(size,size,xs.length-1,zs.length-1),p=geo.attributes.position,uv=geo.attributes.uv;
@@ -8000,6 +8149,7 @@ function skyDome(texture){
   mesh.name='sky';mesh.renderOrder=-10;mesh.frustumCulled=false;return mesh;
 }
 // Flat strip along a polyline: two or more vertices across, y from a callback.
+// Faces wind counter-clockwise seen from above, so the strip faces the sky.
 function ribbonGeometry(points,width,heightAt,{across=2,uvScale=8,skip=null,lift=0}={}){
   const pos=[],uv=[],index=[];let length=0,row=-1;
   for(let i=0;i<points.length;i++){
@@ -8010,7 +8160,7 @@ function ribbonGeometry(points,width,heightAt,{across=2,uvScale=8,skip=null,lift
     if(skip?.(p[0],p[1])){row=-1;continue;}
     const base=pos.length/3;
     for(let k=0;k<across;k++){const s=k/(across-1)*2-1,x=p[0]-tz*w*s,z=p[1]+tx*w*s;pos.push(x,heightAt(x,z)+lift,z);uv.push(k/(across-1),length/uvScale);}
-    if(row>=0)for(let k=0;k<across-1;k++){const a0=row+k,a1=row+k+1,b0=base+k,b1=base+k+1;index.push(a0,b0,a1,a1,b0,b1);}
+    if(row>=0)for(let k=0;k<across-1;k++){const a0=row+k,a1=row+k+1,b0=base+k,b1=base+k+1;index.push(a0,a1,b0,a1,b1,b0);}
     row=base;
   }
   const geo=new THREE.BufferGeometry();
@@ -8048,17 +8198,43 @@ function windowTexture(kind='house'){
   },128);
   tex.wrapS=tex.wrapT=THREE.RepeatWrapping;return tex;
 }
-function trackTexture(kind){
-  const tex=localTexture('track-'+kind,(ctx,s)=>{
-    const base=kind==='snow'?'#a9b6b7':kind==='sand'?'#b3a07c':kind==='asphalt'?'#56595b':kind==='ballast'?'#7a756c':'#958a6c';
-    ctx.fillStyle=base;ctx.fillRect(0,0,s,s);const rng=random(kind.length*77+5);
-    for(let i=0;i<2600;i++){const c=rng()<.5?0:255;ctx.fillStyle=`rgba(${c},${c},${c},${.04+rng()*.08})`;ctx.fillRect(rng()*s,rng()*s,1+rng()*2,1+rng()*2);}
-    if(kind!=='asphalt'&&kind!=='ballast')for(const x of [.27,.73]){ctx.fillStyle='rgba(40,34,26,.18)';ctx.fillRect(s*(x-.07),0,s*.14,s);}
-    const edge=ctx.createLinearGradient(0,0,s,0);edge.addColorStop(0,'rgba(0,0,0,.18)');edge.addColorStop(.12,'rgba(0,0,0,0)');edge.addColorStop(.88,'rgba(0,0,0,0)');edge.addColorStop(1,'rgba(0,0,0,.18)');
-    ctx.fillStyle=edge;ctx.fillRect(0,0,s,s);
-  },128);
-  tex.wrapS=tex.wrapT=THREE.RepeatWrapping;return tex;
+// Roads, rails and streets painted by the ground shader. The mask stores, per
+// network and channel (r roads, g rails, b streets), the signed distance inside
+// the nearest edge in metres: 0.5 + d/(2*SURFACE_RANGE), clamped to [0,1]. A
+// distance field stays sharp under bilinear filtering, so edges, ruts and
+// kerbs hold up at any range and lie exactly on the terrain.
+const SURFACE_RANGE=8;
+const SURFACE_GLSL=`
+varying vec2 vSurf;
+uniform sampler2D uSurfMask;
+uniform float uSurfScale;
+uniform vec3 uRoadColor,uBallastColor,uStreetColor,uPaveColor;
+uniform vec4 uRoadStyle;
+float surfHash(vec2 p){vec3 q=fract(vec3(p.xyx)*.1031);q+=dot(q,q.yzx+33.33);return fract((q.x+q.y)*q.z);}
+float surfNoise(vec2 p){vec2 i=floor(p),f=fract(p),u=f*f*(3.-2.*f);
+  return mix(mix(surfHash(i),surfHash(i+vec2(1,0)),u.x),mix(surfHash(i+vec2(0,1)),surfHash(i+vec2(1,1)),u.x),u.y);}
+void surfacePaint(inout vec3 col,vec3 tex){
+  vec3 f=(texture2D(uSurfMask,vSurf*uSurfScale+.5).rgb-.5)*${(2*SURFACE_RANGE).toFixed(1)};
+  float px=length(fwidth(vSurf)),aa=px*.7,fade=1.-smoothstep(.3,1.5,px);
+  float n1=surfNoise(vSurf*.45),n2=surfNoise(vSurf*1.7),n3=surfNoise(vSurf*.08);
+  float wob=(n1*1.4+n2*.6-1.)*mix(.35,1.,fade);
+  // Roads: uRoadStyle = (edge wobble m, edge softness m, unpaved 0/1, edge lines 0/1).
+  float re=f.r+wob*uRoadStyle.x,soft=uRoadStyle.y+aa,road=smoothstep(-soft,soft,re);
+  vec3 rc=uRoadColor*tex;
+  col=mix(col,rc*.92,uRoadStyle.z*.4*(1.-smoothstep(0.,2.6,-re))*(.55+.45*n1));
+  float rut=uRoadStyle.z*fade*(1.-smoothstep(.25,.8,abs(re-2.3)));
+  rc*=(.9+.18*n3)*(1.-.16*rut)*(.86+.14*smoothstep(0.,1.1,re));
+  rc=mix(rc,vec3(.62,.6,.55)*tex,.8*uRoadStyle.w*fade*(1.-smoothstep(.08,.08+aa,abs(re-.6))));
+  col=mix(col,rc,road);
+  // Railway ballast.
+  float be=f.g+wob*.3,ballast=smoothstep(-.2-aa,.2+aa,be);
+  col=mix(col,uBallastColor*tex*(.82+.3*n2)*(.84+.16*smoothstep(0.,.9,be)),ballast);
+  // Streets: asphalt, a kerb and 3.2 m of pavement.
+  float se=f.b,edge=aa+.02,pave=smoothstep(-3.2-edge,-3.2+edge,se),street=smoothstep(-edge,edge,se),kerb=smoothstep(-.4-edge,-.4+edge,se);
+  vec3 pc=uPaveColor*tex*mix(.94+.1*n1,1.14,kerb),sc=uStreetColor*tex*(.88+.2*n3+.06*n2);
+  col=mix(col,mix(pc,sc,street),pave);
 }
+`;
 // Gable roof with overhang; the ridge runs along local x or local z.
 function gableGeometry(w,d,h,rise,alongX){
   const o=.35,L=(alongX?w:d)/2+o,S=(alongX?d:w)/2+o,v=[];
@@ -8172,6 +8348,7 @@ class Renderer {
     this.hangarTank = null;
     this.terrain = null;
     this.sky = null;
+    this.surfaceMask?.dispose(); this.surfaceMask = null;
     this.flash.intensity = 0;
   }
 
@@ -8327,20 +8504,23 @@ class Renderer {
     this.pendingViewAim = null;
     this.camera.fov = 54;
     this.camera.clearViewOffset();
-    this.smoothedTarget.set(game.player.x, this.heightAt(game.player.x, game.player.z) + 2.4, game.player.z);
+    this.smoothedTarget.set(game.player.x, this.tankY(game.player) + 2.4, game.player.z);
     this.resize();
     this.updateView(1, game);
   }
 
   heightAt(x, z) { return surfaceHeight(this.map?.id, x, z) || 0; }
+  // A tank stands on its own layer: a bridge deck or the ground beneath it.
+  tankY(tank) { return tank.fall ? tank.y : surfaceHeight(this.map?.id, tank.x, tank.z, tank.y) || 0; }
   groundAt(x, z) { return terrainHeight(this.map?.id, x, z) || 0; }
 
   // Vertex colours from the surface types; steep faces turn to bare rock.
+  // Roads, rails and streets are left out: paintSurfaces draws them sharply.
   paintGround(geo, map) {
     geo.computeVertexNormals();
     const pos = geo.attributes.position, nrm = geo.attributes.normal, colors = new Float32Array(pos.count * 3), base = new THREE.Color(), rock = color(this.theme.rock);
     for (let i = 0; i < pos.count; i++) {
-      const x = pos.getX(i), z = pos.getZ(i), terrain = terrainAt(map.id, x, z);
+      const x = pos.getX(i), z = pos.getZ(i), terrain = bareTerrainAt(map.id, x, z);
       base.set(terrain?.color || '#7c8b59');
       // The water is see-through, so beds read as silt and pebbles that darken with depth.
       if (terrain?.water || terrain === TERRAIN.bank) {
@@ -8364,6 +8544,7 @@ class Renderer {
     tex.repeat.set(size / 5, size / 5);
     tex.needsUpdate = true;
     const material = mat('#ffffff', { vertexColors: true, map: tex, roughness: 1, metalness: 0 });
+    this.paintSurfaces(material, map);
     this.terrain = new THREE.Mesh(geo, material);
     this.terrain.receiveShadow = true;
     this.world.add(this.terrain);
@@ -8372,6 +8553,76 @@ class Renderer {
     this.buildWater(map);
     this.buildRoads(map);
     if (map.kind !== 'urban') this.buildClutter(map);
+  }
+
+  // Bakes the road, rail and street distance field (see SURFACE_GLSL) and has
+  // the ground material paint them over its vertex colours.
+  paintSurfaces(material, map) {
+    const vis = map.visual; if (!vis || !(vis.roads.length || vis.rails.length || vis.streets.length)) return;
+    // Cover the networks a little past the battlefield, where they run on into the apron.
+    let reach = 0;
+    for (const path of [...vis.roads, ...vis.rails, ...vis.streets]) for (const p of path.pts) reach = Math.max(reach, Math.abs(p[0]), Math.abs(p[1]));
+    const half = map.size / 2, E = clamp(reach + 30, half + 60, half + 600), N = this.quality === 'low' ? 1024 : 2048, texel = 2 * E / N, R = SURFACE_RANGE;
+    const canvas = document.createElement('canvas'); canvas.width = canvas.height = N;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, N, N);
+    ctx.setTransform(1 / texel, 0, 0, 1 / texel, N / 2, N / 2); // world metres: x along u, z along v
+    ctx.lineCap = ctx.lineJoin = 'round';
+    const trace = pts => { ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]); };
+    // Nested strokes from the outside in, one distance level each. 'lighten'
+    // keeps the larger value, so crossings merge into one field, and the
+    // anti-aliased stroke edges interpolate between levels within a texel.
+    ctx.globalCompositeOperation = 'lighten';
+    const step = Math.min(.5, texel * .75);
+    const field = (paths, channel, grow = 0) => {
+      for (const path of paths) {
+        const w = path.width / 2 + grow;
+        for (let e = -R; e < w; e += step) {
+          const v = Math.round(clamp(.5 + (e + step / 2) / (2 * R), 0, 1) * 255);
+          ctx.strokeStyle = channel === 0 ? `rgb(${v},0,0)` : channel === 1 ? `rgb(0,${v},0)` : `rgb(0,0,${v})`;
+          ctx.lineWidth = 2 * (w - e); trace(path.pts); ctx.stroke();
+        }
+      }
+    };
+    field(vis.roads, 0); field(vis.rails, 1, .9); field(vis.streets, 2);
+    // Nothing is painted on open water (fords show their own bed), frozen
+    // lakes or under bridge decks; islands keep their roads.
+    ctx.globalCompositeOperation = 'source-over'; ctx.strokeStyle = ctx.fillStyle = '#000';
+    ctx.save();
+    ctx.beginPath(); ctx.rect(-E, -E, 2 * E, 2 * E);
+    for (const r of vis.rivers) for (const is of r.islands) {
+      ctx.moveTo(is.x + is.rx * Math.cos(is.rot), is.z - is.rx * Math.sin(is.rot));
+      ctx.ellipse(is.x, is.z, is.rx, is.rz, -is.rot, 0, TAU);
+    }
+    ctx.clip('evenodd');
+    for (const r of vis.rivers) for (const path of r.paths) for (let i = 0; i < path.pts.length - 1; i++) {
+      const a = path.pts[i], b = path.pts[i + 1];
+      ctx.lineWidth = Math.max(1, Math.min(a[2], b[2]) - 2); ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+    }
+    ctx.restore();
+    for (const L of vis.lakes) { const k = L.ice ? 1 : .97; ctx.beginPath(); ctx.ellipse(L.x, L.z, L.rx * k, L.rz * k, -L.rot, 0, TAU); ctx.fill(); }
+    for (const b of map.bridges || []) {
+      if (b.axis === 'x') ctx.fillRect(b.x - b.d / 2 + 1, b.z - b.w / 2 - 1, b.d - 2, b.w + 2);
+      else ctx.fillRect(b.x - b.w / 2 - 1, b.z - b.d / 2 + 1, b.w + 2, b.d - 2);
+    }
+    // A clear border, so clamped sampling does not smear a network across the apron.
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.lineWidth = 4; ctx.strokeRect(0, 0, N, N);
+    const texture = this.surfaceMask = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.NoColorSpace; texture.flipY = false;
+    texture.anisotropy = Math.min(8, this.renderer.capabilities.getMaxAnisotropy());
+    const road = map.theme === 'works' ? TERRAIN.asphalt : map.biome === 'winter' ? TERRAIN.packed : map.biome === 'desert' ? TERRAIN.firm : TERRAIN.dirt, paved = road === TERRAIN.asphalt;
+    const uniforms = {
+      uSurfMask: { value: texture }, uSurfScale: { value: 1 / (2 * E) },
+      uRoadColor: { value: color(road.color) }, uRoadStyle: { value: paved ? new THREE.Vector4(.1, .04, 0, 1) : new THREE.Vector4(1.1, .3, 1, 0) },
+      uBallastColor: { value: color(TERRAIN.rail.color) }, uStreetColor: { value: color(TERRAIN.street.color) }, uPaveColor: { value: color(TERRAIN.sidewalk.color) },
+    };
+    material.onBeforeCompile = shader => {
+      Object.assign(shader.uniforms, uniforms);
+      shader.vertexShader = shader.vertexShader.replace('#include <common>', '#include <common>\nvarying vec2 vSurf;')
+        .replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvSurf = (modelMatrix * vec4(transformed, 1.0)).xz;');
+      shader.fragmentShader = shader.fragmentShader.replace('#include <common>', '#include <common>\n' + SURFACE_GLSL)
+        .replace('#include <color_fragment>', '#include <color_fragment>\nsurfacePaint(diffuseColor.rgb, sampledDiffuseColor.rgb);');
+    };
   }
 
   // Land continues past the playable square out to the horizon. The inner ring
@@ -8473,21 +8724,14 @@ class Renderer {
     }
   }
 
-  // Roads, streets, squares and railways drawn as ribbons over the ground.
+  // Street centre lines, squares and the track of railways. The road, street
+  // and ballast surfaces themselves are painted into the ground (paintSurfaces).
   buildRoads(map) {
     const vis = map.visual; if (!vis) return;
-    const group = new THREE.Group(), urban = map.kind === 'urban', biome = map.biome;
+    const group = new THREE.Group(), biome = map.biome;
     const overlay = (c, extra = {}) => mat(c, { roughness: 1, metalness: 0, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -3, ...extra });
-    const deck = (x, z) => terrainAt(map.id, x, z) === TERRAIN.bridge;
-    const drape = lift => (x, z) => this.heightAt(x, z) + lift;
-    const add = (geo, material) => { const m = new THREE.Mesh(geo, material); m.receiveShadow = true; group.add(m); return m; };
     if (vis.streets.length) {
-      const paving = overlay('#a7a291'), asphalt = overlay('#ffffff', { map: trackTexture('asphalt') }), line = overlay('#c9c6b2');
-      for (const path of vis.streets) {
-        const pts = resample(path.pts, 6);
-        add(ribbonGeometry(pts, path.width + 6.4, drape(.03), { uvScale: 10 }), paving);
-        add(ribbonGeometry(pts, path.width, drape(.07), { uvScale: path.width }), asphalt);
-      }
+      const line = overlay('#c9c6b2');
       // Centre lines on the wider streets, broken at every junction.
       const others = vis.streets.map(p => resample(p.pts, 6));
       vis.streets.forEach((path, n) => {
@@ -8501,21 +8745,15 @@ class Renderer {
         }
       });
     }
-    if (vis.roads.length) {
-      const kind = map.theme === 'works' ? 'asphalt' : biome === 'winter' ? 'snow' : biome === 'desert' ? 'sand' : 'dirt';
-      const material = overlay('#ffffff', { map: trackTexture(kind) });
-      for (const path of vis.roads) add(ribbonGeometry(resample(path.pts, 6), path.width, drape(.07), { across: 3, uvScale: path.width, skip: deck }), material);
-    }
     for (const a of vis.areas || []) {
       const c = a.kind === 'park' ? '#6f8458' : a.kind === 'concrete' ? '#9a958a' : '#a1998a';
       const m = new THREE.Mesh(geometry('area-plane', () => new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2)), overlay(c));
       m.position.set(a.x, this.heightAt(a.x, a.z) + .05, a.z); m.scale.set(a.w, 1, a.d); m.rotation.y = a.rot || 0; m.receiveShadow = true; group.add(m);
     }
     if (vis.rails.length) {
-      const ballast = overlay('#ffffff', { map: trackTexture('ballast') }), steel = mat('#6c6a66', { roughness: .45, metalness: .7 }), wood = mat(biome === 'winter' ? '#6a6458' : '#4f4536', { roughness: 1, metalness: 0 });
+      const steel = mat('#6c6a66', { roughness: .45, metalness: .7 }), wood = mat(biome === 'winter' ? '#6a6458' : '#4f4536', { roughness: 1, metalness: 0 });
       const sleepers = [], rails = [];
       for (const path of vis.rails) {
-        add(ribbonGeometry(resample(path.pts, 5), path.width + 1.8, (x, z) => terrainHeight(map.id, x, z) + .06, { across: 3, uvScale: 4 }), ballast);
         const pts = resample(path.pts, 1.3);
         for (let i = 0; i < pts.length - 1; i++) {
           const [x, z] = pts[i], [nx, nz] = pts[i + 1], y = terrainHeight(map.id, x, z);
@@ -9048,7 +9286,7 @@ class Renderer {
         for(const m of model.skinMaterials)m.color.set('#955a90');
       }
       model.group.visible = !tank.flight&&(tank.alive || tank.respawnIn > 0);
-      const y=tank.fall?tank.y:this.heightAt(tank.x,tank.z),a=tank.angle||0,pose=hullPose(tank,this.map.id);
+      const y=this.tankY(tank),a=tank.angle||0,pose=hullPose(tank,this.map.id);
       model.group.position.set(tank.x,y+.035,tank.z);model.group.rotation.set(0,0,0);
       model.hull.rotation.order='YXZ';model.hull.rotation.set(pose.pitch,a,pose.roll);
       for(const wheel of model.wheels||[]){
@@ -9137,7 +9375,7 @@ class Renderer {
       this.viewScope=false;
       return;
     }
-    const p = game.player, scoped = !!scope && p.alive, y = p.fall?p.y:this.heightAt(p.x, p.z);
+    const p = game.player, scoped = !!scope && p.alive, y = this.tankY(p);
     if (scoped !== this.viewScope && !this.pendingViewAim) this.pendingViewAim = this.aimFromCenter();
     this.viewScope = scoped;
     const view = this.aimCamera;
@@ -9191,13 +9429,18 @@ class Renderer {
     out.set(anchor.x + Math.sin(this.cameraYaw) * flat, anchor.y + d * Math.sin(elevation), anchor.z + Math.cos(this.cameraYaw) * flat);
     // Lift only as much as the ground needs: under the camera and along the
     // boom, so a hill behind the tank never hides it.
-    const id = this.map?.id, floor = (x, z) => { const h = this.heightAt(x, z); return h < (this.map?.waterTop ?? -Infinity) ? Math.max(h, waterLevel(id, x, z)) : h; };
+    // The ground is read on the tank's own layer, so beneath a bridge the deck is a roof.
+    const id = this.map?.id, layer = anchor.y - 2.4, floor = (x, z) => { const h = surfaceHeight(id, x, z, layer) || 0; return h < (this.map?.waterTop ?? -Infinity) ? Math.max(h, waterLevel(id, x, z)) : h; };
     let y = Math.max(out.y, floor(out.x, out.z) + 1.1);
     for (let f = .4; f < .99; f += .15) {
       const need = floor(mix(anchor.x, out.x, f), mix(anchor.z, out.z, f)) + .6;
       y = Math.max(y, anchor.y + (need - anchor.y) / f);
     }
     out.y = Math.min(y, anchor.y + d);
+    for (const b of this.map?.bridges || []) {
+      const u = b.axis === 'x' ? out.z - b.z : out.x - b.x, v = b.axis === 'x' ? out.x - b.x : out.z - b.z;
+      if (layer < b.height - 1.5 && Math.abs(u) <= b.w / 2 + 1 && Math.abs(v) <= b.d / 2) out.y = Math.min(out.y, b.height - (b.style === 'wood' ? 1.1 : 1.9));
+    }
     // Bring the chase camera in front of nearby buildings instead of looking
     // through them. Trees do not steal the view when driving through foliage.
     const direction = out.clone().sub(anchor), distance = direction.length();
@@ -9208,6 +9451,31 @@ class Renderer {
       if (obstacle.type === 'tree' || Math.abs(obstacle.x - anchor.x) > reach || Math.abs(obstacle.z - anchor.z) > reach) continue;
       const hit = this.intersectBounds(cameraRay, obstacle.x, this.heightAt(obstacle.x, obstacle.z), obstacle.z, obstacle.rotation || 0, obstacle.w, obstacle.h, obstacle.d);
       if (hit) clearDistance = Math.min(clearDistance, Math.max(2, hit.distanceTo(anchor) - .7));
+    }
+    // Bridge piers, end walls, arch rings and the deck slab block the boom
+    // too, since tanks can drive beneath and beside the spans.
+    const span = this.bridgeBox ||= new THREE.Box3(), spanHit = this.bridgeHit ||= new THREE.Vector3();
+    for (const b of this.map?.bridges || []) {
+      if (Math.abs(b.x - anchor.x) > reach + b.d / 2 || Math.abs(b.z - anchor.z) > reach + b.d / 2) continue;
+      const wood = b.style === 'wood', parts = [[0, b.w, b.d, b.height - (wood ? .85 : 1.55), b.height - .1]];
+      for (const end of [-1, 1]) parts.push([end * (b.d / 2 - 1.5), b.w - .12, 3.2, -60, b.height - .1]);
+      if (!wood) {
+        const spans = Math.max(2, Math.round(b.d / 22));
+        for (let i = 1; i < spans; i++) {
+          const v = -b.d / 2 + i * b.d / spans;
+          parts.push([v, b.w + .8, 3.6, -60, b.height - 1.5]);
+          for (const s of [-1, 1]) for (let k = 1; k <= 3; k++) {
+            const drop = 1.5 + (3 - k) * .9;
+            parts.push([v + s * (1.8 + k * 1.6), b.w - .12, 1.6, b.height - drop - .45, b.height - drop + .45]);
+          }
+        }
+      }
+      for (const [v, across, along, bottom, top] of parts) {
+        const alongX = b.axis === 'x', cx = alongX ? b.x + v : b.x, cz = alongX ? b.z : b.z + v, hx = (alongX ? along : across) / 2, hz = (alongX ? across : along) / 2;
+        span.min.set(cx - hx, bottom, cz - hz); span.max.set(cx + hx, top, cz + hz);
+        if (span.containsPoint(anchor)) continue;
+        if (cameraRay.intersectBox(span, spanHit)) clearDistance = Math.min(clearDistance, Math.max(2, spanHit.distanceTo(anchor) - .7));
+      }
     }
     // Snap in front of a wall at once, but ease back out once it is passed so
     // the view does not pop at every corner. Tracked as a share of the boom so
@@ -9409,7 +9677,7 @@ class Renderer {
   }
 
   projectTank(tank) {
-    const vector = new THREE.Vector3(tank.x, (tank.fall?tank.y:this.heightAt(tank.x, tank.z)) + (this.tankModels.get(tank.id)?.height || 3.2) + 2.2, tank.z).project(this.camera);
+    const vector = new THREE.Vector3(tank.x, this.tankY(tank) + (this.tankModels.get(tank.id)?.height || 3.2) + 2.2, tank.z).project(this.camera);
     return { x: (vector.x * .5 + .5) * this.width, y: (-vector.y * .5 + .5) * this.height, visible: vector.z > -1 && vector.z < 1 && Math.abs(vector.x) < 1.08 && Math.abs(vector.y) < 1.08 };
   }
 
