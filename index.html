@@ -593,6 +593,11 @@ body.in-battle #scene{cursor:none;touch-action:none;outline:none}
 #custom-form fieldset{border:1px solid #485742;margin:16px 0;padding:8px 12px}
 #custom-form legend{color:#c2aa76;font-size:11px}
 #custom-form .custom-check{flex-direction:row;align-items:center;gap:10px}
+#custom-form .custom-check small{margin-left:auto;white-space:nowrap}
+#custom-form input[type=range],#custom-model-file{width:100%}
+#custom-form .custom-model-label{overflow-wrap:anywhere}
+#custom-form .custom-balance,#custom-price{color:var(--accent-text);font-weight:700}
+#custom-preview .paint-cursor{cursor:crosshair}
 .custom-actions{display:grid;gap:9px;margin:16px 0}
 .custom-actions button{justify-content:center;width:100%;padding:12px}
 @media(max-width:720px){
@@ -1411,7 +1416,7 @@ try{const theme=localStorage.getItem('hsw-theme');if(theme==='light'||theme==='m
 </main>
 <section id="battle" hidden><div id="battle-scene"></div><div class="battle-top"><button id="pause-button" class="hud-button">Ⅱ</button><div class="battle-score"><div class="score-row"><span class="team-blue">SPOJENCI <b id="friendly-score">2000</b></span><span id="battle-time">12:00</span><span class="team-red"><b id="enemy-score">2000</b> NEPŘÍTEL</span></div><div class="ticket-bars"><i id="friendly-bar"></i><i id="enemy-bar"></i></div><div id="zone-hud" class="zone-hud"></div></div><span class="battle-map-label" id="battle-map-label"></span></div><div id="network-hud" hidden></div><section id="server-chat" hidden><button id="server-chat-toggle" type="button">CHAT · ENTER</button><div id="server-chat-body" hidden><div id="server-chat-log" role="log" aria-label="Chat" aria-live="polite"></div><form id="server-chat-form"><input id="server-chat-input" aria-label="Zpráva" placeholder="Napiš zprávu…" maxlength="180" autocomplete="off"><button type="submit">ODESLAT</button></form></div></section><aside id="team-roster" hidden></aside><div id="name-tags"></div><div id="zombie-hud" hidden></div><div id="scope-overlay" class="scope-overlay" hidden><canvas id="scope-canvas" aria-hidden="true"></canvas></div><div id="view-status" class="view-status"></div><button id="camera-mode-button" class="camera-mode-button">1. OSOBA</button><div id="gun-marker" hidden></div><div id="reticle"><span></span></div><div id="hit-notice" aria-live="polite"></div><div id="kill-confirmation" class="kill-confirmation" hidden><span>✦</span><strong>CÍL ZNIČEN</strong><small></small></div><div id="kill-feed" class="kill-feed"></div><div class="battle-objective" id="battle-objective">OBSAĎ A UDRŽ ZÓNY</div><div id="damage-flash"></div><div id="nuke-flash"></div><button id="nuke-button" disabled>☢ BODY 0 / 10</button><div class="battle-bottom"><div class="module-panel"><div class="hud-caption"><span id="battle-tank-name"></span><span id="crew-label">POSÁDKA</span></div><div class="module-layout"><div id="tank-diagram" class="tank-diagram"><div class="track left"></div><div class="hull"><div class="engine-block"></div><div class="turret-block"><div class="gun-block"></div></div><div class="ammo-block"></div></div><div class="track right"></div></div><div id="module-bars"></div></div><div class="module-actions"><button id="repair-button">[F] Opravit</button><button id="smoke-button">[G] Kouř <span>3</span></button></div><button id="secondary-button" class="missile-action" hidden>[R] 75 mm · PŘIPRAVENO</button><button id="missile-button" class="missile-action" hidden>[2] RAKETA 4/4</button></div><div class="driving-hud"><small id="cruise-status" hidden></small><div class="speed"><strong id="speed-value">0</strong><span>km/h</span></div><div class="ammo-hud"><div class="shell-icon"></div><div><strong id="ammo-name">APHE</strong><small id="reload-label">PŘIPRAVENO</small><div class="reload-track"><i id="reload-bar"></i></div></div><span id="reload-count"></span></div><div class="mg-hud"><span id="mg-status">KULOMET</span><div><i id="mg-heat"></i></div></div></div><div class="minimap-wrap"><canvas id="minimap" width="300" height="300" aria-label="Taktická mapa bojiště"></canvas></div></div><div id="respawn-panel" hidden><span class="eyebrow">STROJ VYŘAZEN</span><h2>Bitva ještě nekončí.</h2><p id="death-killer" translate="no"></p><p id="respawn-text">Připravuje se záložní tank…</p><button id="respawn-button" class="primary-button">ZPĚT DO BOJE →</button></div><div class="touch-controls"><div class="touch-pad"><button data-key="KeyW">▲</button><button data-key="KeyA">◀</button><button data-key="KeyS">▼</button><button data-key="KeyD">▶</button></div><div class="touch-aim-actions"><button id="touch-scope">ZAMĚŘOVAČ</button><button id="touch-fire">PALBA</button></div></div></section>
 <div id="modal" class="modal-backdrop" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button id="close-modal" class="modal-close" aria-label="Zavřít">×</button><div id="modal-content"></div></section></div>
-<section id="workshop" hidden><div id="custom-preview"></div><aside><span class="eyebrow">DÍLNA / VLASTNÍ VZHLED</span><h2 id="custom-title"></h2><p>Vyber nálepku přímo na 3D tanku. Táhni po pancíři, rohy měň velikost, horním úchytem otáčej. Pravým tlačítkem si tank prohlédni ze všech stran.</p><div id="custom-form"></div><button id="custom-reset" class="text-button">Obnovit původní vzhled</button><div class="custom-actions"><button id="custom-save" class="primary-button">ULOŽIT VZHLED</button><button id="custom-cancel" class="secondary-button">ZRUŠIT</button></div><small>Vzhled je zdarma a nemění bojové vlastnosti. Ukládá se pro každý tank zvlášť v tomto prohlížeči.</small></aside></section><div id="toast" role="status"></div>
+<section id="workshop" aria-labelledby="custom-title" hidden><div id="custom-preview"></div><aside><span class="eyebrow">DÍLNA / VLASTNÍ VZHLED</span><h2 id="custom-title" tabindex="-1"></h2><p>Pravým tlačítkem si tank prohlédni ze všech stran. Štětec a nálepky použij přímo na 3D náhledu.</p><div id="custom-form"></div><button id="custom-reset" class="text-button">Obnovit původní vzhled</button><div class="custom-actions"><small id="custom-price" role="status"></small><button id="custom-save" class="primary-button">ULOŽIT VZHLED</button><button id="custom-cancel" class="secondary-button">ZRUŠIT</button></div><small>Úpravy vzhledu nemění bojové vlastnosti. Odemčené položky a vlastní vzhledy přeneseš zálohou v nastavení.</small></aside></section><div id="toast" role="status"></div>
 </div>
 <script src="vendor/three.js"></script>
 <script>
@@ -1440,7 +1445,7 @@ const CONTENT_TRANSLATIONS=[
  ["PŘIHLÁSIT","SIGN IN"],
  ["VYTVOŘIT ÚČET","CREATE ACCOUNT"],
  ["3–20 znaků, bez diakritiky. Velikost písmen nerozhoduje.","3–20 ASCII letters, digits or underscores. Case-insensitive."],
- ["Účet ukládá tanky, výzkum a rekordy. Vlastní obrázky přenes přes soubor zálohy v nastavení.","Your account saves tanks, research and records. Transfer custom images using a backup file in settings."],
+ ["Účet ukládá tanky, výzkum a rekordy. Vzhledy a kosmetická odemčení přenes zálohou v nastavení.","Your account saves tanks, research and records. Use a settings backup to transfer appearances and cosmetic unlocks."],
  ["Instagram · uživatelské jméno","Instagram · username"],
  ["Discord · uživatelské jméno","Discord · username"],
  ["Kontaktní e-mail","Contact email"],
@@ -1666,7 +1671,7 @@ const MULTIPLAYER_TRANSLATIONS=[
  ['ONLINE / MULTIPLAYER BETA','ONLINE / MULTIPLAYER BETA'],
  ['Tvůj tank','Your tank'],['01 / ZALOŽIT','01 / HOST'],['Vlastní místnost','Your own room'],['ZALOŽIT MÍSTNOST →','CREATE ROOM →'],
  ['02 / PŘIPOJIT','02 / JOIN'],['Ke kamarádovi','Join a friend'],['Kód místnosti','Room code'],['PŘIPOJIT SE →','JOIN ROOM →'],
- ['Tréninkový režim bez změn výzkumu a žebříčku. Hostitel musí nechat hru otevřenou na popředí. Vlastní importované obrázky se neposílají ostatním hráčům.','Practice mode without research or leaderboard changes. The host must keep the game in the foreground. Imported personal images are not sent to other players.'],
+ ['Tréninkový režim bez změn výzkumu a žebříčku. Hostitel musí nechat hru otevřenou na popředí. Vlastní malby, obrázky a modely vidíš jen ty.','Practice mode without research or leaderboard changes. The host must keep the game in the foreground. Only you can see your custom paint, images and models.'],
  ['Přezdívka musí mít alespoň 3 znaky.','Your nickname must have at least three characters.'],['Připojuji k multiplayeru…','Connecting to multiplayer…'],
  ['ONLINE / MÍSTNOST','ONLINE / ROOM'],['Tvoje místnost je připravená.','Your room is ready.'],['Jsi ve stejné místnosti.','You are in the same room.'],['KÓD MÍSTNOSTI','ROOM CODE'],['KOPÍROVAT','COPY'],
  ['HOSTITEL','HOST'],
@@ -2006,7 +2011,44 @@ Maskovací větve	Camouflage branches
 Obnovit původní vzhled	Restore factory appearance
 ULOŽIT VZHLED	SAVE APPEARANCE
 ZRUŠIT	CANCEL
-Vzhled je zdarma a nemění bojové vlastnosti. Ukládá se pro každý tank zvlášť v tomto prohlížeči.	Appearance is free and does not change combat performance. Saved per vehicle in this browser.
+Pravým tlačítkem si tank prohlédni ze všech stran. Štětec a nálepky použij přímo na 3D náhledu.	Right-drag to inspect every side. Use the brush and decals directly on the 3D preview.
+Úpravy vzhledu nemění bojové vlastnosti. Odemčené položky a vlastní vzhledy přeneseš zálohou v nastavení.	Cosmetics leave combat performance unchanged. Use a settings backup to transfer unlocks and custom appearances.
+Štětec	Brush
+Barva štětce	Brush color
+Šířka štětce	Brush width
+Smazat malbu	Clear paint
+Zapni štětec nad náhledem a táhni po pancíři.	Enable the brush above the preview and drag across the armor.
+Táhni štětcem po pancíři	Drag the brush across the armor
+Skin	Skin
+Vlastní nátěr	Custom paint
+Zimní led	Winter Ice
+Pouštní bouře	Desert Storm
+Městský stín	Urban Shadow
+Odemčeno	Unlocked
+Výzkumné body	Research points
+Body se odečtou při uložení. Odemčené položky můžeš použít na všech svých tancích.	Points are spent when you save. Use unlocked items on any of your tanks.
+Cena při uložení	Cost when saved
+3D doplňky	3D accessories
+Vlastní 3D model	Custom 3D model
+Odemčení importu	Unlock imports
+Jednorázové odemčení. Na každý tank lze umístit jeden model OBJ do 64 kB. Použije se geometrie a zvolená barva.	One-time unlock. Mount one OBJ model up to 64 kB per tank. The game uses its geometry and your chosen color.
+Přidat model OBJ	Import OBJ model
+Vyber soubor OBJ do 64 kB.	Choose an OBJ file up to 64 kB.
+OBJ musí obsahovat platné plochy, nejvýše 3 000 vrcholů a 6 000 trojúhelníků.	OBJ must contain valid faces and at most 3,000 vertices and 6,000 triangles.
+Model se nepodařilo načíst.	Could not load the model.
+Načítám model…	Loading model…
+Model je připraven v náhledu.	The model is ready in the preview.
+Limit malby je vyčerpán. Použij Zpět nebo smaž malbu.	Paint limit reached. Undo a stroke or clear the paint.
+Postup se změnil v jiné kartě. Načti hru znovu, než uložíš vzhled.	Progress changed in another tab. Reload the game before saving the appearance.
+Vzhled se nepodařilo uložit. Výzkumné body se neodečetly.	Could not save the appearance. No research points were spent.
+Odstranit model	Remove model
+Uchycení	Mount
+Korba	Hull
+Věž	Turret
+Posun do strany	Side offset
+Výška	Height
+Posun vpřed / vzad	Front / rear offset
+Barva modelu	Model color
 Vzhled tanku uložen. Použije se i v bitvě.	Appearance saved. It will also be used in battle.
 Načítám obrázek…	Loading image…
 Na tank lze přidat nejvýše 6 nálepek.	A tank can have up to six decals.
@@ -4857,7 +4899,96 @@ return {BATTLE_SETTINGS,Game};
 MODULES["appearance.js"]=(()=>{
 const {TANKS,getTank} = MODULES["data.js"];
 const CAMOUFLAGES=[['factory','Původní nátěr'],['plain','Jednobarevný'],['patches','Skvrnitý'],['stripes','Pruhovaný'],['digital','Digitální']];
+const SKINS=[
+ {id:'winter',name:'Zimní led',cost:1800,colors:['#dce6ec','#829fb3','#465f73']},
+ {id:'desert',name:'Pouštní bouře',cost:2200,colors:['#c8a66d','#a16a46','#65482e']},
+ {id:'urban',name:'Městský stín',cost:2600,colors:['#626a71','#343940','#959b9e']}
+];
+const ACCESSORIES=[
+ {id:'stowage',name:'Brašny a zavazadla',cost:900},
+ {id:'sandbags',name:'Pytle s pískem',cost:1300},
+ {id:'foliage',name:'Maskovací větve',cost:1700}
+];
+const MODEL_LICENSE={id:'model-import',cost:12000};
+const PAINT_SIDES=['right','left','front','back','top'];
+const PAINT_SURFACES=['hull','turret'].flatMap(part=>PAINT_SIDES.map(side=>part+'-'+side));
+const PAINT_EXTENT=6, MAX_STROKES=120, MAX_PAINT_POINTS=2400;
+const MAX_OBJ_SIZE=64*1024;
 const MAX_DECAL_LENGTH=120000;
+const color=(value,fallback)=>typeof value==='string'&&/^#[0-9a-f]{6}$/i.test(value)?value.toLowerCase():fallback;
+const bounded=(value,fallback,min,max)=>Number.isFinite(value)?Math.max(min,Math.min(max,value)):fallback;
+const mount=(value)=>value==='turret'?'turret':'hull';
+function normalizePaint(value){
+ if(!Array.isArray(value))return [];
+ const strokes=[];
+ let remaining=MAX_PAINT_POINTS;
+ for(const stroke of value.slice(0,MAX_STROKES)){
+  if(!PAINT_SURFACES.includes(stroke?.surface)||!Array.isArray(stroke.points))continue;
+  const points=[];
+  for(let i=0;i+1<stroke.points.length&&remaining;i+=2){
+   const x=stroke.points[i],y=stroke.points[i+1];
+   if(!Number.isFinite(x)||!Number.isFinite(y)||Math.abs(x)>PAINT_EXTENT||Math.abs(y)>PAINT_EXTENT)break;
+   points.push(Math.round(x*100)/100,Math.round(y*100)/100);
+   remaining--;
+  }
+  if(points.length)strokes.push({surface:stroke.surface,color:color(stroke.color,'#ffffff'),size:bounded(stroke.size,.25,.1,1.5),points});
+  if(!remaining)break;
+ }
+ return strokes;
+}
+// Read the geometry only. OBJ material and texture paths are never loaded.
+function parseWorkshopOBJ(source){
+ if(typeof source!=='string'||source.length>MAX_OBJ_SIZE)return null;
+ const positions=[],indices=[];
+ for(const line of source.split(/\r?\n/)){
+  const [kind,...fields]=line.split('#',1)[0].trim().split(/\s+/);
+  if(kind==='v'){
+   const vertex=fields.slice(0,3).map(Number);
+   if(vertex.length!==3||vertex.some(n=>!Number.isFinite(n)||Math.abs(n)>1e7)||positions.length>=9000)return null;
+   positions.push(...vertex);
+  }
+  if(kind==='f'){
+   if(fields.length<3||indices.length+(fields.length-2)*3>18000)return null;
+   const count=positions.length/3,face=[];
+   for(const field of fields){
+    if(!/^-?\d+(?:\/-?\d+(?:\/-?\d+)?|\/\/-?\d+)?$/.test(field))return null;
+    const raw=Number(field.split('/',1)[0]),index=raw<0?count+raw:raw-1;
+    if(!Number.isSafeInteger(index)||index<0||index>=count)return null;
+    face.push(index);
+   }
+   for(let i=1;i+1<face.length;i++)indices.push(face[0],face[i],face[i+1]);
+  }
+ }
+ if(!indices.length)return null;
+ for(let i=0;i<indices.length;i+=3){
+  const a=indices[i]*3,b=indices[i+1]*3,c=indices[i+2]*3;
+  const ux=positions[b]-positions[a],uy=positions[b+1]-positions[a+1],uz=positions[b+2]-positions[a+2];
+  const vx=positions[c]-positions[a],vy=positions[c+1]-positions[a+1],vz=positions[c+2]-positions[a+2];
+  if(Math.hypot(uy*vz-uz*vy,uz*vx-ux*vz,ux*vy-uy*vx)>1e-14)return {positions,indices};
+ }
+ return null;
+}
+function normalizeWorkshopModel(value){
+ if(!value||!parseWorkshopOBJ(value.source))return null;
+ return {source:value.source,name:typeof value.name==='string'?value.name.slice(0,80):'OBJ',
+  mount:mount(value.mount),x:bounded(value.x,.7,-1,1),y:bounded(value.y,0,-1,1),z:bounded(value.z,-.65,-1,1),
+  size:bounded(value.size,.85,.15,2),rotation:bounded(value.rotation,0,-180,180),color:color(value.color,'#77836a')};
+}
+async function importWorkshopModel(file){
+ if(!/\.obj$/i.test(file.name)||file.size>MAX_OBJ_SIZE)throw Error('Vyber soubor OBJ do 64 kB.');
+ const model=normalizeWorkshopModel({source:await file.text(),name:file.name});
+ if(!model)throw Error('OBJ musí obsahovat platné plochy, nejvýše 3 000 vrcholů a 6 000 trojúhelníků.');
+ return model;
+}
+function workshopItems(appearance){
+ return [...SKINS.filter(s=>s.id===appearance.skin),...ACCESSORIES.filter(a=>appearance[a.id]),...(appearance.model?[MODEL_LICENSE]:[])];
+}
+function normalizeCosmetics(value,appearances){
+ const ids=[...SKINS,...ACCESSORIES,MODEL_LICENSE].map(item=>item.id);
+ const owned=Array.isArray(value)?value.filter(id=>ids.includes(id)):
+  ACCESSORIES.filter(item=>Object.values(appearances).some(a=>a[item.id])).map(item=>item.id);
+ return [...new Set(owned)];
+}
 function normalizeDecal(value){
   return typeof value==='string'&&value.length<=MAX_DECAL_LENGTH&&/^data:image\/(png|webp|jpeg);base64,[A-Za-z0-9+/]+={0,2}$/.test(value)?value:'';
 }
@@ -4885,8 +5016,8 @@ function normalizeDecals(values){
 }
 function normalizeAppearance(value={},tankId='pz4f2'){
  const v=value&&typeof value==='object'?value:{},nation=getTank(tankId).nation;
- const color=(x,fallback)=>typeof x==='string'&&/^#[0-9a-f]{6}$/i.test(x)?x.toLowerCase():fallback;
- return {base:color(v.base,nation==='de'?'#8e8c6b':nation==='us'?'#68705a':'#60705b'),secondary:color(v.secondary,'#3e4c37'),pattern:CAMOUFLAGES.some(([id])=>id===v.pattern)?v.pattern:'factory',number:typeof v.number==='string'?v.number.replace(/\D/g,'').slice(0,4):nation==='de'?'214':nation==='us'?'32':'108',stowage:v.stowage===true,sandbags:v.sandbags===true,foliage:v.foliage===true,decal:normalizeDecal(v.decal),decals:normalizeDecals(Array.isArray(v.decals)?v.decals:normalizeDecal(v.decal)?[{image:v.decal}]:[])};
+ return {base:color(v.base,nation==='de'?'#8e8c6b':nation==='us'?'#68705a':'#60705b'),secondary:color(v.secondary,'#3e4c37'),pattern:CAMOUFLAGES.some(([id])=>id===v.pattern)?v.pattern:'factory',number:typeof v.number==='string'?v.number.replace(/\D/g,'').slice(0,4):nation==='de'?'214':nation==='us'?'32':'108',stowage:v.stowage===true,sandbags:v.sandbags===true,foliage:v.foliage===true,decal:normalizeDecal(v.decal),decals:normalizeDecals(Array.isArray(v.decals)?v.decals:normalizeDecal(v.decal)?[{image:v.decal}]:[]),
+  skin:SKINS.some(s=>s.id===v.skin)?v.skin:'',brush:normalizePaint(v.brush),model:normalizeWorkshopModel(v.model)};
 }
 function normalizeAppearances(values){
   const out={};
@@ -4895,7 +5026,9 @@ function normalizeAppearances(values){
   return out;
 }
 
-return {CAMOUFLAGES,MAX_DECAL_LENGTH,normalizeDecal,importTankImage,DECAL_SURFACES,normalizeDecals,normalizeAppearance,normalizeAppearances};
+return {CAMOUFLAGES,SKINS,ACCESSORIES,MODEL_LICENSE,PAINT_SIDES,PAINT_SURFACES,PAINT_EXTENT,MAX_STROKES,MAX_PAINT_POINTS,
+ MAX_DECAL_LENGTH,normalizeDecal,importTankImage,DECAL_SURFACES,normalizeDecals,normalizeAppearance,normalizeAppearances,
+ parseWorkshopOBJ,importWorkshopModel,workshopItems,normalizeCosmetics};
 })();
 MODULES["leaderboard.js"]=(()=>{
 const cleanNick=value=>String(value||'').normalize('NFKC').replace(/[<>\u0000-\u001f\u007f]/g,'').trim().slice(0,20);
@@ -4947,9 +5080,10 @@ function sanitizeInput(input={}){
  return {lift:number('lift',-1,1),flyYaw:Number.isFinite(input.flyYaw)?input.flyYaw%(2*Math.PI):undefined,flyPitch:number('flyPitch',-1.55,1.55),throttle:number('throttle',-1,1),steer:number('steer',-1,1),aimX:number('aimX',-4000,4000),aimZ:number('aimZ',-4000,4000),aimY:finite(input.aimY,-200,1500)?input.aimY:null,fire:input.fire===true,secondaryFire:input.secondaryFire===true,machineGun:input.machineGun===true};
 }
 function publicAppearance(value,tankId){
- const a=normalizeAppearance(value,tankId);
- // Imported pictures stay on their owner's device, as promised by the workshop.
- return {...a,decals:[],decal:''};
+ const a=normalizeAppearance({...value,decals:[],decal:'',model:null,brush:[]},tankId);
+ // Send only the small settings used to render the shared vehicle.
+ const {model,brush,...shared}=a;
+ return shared;
 }
 function normalizeProfile(value){
  if(!value||typeof value.id!=='string'||!/^[a-zA-Z0-9-]{8,60}$/.test(value.id)||!tankTypes.has(value.tankId))throw Error('Neplatná data hráče.');
@@ -6089,7 +6223,7 @@ class MultiplayerUI{
   this.openModal('multiplayer',`<span class="eyebrow">ONLINE / MULTIPLAYER BETA</span><h2>Vyraz do bitvy s přáteli.</h2><p class="modal-intro">Vyber veřejný server, soukromou místnost až pro osm hráčů nebo offline bitvu proti botům.</p>
    ${this.inviteCode?`<div class="mp-invitation" role="status"><strong>Pozvánka do místnosti</strong> <span translate="no">${esc(this.inviteCode)}</span><p>Vyber přezdívku a tank, potom se připoj tlačítkem níže.</p></div>`:''}
    <div class="mp-profile"><label>Přezdívka<input id="mp-nick" maxlength="20" minlength="3" autocomplete="nickname" value="${esc(p.multiplayerNick||p.nickname||'Velitel')}"></label><label>Tvůj tank<select id="mp-tank">${tankOptions(p,p.selected)}</select></label></div>
-   ${this.servers.markup()}<h3>Soukromá místnost · až 8 hráčů</h3><div class="mp-options"><section><span class="eyebrow">01 / ZALOŽIT</span><h3>Vlastní místnost</h3><label>Bojiště<select id="mp-map">${mapOptions(mapId)}</select></label><label class="mp-checkbox"><input id="mp-bots" type="checkbox" checked>Doplnit týmy boty do 6 proti 6</label><button class="primary-button" data-mp="create">ZALOŽIT MÍSTNOST →</button></section><section><span class="eyebrow">02 / PŘIPOJIT</span><h3>Ke kamarádovi</h3><label>Kód místnosti<input id="mp-code" maxlength="10" autocomplete="off" spellcheck="false" placeholder="ABCDEFGH" value="${esc(this.inviteCode)}"></label><p>Hostitel ti pošle odkaz nebo osmimístný kód.</p><button class="secondary-button" data-mp="join">PŘIPOJIT SE →</button></section></div><p id="mp-status" role="status"></p><p class="mp-note">Tréninkový režim bez změn výzkumu a žebříčku. Hostitel musí nechat hru otevřenou na popředí. Vlastní importované obrázky se neposílají ostatním hráčům.</p>`);
+   ${this.servers.markup()}<h3>Soukromá místnost · až 8 hráčů</h3><div class="mp-options"><section><span class="eyebrow">01 / ZALOŽIT</span><h3>Vlastní místnost</h3><label>Bojiště<select id="mp-map">${mapOptions(mapId)}</select></label><label class="mp-checkbox"><input id="mp-bots" type="checkbox" checked>Doplnit týmy boty do 6 proti 6</label><button class="primary-button" data-mp="create">ZALOŽIT MÍSTNOST →</button></section><section><span class="eyebrow">02 / PŘIPOJIT</span><h3>Ke kamarádovi</h3><label>Kód místnosti<input id="mp-code" maxlength="10" autocomplete="off" spellcheck="false" placeholder="ABCDEFGH" value="${esc(this.inviteCode)}"></label><p>Hostitel ti pošle odkaz nebo osmimístný kód.</p><button class="secondary-button" data-mp="join">PŘIPOJIT SE →</button></section></div><p id="mp-status" role="status"></p><p class="mp-note">Tréninkový režim bez změn výzkumu a žebříčku. Hostitel musí nechat hru otevřenou na popředí. Vlastní malby, obrázky a modely vidíš jen ty.</p>`);
   this.servers.mount();
  }
  async copyInvite(link){
@@ -6631,7 +6765,7 @@ class AccountUI{
    html+='<div class="account-stats"><div><strong>'+number(p.best_score)+'</strong><small>OSOBNÍ REKORD</small></div><div><strong>'+progress.unlocked.length+' / '+TANKS.length+'</strong><small>VYZKOUMÁNO</small></div><div><strong>'+number(progress.xp)+'</strong><small>VÝZKUMNÝCH BODŮ</small></div></div>';
    html+='<section class="account-section"><div class="account-section-head"><h3>Měsíční soutěž</h3><span class="account-badge'+(contact?' ok':'')+'">'+(contact?'✓ Účast v soutěži':'Doplň kontakt')+'</span></div><p>Hráč s nejvyšším skóre mezi způsobilými účastníky na konci měsíce od nás dostane web zdarma.</p><details class="account-contacts"'+(contact?'':' open')+'><summary>'+(contact?'Upravit kontakty':'Vyplnit kontakt')+'</summary><form id="account-contacts" class="account-form"><label>Instagram · uživatelské jméno<input name="instagram" maxlength="100" value="'+escapeHTML(p.instagram)+'" autocomplete="off"></label><label>Discord · uživatelské jméno<input name="discord" maxlength="100" value="'+escapeHTML(p.discord)+'" autocomplete="off"></label><label>Kontaktní e-mail<input name="email" type="email" maxlength="254" value="'+escapeHTML(p.contact_email)+'" autocomplete="email"></label><small>Kontakty uvidí pouze provozovatel hry pro kontaktování výherce. Nezobrazují se v žebříčku.</small><button class="primary-button" type="submit">ULOŽIT KONTAKTY</button></form></details></section>';
   }
-  html+='<p id="account-status" class="account-status" role="status"></p><div class="account-footer">'+(p?'<button class="secondary-button" data-account="sync">ULOŽIT TEĎ</button>':'<span></span>')+'<button class="text-button account-logout" data-account="logout">ODHLÁSIT SE</button></div><p class="account-fineprint">Účet ukládá tanky, výzkum a rekordy. Vlastní obrázky přenes přes soubor zálohy v nastavení.</p></div>';
+  html+='<p id="account-status" class="account-status" role="status"></p><div class="account-footer">'+(p?'<button class="secondary-button" data-account="sync">ULOŽIT TEĎ</button>':'<span></span>')+'<button class="text-button account-logout" data-account="logout">ODHLÁSIT SE</button></div><p class="account-fineprint">Účet ukládá tanky, výzkum a rekordy. Vzhledy a kosmetická odemčení přenes zálohou v nastavení.</p></div>';
   this.openModal('account',html);
   this.render();
   document.querySelector('#account-contacts')?.addEventListener('submit',async e=>{
@@ -6803,15 +6937,16 @@ class OnlineLeaderboard{
 return {OnlineLeaderboard};
 })();
 MODULES["workshop.js"]=(()=>{
-const {normalizeDecals} = MODULES["appearance.js"];
+const {normalizeDecals,PAINT_EXTENT,MAX_STROKES,MAX_PAINT_POINTS} = MODULES["appearance.js"];
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const copy=v=>JSON.parse(JSON.stringify(v));
 class WorkshopEditor {
  constructor({canvas,renderer,getDraft,onChange}){
-  Object.assign(this,{canvas,renderer,getDraft,onChange,selected:-1,drag:null,history:[],future:[],placing:false});
+  Object.assign(this,{canvas,renderer,getDraft,onChange,selected:-1,drag:null,history:[],future:[],placing:false,painting:false,paintColor:'#d53333',paintSize:.3});
   this.root=canvas.parentElement;
   this.ui=document.createElement('div');this.ui.className='workshop-tools';
   this.ui.innerHTML=`<div class="workshop-camera" aria-label="Pohled na tank">${[['front','Čelo'],['back','Záď'],['left','Levý bok'],['right','Pravý bok'],['top','Shora'],['reset','Celý tank']].map(([id,label])=>`<button data-camera="${id}">${label}</button>`).join('')}<button data-camera="closer" aria-label="Přiblížit tank">＋</button><button data-camera="farther" aria-label="Oddálit tank">−</button></div><div class="workshop-selection"><strong id="decal-selection-label">Vyber nálepku přímo na tanku</strong><div><button data-edit="place">Umístit kliknutím</button><button data-edit="duplicate">Duplikovat</button><button data-edit="delete">Smazat</button><button data-edit="undo">↶ Zpět</button><button data-edit="redo">↷ Znovu</button></div></div><div class="workshop-help">Nálepka: klikni a táhni · rohy: velikost · horní úchyt: otočení<br>Pravé tlačítko / prázdné místo: otáčení pohledu · kolečko: přiblížení</div><div class="decal-gizmo" hidden><span class="decal-rotate-line"></span><button data-handle="rotate" aria-label="Otočit vybranou nálepku">↻</button>${['nw','ne','sw','se'].map(id=>`<button data-handle="${id}" aria-label="Změnit velikost nálepky — ${id}"></button>`).join('')}</div>`;
+  this.ui.querySelector('.workshop-camera').insertAdjacentHTML('beforeend','<button data-edit="brush" aria-pressed="false">Štětec</button>');
   this.root.append(this.ui);this.gizmo=this.ui.querySelector('.decal-gizmo');
   this.ui.addEventListener('click',e=>{
     const b=e.target.closest('button');
@@ -6845,21 +6980,29 @@ class WorkshopEditor {
    this.selected=-1;
    this.drag=null;
    this.placing=false;
+   this.painting=false;
+   this.paintLimit=false;
    this.renderer.workshopView('reset');
    this.update();
  }
  close(){this.cancel();this.selected=-1;this.gizmo.hidden=true;}
- beforeChange(){this.before=copy(this.getDraft()?.decals||[]);}
+ snapshot(){
+   const {decals,brush}=this.getDraft();
+   return copy({decals,brush});
+ }
+ beforeChange(){this.before=this.snapshot();}
  commit(){
-   const decals=this.getDraft()?.decals;
-   if(this.before&&JSON.stringify(this.before)!==JSON.stringify(decals)){
+   const {decals,brush}=this.getDraft();
+   const changed=!!this.before&&JSON.stringify(this.before)!==JSON.stringify({decals,brush});
+   if(changed){
      this.history.push(this.before);
      if(this.history.length>40)this.history.shift();
      this.future=[];
    }
    this.before=null;
+   return changed;
  }
- select(index){this.selected=index;this.placing=false;this.update();}
+ select(index){this.selected=index;this.placing=false;if(index>=0)this.painting=false;this.update();}
  zoom(delta){
    const o=this.renderer.workshopOrbit??={yaw:.73,pitch:.32,distance:17};
    o.distance=clamp(o.distance*Math.exp(delta*.001),6,34);
@@ -6867,17 +7010,29 @@ class WorkshopEditor {
  }
  apply(){
    const draft=this.getDraft();
+   this.paintLimit=false;
    draft.decal='';
    draft.decals=normalizeDecals(draft.decals);
    this.renderer.setWorkshopDecals(draft.decals);
+   this.renderer.setWorkshopPaint(draft.brush);
    this.update();
  }
  action(action){const draft=this.getDraft();if(!draft)return;
+  if(action==='brush'){
+    this.painting=!this.painting;
+    this.paintLimit=false;
+    this.selected=-1;this.placing=false;this.update();
+    return;
+  }
+  if(action==='clear-paint'){
+    this.beforeChange();draft.brush=[];this.apply();this.commit();this.onChange();
+    return;
+  }
   if(action==='undo'||action==='redo'){
     const source=action==='undo'?this.history:this.future,target=action==='undo'?this.future:this.history;
     if(!source.length)return;
-    target.push(copy(draft.decals));
-    draft.decals=source.pop();
+    target.push(this.snapshot());
+    Object.assign(draft,source.pop());
     this.selected=Math.min(this.selected,draft.decals.length-1);
     this.apply();
     this.onChange();
@@ -6896,8 +7051,36 @@ class WorkshopEditor {
   }
   this.apply();this.commit();this.onChange();
  }
- down(e,handle){if(e.button!==0&&e.button!==2)return;e.preventDefault();this.canvas.focus({preventScroll:true});
-  const draft=this.getDraft(),pick=handle?this.selected:this.renderer.pickWorkshopDecal(e.clientX,e.clientY);
+ paintAt(x,y){
+   const hit=this.renderer.workshopSurface(x,y,true),drag=this.drag,draft=this.getDraft();
+   if(!hit||Math.abs(hit.x)>PAINT_EXTENT||Math.abs(hit.y)>PAINT_EXTENT){drag.stroke=null;return;}
+   if(drag.points>=MAX_PAINT_POINTS||(drag.stroke?.surface!==hit.surface&&draft.brush.length>=MAX_STROKES)){
+     this.paintLimit=true;
+     return;
+   }
+   this.paintLimit=false;
+   let stroke=drag.stroke;
+   if(stroke?.surface!==hit.surface){
+     stroke={surface:hit.surface,color:this.paintColor,size:this.paintSize,points:[]};
+     draft.brush.push(stroke);
+     drag.stroke=stroke;
+   }
+   const last=stroke.points.length;
+   if(last&&Math.hypot(hit.x-stroke.points[last-2],hit.y-stroke.points[last-1])<.04)return;
+   stroke.points.push(Math.round(hit.x*100)/100,Math.round(hit.y*100)/100);
+   drag.points++;
+   this.renderer.setWorkshopPaint(draft.brush);
+ }
+ down(e,handle){if(this.drag||(e.button!==0&&e.button!==2))return;e.preventDefault();this.canvas.focus({preventScroll:true});
+  const draft=this.getDraft();
+  if(this.painting&&e.button===0){
+    this.beforeChange();
+    this.drag={id:e.pointerId,mode:'paint',target:e.target,stroke:null,points:draft.brush.reduce((sum,s)=>sum+s.points.length/2,0)};
+    e.target.setPointerCapture?.(e.pointerId);
+    this.paintAt(e.clientX,e.clientY);
+    return;
+  }
+  const pick=handle?this.selected:this.renderer.pickWorkshopDecal(e.clientX,e.clientY);
   if(e.button===0&&this.placing){
     const hit=this.renderer.workshopSurface(e.clientX,e.clientY);
     if(hit&&draft.decals[this.selected]){
@@ -6915,7 +7098,7 @@ class WorkshopEditor {
   const d=draft.decals[this.selected],bounds=d?this.renderer.workshopDecalBounds(this.selected):null,
     rect=this.canvas.getBoundingClientRect();
   const cx=rect.left+(bounds?.cx||rect.width/2),cy=rect.top+(bounds?.cy||rect.height/2);
-  this.beforeChange();
+  if(mode!=='orbit')this.beforeChange();
   this.drag={id:e.pointerId,mode,x:e.clientX,y:e.clientY,start:d?copy(d):null,hit:this.renderer.workshopSurface(e.clientX,e.clientY),cx,cy,radius:Math.max(8,Math.hypot(e.clientX-cx,e.clientY-cy)),angle:Math.atan2(e.clientY-cy,e.clientX-cx),target:e.target};
   e.target.setPointerCapture?.(e.pointerId);
  }
@@ -6923,6 +7106,7 @@ class WorkshopEditor {
   const drag=this.drag;
   if(!drag||drag.id!==e.pointerId)return;
   e.preventDefault();
+  if(drag.mode==='paint'){this.paintAt(e.clientX,e.clientY);return;}
   const draft=this.getDraft(),d=draft.decals[this.selected];
   if(drag.mode==='orbit'){
     const o=this.renderer.workshopOrbit;
@@ -6954,8 +7138,7 @@ class WorkshopEditor {
    const drag=this.drag;
    this.drag=null;
    try{drag.target.releasePointerCapture(drag.id);}catch{}
-   this.commit();
-   this.onChange();
+   if(this.commit())this.onChange();
  }
  cancel(){
    if(!this.drag)return;
@@ -6963,15 +7146,23 @@ class WorkshopEditor {
    this.drag=null;
    this.before=null;
    try{drag.target.releasePointerCapture(drag.id);}catch{}
-   if(before&&this.getDraft()){this.getDraft().decals=before;this.apply();this.onChange();}
+   if(before&&this.getDraft()){Object.assign(this.getDraft(),before);this.apply();this.onChange();}
  }
  update(){if(!this.active())return;const draft=this.getDraft();if(this.selected>=draft.decals.length)this.selected=-1;
   const selected=draft.decals[this.selected],b=selected?this.renderer.workshopDecalBounds(this.selected):null;
   this.gizmo.hidden=!b;
   if(b)Object.assign(this.gizmo.style,{left:b.left+'px',top:b.top+'px',width:b.width+'px',height:b.height+'px'});
-  this.ui.querySelector('#decal-selection-label').textContent=this.placing?'Klikni na pancíř pro nové umístění':selected?'Nálepka '+(this.selected+1)+' · '+Math.round(selected.size*100)+' cm · '+Math.round(selected.rotation)+'°':'Vyber nálepku přímo na tanku';
+  this.canvas.classList.toggle('paint-cursor',this.painting);
+  const label=this.painting?(this.paintLimit?'Limit malby je vyčerpán. Použij Zpět nebo smaž malbu.':'Táhni štětcem po pancíři'):
+    this.placing?'Klikni na pancíř pro nové umístění':selected?'Nálepka '+(this.selected+1)+' · '+Math.round(selected.size*100)+' cm · '+Math.round(selected.rotation)+'°':'Vyber nálepku přímo na tanku';
+  if(label!==this.label){this.label=label;this.ui.querySelector('#decal-selection-label').textContent=label;}
   for(const button of this.ui.querySelectorAll('[data-edit]')){
     const action=button.dataset.edit;
+    if(action==='brush'){
+      button.setAttribute('aria-pressed',String(this.painting));
+      button.classList.toggle('active',this.painting);
+      continue;
+    }
     button.disabled=action==='undo'?!this.history.length:action==='redo'?!this.future.length:!selected||(action==='duplicate'&&draft.decals.length>=6);
     button.classList.toggle('active',action==='place'&&this.placing);
   }
@@ -7159,7 +7350,7 @@ return {ZOMBIE_UPGRADES,ZombieGame};
 })();
 MODULES["renderer.js"]=(()=>{
 
-const {normalizeAppearance} = MODULES["appearance.js"];
+const {normalizeAppearance,SKINS,PAINT_SIDES,PAINT_SURFACES,PAINT_EXTENT,parseWorkshopOBJ} = MODULES["appearance.js"];
 const { getTank, getMap, terrainHeight, surfaceHeight, terrainAt, bareTerrainAt, waterLevel, TERRAIN, BRIDGE_FILL } = MODULES["data.js"];
 const { weaponFrame, weaponGeometry, hullPose, GRAVITY } = MODULES["ballistics.js"];
 // All geometry and surface textures are generated locally. No runtime asset requests.
@@ -7470,20 +7661,153 @@ function addCustomDecal(model,decal,index=0){
  return mesh;
 }
 
-function makeTank(id,appearance){
+const PAINT_TILE=192, PAINT_INSET=2, PAINT_PIXELS=PAINT_TILE-2*PAINT_INSET, PAINT_COLS=4, PAINT_ROWS=3;
+function setupTankBrush(model){
+ const canvas=document.createElement('canvas');
+ canvas.width=PAINT_COLS*PAINT_TILE;canvas.height=PAINT_ROWS*PAINT_TILE;
+ const texture=new THREE.CanvasTexture(canvas);
+ texture.colorSpace=THREE.SRGBColorSpace;
+ texture.generateMipmaps=false;
+ texture.minFilter=THREE.LinearFilter;
+ const shade={value:1};
+ model.brush={canvas,texture,shade};
+ // The static armor meshes have already been merged in hull or turret coordinates.
+ // Use the same five projections as the brush raycast, so paint moves with each part.
+ for(const [partIndex,part] of [model.hull,model.turret].entries()){
+  const materials=new Map();
+  for(const mesh of part.children){
+   const original=mesh.material;
+   if(!mesh.isMesh||!model.skinMaterials.slice(0,2).includes(original))continue;
+   if(!materials.has(original)){
+    const material=original.clone();
+    material.brushMap=texture;
+    material.onBeforeCompile=shader=>{
+     shader.uniforms.brushMap={value:texture};
+     shader.uniforms.brushShade=shade;
+     shader.uniforms.brushPart={value:partIndex*PAINT_SIDES.length};
+     const varyings='varying vec3 brushPosition; varying vec3 brushNormal;\n';
+     shader.vertexShader=varyings+shader.vertexShader.replace('#include <begin_vertex>',
+      '#include <begin_vertex>\nbrushPosition = position; brushNormal = objectNormal;');
+     shader.fragmentShader=varyings+`uniform sampler2D brushMap;
+uniform float brushShade, brushPart;
+`+shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
+vec3 n = normalize(brushNormal);
+vec3 p = brushPosition;
+float side;
+vec2 point;
+if (n.y > .65) {
+ side = 4.0; point = vec2(p.x, -p.z);
+} else {
+ float y = p.y - (brushPart > 0.0 ? .57 : abs(n.x) > abs(n.z) ? 1.7 : 1.15);
+ if (abs(n.x) > abs(n.z)) {
+  side = n.x > 0.0 ? 0.0 : 1.0; point = vec2(n.x > 0.0 ? -p.z : p.z, y);
+ } else {
+  side = n.z > 0.0 ? 2.0 : 3.0; point = vec2(n.z > 0.0 ? p.x : -p.x, y);
+ }
+}
+float tile = side + brushPart;
+vec2 corner = vec2(mod(tile, ${PAINT_COLS}.0), floor(tile / ${PAINT_COLS}.0)) * ${PAINT_TILE}.0;
+vec2 pixel = corner + ${PAINT_INSET}.0 + (vec2(point.x, -point.y) / ${PAINT_EXTENT*2}.0 + .5) * ${PAINT_PIXELS}.0;
+if (max(abs(point.x), abs(point.y)) <= ${PAINT_EXTENT}.0) {
+ vec2 coord = pixel / vec2(${canvas.width}.0, ${canvas.height}.0);
+ vec4 paintSample = texture2D(brushMap, vec2(coord.x, 1.0 - coord.y));
+ diffuseColor.rgb = mix(diffuseColor.rgb, paintSample.rgb * brushShade, paintSample.a);
+}`);
+    };
+    materials.set(original,material);
+    model.skinMaterials.push(material);
+    model.originalColors.set(material,material.color.clone());
+   }
+   mesh.material=materials.get(original);
+   mesh.userData.brushSurface=true;
+  }
+ }
+}
+function drawTankBrush(model,strokes){
+ const {canvas,texture}=model.brush,ctx=canvas.getContext('2d');
+ const scale=PAINT_PIXELS/(2*PAINT_EXTENT);
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+ ctx.lineCap=ctx.lineJoin='round';
+ for(const stroke of strokes){
+  const i=PAINT_SURFACES.indexOf(stroke.surface),left=i%PAINT_COLS*PAINT_TILE,top=Math.floor(i/PAINT_COLS)*PAINT_TILE;
+  const centerX=left+PAINT_TILE/2,centerY=top+PAINT_TILE/2,points=stroke.points;
+  const x=centerX+points[0]*scale,y=centerY-points[1]*scale;
+  ctx.save();
+  ctx.beginPath();ctx.rect(left+PAINT_INSET,top+PAINT_INSET,PAINT_PIXELS,PAINT_PIXELS);ctx.clip();
+  ctx.strokeStyle=ctx.fillStyle=stroke.color;
+  ctx.lineWidth=stroke.size*scale;
+  ctx.beginPath();
+  if(points.length===2){ctx.arc(x,y,ctx.lineWidth/2,0,TAU);ctx.fill();}
+  else{
+   ctx.moveTo(x,y);
+   for(let j=2;j<points.length;j+=2)ctx.lineTo(centerX+points[j]*scale,centerY-points[j+1]*scale);
+   ctx.stroke();
+  }
+  ctx.restore();
+ }
+ texture.needsUpdate=true;
+}
+function addWorkshopModel(model,attachment){
+ const {positions,indices}=parseWorkshopOBJ(attachment.source);
+ const bounds=new THREE.Box3(),point=new THREE.Vector3(),used=new Set(indices);
+ for(const index of used)bounds.expandByPoint(point.fromArray(positions,index*3));
+ const center=bounds.getCenter(new THREE.Vector3()),size=bounds.getSize(new THREE.Vector3());
+ const scale=attachment.size/Math.max(size.x,size.y,size.z);
+ const vertices=new Float32Array(positions.length);
+ for(const index of used){
+  point.fromArray(positions,index*3).sub(center);
+  point.y+=size.y/2;
+  point.multiplyScalar(scale).toArray(vertices,index*3);
+ }
+ const geometry=new THREE.BufferGeometry();
+ geometry.setAttribute('position',new THREE.BufferAttribute(vertices,3));
+ geometry.setIndex(indices);
+ geometry.computeVertexNormals();
+ const material=mat(attachment.color,{side:THREE.DoubleSide,roughness:.78,metalness:.24});
+ const turret=attachment.mount==='turret',part=turret?model.turret:model.hull;
+ const mesh=addMesh(part,geometry,material,
+  attachment.x*model.width*(turret?.25:.5),
+  (turret?model.height-model.turretBaseY-.25:model.turretBaseY)+attachment.y,
+  attachment.z*model.length*(turret?.25:.5));
+ mesh.rotation.y=attachment.rotation*Math.PI/180;
+ mesh.userData.workshopModel=true;
+ model.skinMaterials.push(material);
+ model.originalColors.set(material,material.color.clone());
+}
+
+function makeTank(id,appearance,enableBrush=false){
  const model=makeTankBase(id);if(!appearance)return model;
  const a=normalizeAppearance(appearance,id),nation=getTank(id).nation,paint=model.skinMaterials[0];
- if(a.pattern!=='factory'){
+ const skin=SKINS.find(s=>s.id===a.skin);
+ if(skin||a.pattern!=='factory'){
   const canvas=document.createElement('canvas');
   canvas.width=canvas.height=512;
   const ctx=canvas.getContext('2d'),rng=random(412);
-  ctx.fillStyle=a.base;ctx.fillRect(0,0,512,512);ctx.fillStyle=a.secondary;
-  if(a.pattern==='patches')for(let i=0;i<25;i++){
+  ctx.fillStyle=skin?.colors[0]||a.base;ctx.fillRect(0,0,512,512);ctx.fillStyle=skin?.colors[1]||a.secondary;
+  if(skin?.id==='winter'){
+   for(let i=-2;i<7;i++){
+    const x=i*115;
+    ctx.fillStyle=skin.colors[1+(i%2===0?0:1)];
+    ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x+39,0);ctx.lineTo(x+95,187);
+    ctx.lineTo(x+170,250);ctx.lineTo(x+250,512);ctx.lineTo(x+209,512);
+    ctx.lineTo(x+132,277);ctx.lineTo(x+54,214);ctx.fill();
+   }
+  }else if(skin?.id==='desert'){
+   for(let i=0;i<42;i++){
+    ctx.fillStyle=skin.colors[1+i%2];
+    ctx.beginPath();ctx.ellipse(rng()*512,rng()*512,22+rng()*85,3+rng()*20,-.45,0,TAU);ctx.fill();
+   }
+  }else if(skin?.id==='urban'){
+   for(let i=0;i<58;i++){
+    ctx.fillStyle=skin.colors[1+i%2];
+    ctx.fillRect(Math.floor(rng()*16)*32,Math.floor(rng()*32)*16,32*(1+Math.floor(rng()*4)),16*(1+Math.floor(rng()*2)));
+   }
+  }else if(a.pattern==='patches')for(let i=0;i<25;i++){
     ctx.beginPath();
     ctx.ellipse(rng()*512,rng()*512,25+rng()*65,15+rng()*50,rng()*6,0,TAU);
     ctx.fill();
   }
-  if(a.pattern==='stripes')for(let i=-3;i<9;i++){
+  if(!skin&&a.pattern==='stripes')for(let i=-3;i<9;i++){
     ctx.beginPath();
     ctx.moveTo(i*90,0);
     ctx.lineTo(i*90+48,0);
@@ -7491,7 +7815,7 @@ function makeTank(id,appearance){
     ctx.lineTo(i*90+170,512);
     ctx.fill();
   }
-  if(a.pattern==='digital')for(let i=0;i<130;i++)ctx.fillRect(Math.floor(rng()*32)*16,Math.floor(rng()*32)*16,16*(1+Math.floor(rng()*4)),16*(1+Math.floor(rng()*3)));
+  if(!skin&&a.pattern==='digital')for(let i=0;i<130;i++)ctx.fillRect(Math.floor(rng()*32)*16,Math.floor(rng()*32)*16,16*(1+Math.floor(rng()*4)),16*(1+Math.floor(rng()*3)));
   for(let i=0;i<4500;i++){
     ctx.fillStyle=rng()>.5?'#ffffff0b':'#00000015';
     ctx.fillRect(rng()*512,rng()*512,1+rng()*4,1+rng()*3);
@@ -7537,6 +7861,11 @@ function makeTank(id,appearance){
  if(!a.stowage&&!a.sandbags)cloth.dispose();
  if(!a.foliage)green.dispose();
  a.decals.forEach((decal,index)=>addCustomDecal(model,decal,index));
+ if(a.model)addWorkshopModel(model,a.model);
+ if(enableBrush||a.brush.length){
+  setupTankBrush(model);
+  drawTankBrush(model,a.brush);
+ }
  return model;
 }
 function makeTankBase(id) {
@@ -8324,7 +8653,7 @@ class Renderer {
   }
 
   clearWorld() {
-    const materials = new Set(), geometries = new Set(), cachedTextures = new Set(TEX.values());
+    const materials = new Set(), geometries = new Set(), textures = new Set(), cachedTextures = new Set(TEX.values());
     for (const root of [this.world, this.dynamic]) {
       root.traverse(o => {
         if (o.geometry && ![...GEO.values()].includes(o.geometry)) geometries.add(o.geometry);
@@ -8333,7 +8662,12 @@ class Renderer {
       root.clear();
     }
     geometries.forEach(g => g.dispose());
-    materials.forEach(m => { if (m.map && !cachedTextures.has(m.map)) m.map.dispose(); m.dispose(); });
+    materials.forEach(m => {
+      if (m.map && !cachedTextures.has(m.map)) textures.add(m.map);
+      if (m.brushMap) textures.add(m.brushMap);
+      m.dispose();
+    });
+    textures.forEach(t => t.dispose());
     this.droneModels=new Map();
     this.sahurModels=new Map();
     this.drawnDemolitions=new Set();
@@ -8386,7 +8720,7 @@ class Renderer {
     }
     for (let i = 0; i < 4; i++) cyl(this.world, mat('#475345'), 8 + i * .9, .64, -9, .4, 1.28);
     mergeStatic(this.world);
-    this.hangarTank = makeTank(tankId,appearance);
+    this.hangarTank = makeTank(tankId,appearance,this.canvas.parentElement?.id==='custom-preview');
     this.hangarTank.group.rotation.y = -.32;
     this.world.add(this.hangarTank.group);
     this.camera.fov = 34; this.camera.position.set(10.5, 6.3, 11.8); this.camera.lookAt(0, 1.25, 0); this.resize();
@@ -8414,17 +8748,21 @@ class Renderer {
     const hit=this.workshopRay(x,y).intersectObject(this.hangarTank.group,true).find(h=>h.object.isMesh&&!h.object.material?.wireframe&&(!h.object.material?.transparent||h.object.userData.customDecal));
     return hit?.object.userData.customDecal?hit.object.userData.decalIndex:-1;
   }
-  workshopSurface(x,y){
+  workshopSurface(x,y,brush=false){
     const model=this.hangarTank,
-      hit=this.workshopRay(x,y).intersectObject(model.group,true).find(h=>h.object.isMesh&&!h.object.material?.transparent&&!h.object.isInstancedMesh);
-    if(!hit)return null;
+      hit=this.workshopRay(x,y).intersectObject(model.group,true).find(h=>h.object.isMesh&&!h.object.material?.transparent&&!h.object.isInstancedMesh&&!h.object.userData.workshopModel);
+    if(!hit||(brush&&!hit.object.userData.brushSurface))return null;
     let node=hit.object,part='hull';while(node){if(node===model.turret){part='turret';break;}node=node.parent;}
     const parent=part==='turret'?model.turret:model.hull,point=parent.worldToLocal(hit.point.clone());
-    const normal=hit.face.normal.clone().applyNormalMatrix(new THREE.Matrix3().getNormalMatrix(hit.object.matrixWorld)).transformDirection(parent.matrixWorld.clone().invert());
+    const normal=brush&&hit.normal?hit.normal.clone().normalize():
+      hit.face.normal.clone().applyNormalMatrix(new THREE.Matrix3().getNormalMatrix(hit.object.matrixWorld)).transformDirection(parent.matrixWorld.clone().invert());
     const side=normal.y>.65?'top':Math.abs(normal.x)>Math.abs(normal.z)?(normal.x>0?'right':'left'):(normal.z>0?'front':'back');
     const xValue=side==='top'?point.x:side==='right'?-point.z:side==='left'?point.z:side==='front'?point.x:-point.x;
     const base=part==='turret'?.57:(side==='front'||side==='back'?1.15:1.7);
     return {surface:part+'-'+side,x:xValue,y:side==='top'?-point.z:point.y-base};
+  }
+  setWorkshopPaint(strokes){
+    if(this.hangarTank?.brush)drawTankBrush(this.hangarTank,strokes);
   }
   setWorkshopDecals(decals){
     const model=this.hangarTank;if(!model)return;
@@ -9311,6 +9649,7 @@ class Renderer {
       if (model.marker) { model.marker.visible = tank.alive; model.marker.rotation.y = this.clock * .5; }
       if (model.dead !== !tank.alive) {
         model.dead = !tank.alive;
+        if(model.brush)model.brush.shade.value=tank.alive?1:.27;
         for (const material of model.skinMaterials) material.color.copy(model.originalColors.get(material)).multiplyScalar(tank.alive ? 1 : .27);
       }
       this.setXray(model, xray && tank.isPlayer, tank.modules);
@@ -10360,7 +10699,8 @@ const {LocalLeaderboard,cleanNick} = MODULES["leaderboard.js"];
 const {WorkshopEditor} = MODULES["workshop.js"];
 const {NATIONS,TANKS,MAPS,getTank,getMap,createBattleMap,terrainAt,terrainHeight,surfaceHeight} = MODULES["data.js"];
 const {Game} = MODULES["simulation.js"];
-const {CAMOUFLAGES,normalizeAppearance,normalizeAppearances,importTankImage,DECAL_SURFACES} = MODULES["appearance.js"];
+const {CAMOUFLAGES,SKINS,ACCESSORIES,MODEL_LICENSE,normalizeAppearance,normalizeAppearances,
+ importTankImage,importWorkshopModel,workshopItems,normalizeCosmetics,DECAL_SURFACES} = MODULES["appearance.js"];
 const {ZombieGame,ZOMBIE_UPGRADES} = MODULES["zombies.js"];
 const {Renderer} = MODULES["renderer.js"];
 const {AudioEngine} = MODULES["audio.js"];
@@ -10368,9 +10708,10 @@ const {keyboardInput,bindMouseButtons,CruiseControl,MouseLock,edgeLookDelta} = M
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const STORAGE='iron-front-progress-v1',
   defaults={xp:0,unlocked:['pz4f2','m4a1','t341941'],selected:'pz4f2',nation:'de',map:'valley',battles:0,wins:0,kills:0,settings:{sound:true,quality:'high',sensitivity:1}};
-let progress;
+let progress,lastSavedProgress=null;
 try{
-  const p=JSON.parse(localStorage.getItem(STORAGE)||'null');
+  lastSavedProgress=localStorage.getItem(STORAGE);
+  const p=JSON.parse(lastSavedProgress||'null');
   progress={...structuredClone(defaults),...p,settings:{...defaults.settings,...p?.settings}};
   progress.unlocked=[...new Set([...defaults.unlocked,...(Array.isArray(p?.unlocked)?p.unlocked.filter(id=>TANKS.some(t=>t.id===id)):[])])];
   progress.xp=Math.max(0,Math.floor(Number(progress.xp)||0));
@@ -10381,6 +10722,7 @@ try{
   progress=structuredClone(defaults);
 }
 progress.appearances=normalizeAppearances(progress.appearances);
+progress.cosmetics=normalizeCosmetics(progress.cosmetics,progress.appearances);
 // Only the optional local Windows launcher supplies a network hint. Keep it
 // out of requests, public chat, invite links and shareable browser history.
 if(location.protocol==='file:'&&location.hash.startsWith('#hsw-wifi=')){
@@ -10392,7 +10734,7 @@ if(location.protocol==='file:'&&location.hash.startsWith('#hsw-wifi=')){
 }
 let multiplayerUI=null,account=null,accountUI=null;
 let mapFilter='all';
-let customDraft=null,customPreviewTimer,imageImportVersion=0,workshopEditor=null;
+let customDraft=null,customPreviewTimer,customImportVersion=0,customImporting='',customImportStatus='',workshopEditor=null;
 let game=null,renderer=null,paused=false,awardDone=false,lastTime=performance.now(),lastHud=0,modalView='',toastTimer,
   noticeTimer,flashTimer,feed=[],pointer={x:innerWidth*.5,y:innerHeight*.5,down:false,right:false},keys=new Set(),
   returnFocus=null;
@@ -10419,15 +10761,22 @@ function lateTankSVG(t){
 }
 const roman=n=>['','I','II','III','IV','V','VI'][n]||n;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function save(){
+function save(next=progress){
   try{
-    localStorage.setItem(STORAGE,JSON.stringify(progress));
-    accountUI?.schedule();
-    return true;
+    if(next!==progress&&localStorage.getItem(STORAGE)!==lastSavedProgress){
+      toast('Postup se změnil v jiné kartě. Načti hru znovu, než uložíš vzhled.');
+      return false;
+    }
+    const serialized=JSON.stringify(next);
+    localStorage.setItem(STORAGE,serialized);
+    lastSavedProgress=serialized;
   }catch{
-    toast('Prohlížeč nepovolil uložení. Postup zůstane jen do zavření hry.');
+    toast(next===progress?'Prohlížeč nepovolil uložení. Postup zůstane jen do zavření hry.':'Vzhled se nepodařilo uložit. Výzkumné body se neodečetly.');
     return false;
   }
+  if(next!==progress)Object.assign(progress,next);
+  try{accountUI?.schedule();}catch(error){accountUI?.fail(error);}
+  return true;
 }
 function toast(s){
   clearTimeout(toastTimer);
@@ -10582,10 +10931,48 @@ function showCustomization(){
  workshopEditor??=new WorkshopEditor({canvas,renderer,getDraft:()=>customDraft,onChange:()=>renderCustomizationForm()});
  workshopEditor.open();
  $('#custom-title').textContent=fullName(getTank(progress.selected));
- $('#custom-cancel').focus();
+ $('#workshop aside').scrollTop=0;
+ $('#custom-title').focus({preventScroll:true});
+}
+const cosmeticPrice=item=>progress.cosmetics.includes(item.id)?'Odemčeno':num(item.cost)+' VB';
+function pendingCosmetics(){
+ return workshopItems(customDraft).filter(item=>!progress.cosmetics.includes(item.id));
+}
+function updateCustomizationCost(){
+ const cost=pendingCosmetics().reduce((total,item)=>total+item.cost,0);
+ $('#custom-balance').textContent='Výzkumné body · '+num(progress.xp)+' VB';
+ $('#custom-price').textContent='Cena při uložení · '+num(cost)+' VB'+(cost>progress.xp?' · Chybí '+num(cost-progress.xp)+' VB':'');
+ $('#custom-save').disabled=!!customImporting||cost>progress.xp;
+ $('#custom-model-file').disabled=!!customImporting||(!customDraft.model&&!progress.cosmetics.includes(MODEL_LICENSE.id)&&progress.xp<MODEL_LICENSE.cost);
+}
+function renderWorkshopShop(paintControls){
+ const {skin,model}=customDraft;
+ return `<p id="custom-balance" class="custom-balance"></p>
+ <fieldset><legend>Štětec</legend><p class="custom-note">Zapni štětec nad náhledem a táhni po pancíři.</p>
+ <div class="custom-colors"><label>Barva štětce<input id="brush-color" type="color" value="${workshopEditor?.paintColor||'#d53333'}"></label>
+ <label>Šířka štětce<input id="brush-size" type="range" min=".1" max="1.5" step=".05" value="${workshopEditor?.paintSize||.3}"></label></div>
+ <button type="button" class="text-button" data-workshop-action="clear-paint" ${customDraft.brush.length?'':'disabled'}>Smazat malbu</button></fieldset>
+ ${paintControls}
+ <fieldset><legend>Skin</legend><label>Skin<select id="custom-skin"><option value="">Vlastní nátěr</option>
+ ${SKINS.map(item=>`<option value="${item.id}" ${skin===item.id?'selected':''}>${item.name} · ${cosmeticPrice(item)}</option>`).join('')}</select></label>
+ <p class="custom-note">Body se odečtou při uložení. Odemčené položky můžeš použít na všech svých tancích.</p></fieldset>
+ <fieldset><legend>3D doplňky</legend>
+ ${ACCESSORIES.map(item=>`<label class="custom-check"><input type="checkbox" id="custom-${item.id}" ${customDraft[item.id]?'checked':''}>${item.name}<small>${cosmeticPrice(item)}</small></label>`).join('')}</fieldset>
+ <fieldset><legend>Vlastní 3D model</legend><p>Odemčení importu · ${cosmeticPrice(MODEL_LICENSE)}</p>
+ <p class="custom-note">Jednorázové odemčení. Na každý tank lze umístit jeden model OBJ do 64 kB. Použije se geometrie a zvolená barva.</p>
+ <label>Přidat model OBJ<input id="custom-model-file" type="file" accept=".obj"></label>
+ <p id="custom-model-status" role="status">${esc(customImporting==='model'?customImportStatus:'')}</p>
+ ${model?`<strong class="custom-model-label" translate="no">${esc(model.name)}</strong>
+ <label>Uchycení<select data-model-field="mount"><option value="hull">Korba</option><option value="turret" ${model.mount==='turret'?'selected':''}>Věž</option></select></label>
+ ${[['x','Posun do strany',-1,1,.05],['y','Výška',-1,1,.05],['z','Posun vpřed / vzad',-1,1,.05],['size','Velikost',.15,2,.05],['rotation','Otočení',-180,180,5]].map(([id,label,min,max,step])=>`<label>${label}<input data-model-field="${id}" type="range" min="${min}" max="${max}" step="${step}" value="${model[id]}"></label>`).join('')}
+ <label>Barva modelu<input data-model-field="color" type="color" value="${model.color}"></label>
+ <button type="button" class="text-button" data-workshop-action="remove-model">Odstranit model</button>`:''}</fieldset>`;
 }
 function renderCustomizationForm(){
- $('#custom-form').innerHTML=`<label>Kamufláž<select id="custom-pattern">${CAMOUFLAGES.map(([id,name])=>`<option value="${id}" ${customDraft.pattern===id?'selected':''}>${name}</option>`).join('')}</select></label><div class="custom-colors"><label>Základní barva<input id="custom-base" type="color" value="${customDraft.base}"></label><label>Druhá barva<input id="custom-secondary" type="color" value="${customDraft.secondary}"></label></div><label>Číslo tanku<input id="custom-number" type="text" inputmode="numeric" maxlength="4" value="${customDraft.number}" placeholder="Bez čísla"></label><p class="custom-note">Číslo má až 4 číslice. Změnou barvy se původní nátěr přepne na jednobarevný.</p><fieldset><legend>Vlastní nálepky · ${customDraft.decals.length}/6</legend><label>Přidat obrázek<input id="custom-image" type="file" accept="image/*" ${customDraft.decals.length>=6?'disabled':''}></label><p class="custom-note">Klikni na nálepku na tanku a přetáhni ji. Rohové úchyty mění velikost, kulatý úchyt otáčí. Až 6 obrázků. Soubory do 20 MB zůstávají na tvém zařízení.</p>${customDraft.decals.map((d,i)=>`<div class="decal-editor" data-decal-card="${i}"><strong>Nálepka ${i+1}</strong><button type="button" class="decal-pick" data-select-decal="${i}" aria-label="Vybrat nálepku ${i+1} na tanku"><img class="custom-decal-preview" src="${d.image}" alt="Nálepka ${i+1}"></button><details><summary>Přesné nastavení</summary><label>Umístění<select data-decal="${i}" data-field="surface">${DECAL_SURFACES.map(([id,label])=>`<option value="${id}" ${d.surface===id?'selected':''}>${label}</option>`).join('')}</select></label>${[['x','Vodorovný posun',-4,4,.05],['y','Svislý posun',-4,4,.05],['size','Velikost',.15,3,.05],['rotation','Otočení',-180,180,5]].map(([key,label,min,max,step])=>`<label>${label}<input aria-label="${label} nálepky ${i+1}" data-decal="${i}" data-field="${key}" type="range" min="${min}" max="${max}" step="${step}" value="${d[key]}"></label>`).join('')}</details><button type="button" class="text-button" data-remove-decal="${i}">Odstranit nálepku ${i+1}</button></div>`).join('')}<p id="custom-image-status" role="status"></p></fieldset><fieldset><legend>Doplňky</legend>${[['stowage','Brašny a zavazadla'],['sandbags','Pytle s pískem'],['foliage','Maskovací větve']].map(([id,label])=>`<label class="custom-check"><input type="checkbox" id="custom-${id}" ${customDraft[id]?'checked':''}>${label}</label>`).join('')}</fieldset>`;
+ const paintControls=`<label>Kamufláž<select id="custom-pattern">${CAMOUFLAGES.map(([id,name])=>`<option value="${id}" ${customDraft.pattern===id?'selected':''}>${name}</option>`).join('')}</select></label><div class="custom-colors"><label>Základní barva<input id="custom-base" type="color" value="${customDraft.base}"></label><label>Druhá barva<input id="custom-secondary" type="color" value="${customDraft.secondary}"></label></div><label>Číslo tanku<input id="custom-number" type="text" inputmode="numeric" maxlength="4" value="${customDraft.number}" placeholder="Bez čísla"></label><p class="custom-note">Číslo má až 4 číslice. Změnou barvy se původní nátěr přepne na jednobarevný.</p>`;
+ $('#custom-form').innerHTML=`${renderWorkshopShop(paintControls)}<fieldset><legend>Vlastní nálepky · ${customDraft.decals.length}/6</legend><label>Přidat obrázek<input id="custom-image" type="file" accept="image/*" ${customDraft.decals.length>=6?'disabled':''}></label><p class="custom-note">Klikni na nálepku na tanku a přetáhni ji. Rohové úchyty mění velikost, kulatý úchyt otáčí. Až 6 obrázků. Soubory do 20 MB zůstávají na tvém zařízení.</p>${customDraft.decals.map((d,i)=>`<div class="decal-editor" data-decal-card="${i}"><strong>Nálepka ${i+1}</strong><button type="button" class="decal-pick" data-select-decal="${i}" aria-label="Vybrat nálepku ${i+1} na tanku"><img class="custom-decal-preview" src="${d.image}" alt="Nálepka ${i+1}"></button><details><summary>Přesné nastavení</summary><label>Umístění<select data-decal="${i}" data-field="surface">${DECAL_SURFACES.map(([id,label])=>`<option value="${id}" ${d.surface===id?'selected':''}>${label}</option>`).join('')}</select></label>${[['x','Vodorovný posun',-4,4,.05],['y','Svislý posun',-4,4,.05],['size','Velikost',.15,3,.05],['rotation','Otočení',-180,180,5]].map(([key,label,min,max,step])=>`<label>${label}<input aria-label="${label} nálepky ${i+1}" data-decal="${i}" data-field="${key}" type="range" min="${min}" max="${max}" step="${step}" value="${d[key]}"></label>`).join('')}</details><button type="button" class="text-button" data-remove-decal="${i}">Odstranit nálepku ${i+1}</button></div>`).join('')}<p id="custom-image-status" role="status">${esc(customImporting==='image'?customImportStatus:'')}</p></fieldset>`;
+ $('#custom-image').disabled=!!customImporting||customDraft.decals.length>=6;
+ updateCustomizationCost();
 }
 function previewCustomization(){
   if(!customDraft)return;
@@ -10595,18 +10982,24 @@ function previewCustomization(){
   renderer.resize();
 }
 function closeCustomization(commit){
- if(!customDraft)return;
+ if(!customDraft||(commit&&customImporting))return;
  workshopEditor?.finish();
+ if(commit){
+   const items=pendingCosmetics(),cost=items.reduce((total,item)=>total+item.cost,0);
+   if(cost&&accountUI?.busy){toast('Počkej na načtení účtu.');return;}
+   if(cost>progress.xp){updateCustomizationCost();return;}
+   const appearances={...progress.appearances,[progress.selected]:normalizeAppearance(customDraft,progress.selected)};
+   const cosmetics=[...progress.cosmetics,...items.map(item=>item.id)];
+   if(!save({...progress,xp:progress.xp-cost,appearances,cosmetics}))return;
+   renderer.appearances=progress.appearances;
+   renderHangar();
+   toast('Vzhled tanku uložen. Použije se i v bitvě.');
+ }
  workshopEditor?.close();
  clearTimeout(customPreviewTimer);
- if(commit){
-   progress.appearances[progress.selected]=normalizeAppearance(customDraft,progress.selected);
-   renderer.appearances=progress.appearances;
-   if(save())toast('Vzhled tanku uložen. Použije se i v bitvě.');
- }
- imageImportVersion++;
- $('#custom-save').disabled=false;
+ cancelWorkshopImport();
  customDraft=null;
+ canvas.classList.remove('paint-cursor');
  $('#workshop').hidden=true;
  $('#hangar').hidden=false;
  hero.prepend(canvas);
@@ -10614,10 +11007,23 @@ function closeCustomization(commit){
  renderer.resize();
  $('#customize-button').focus();
 }
+function cancelWorkshopImport(){
+ customImportVersion++;
+ customImporting=customImportStatus='';
+}
 $('#custom-form').addEventListener('input',e=>{
  if(!customDraft)return;
- if(e.target.dataset.decal!==undefined){
-   const decal=customDraft.decals[Number(e.target.dataset.decal)];
+ const {id,dataset,value,type,checked}=e.target;
+ if(id==='brush-color'){workshopEditor.paintColor=value;return;}
+ if(id==='brush-size'){workshopEditor.paintSize=Number(value);return;}
+ if(dataset.modelField&&customDraft.model){
+   customDraft.model[dataset.modelField]=type==='range'?Number(value):value;
+   clearTimeout(customPreviewTimer);
+   customPreviewTimer=setTimeout(previewCustomization,90);
+   return;
+ }
+ if(dataset.decal!==undefined){
+   const decal=customDraft.decals[Number(dataset.decal)];
    if(decal){
      decal[e.target.dataset.field]=e.target.dataset.field==='surface'?e.target.value:Number(e.target.value);
      clearTimeout(customPreviewTimer);
@@ -10625,31 +11031,47 @@ $('#custom-form').addEventListener('input',e=>{
    }
    return;
  }
- const key=e.target.id.replace('custom-','');
- if(!['base','secondary','number','pattern','stowage','sandbags','foliage'].includes(key))return;
- customDraft[key]=e.target.type==='checkbox'?e.target.checked:e.target.value;
+ const key=id.replace('custom-','');
+ if(!['base','secondary','number','pattern','skin',...ACCESSORIES.map(item=>item.id)].includes(key))return;
+ customDraft[key]=type==='checkbox'?checked:value;
+ if(['base','secondary','pattern'].includes(key)){
+   customDraft.skin='';
+   $('#custom-skin').value='';
+ }
  if((key==='base'||key==='secondary')&&customDraft.pattern==='factory'){
    customDraft.pattern='plain';
    $('#custom-pattern').value='plain';
  }
  customDraft=normalizeAppearance(customDraft,progress.selected);
+ updateCustomizationCost();
  clearTimeout(customPreviewTimer);
  customPreviewTimer=setTimeout(previewCustomization,120);
 });
 
 $('#custom-form').addEventListener('change',async e=>{
- if(e.target.id!=='custom-image'||!customDraft)return;
+ const kind=e.target.id==='custom-model-file'?'model':e.target.id==='custom-image'?'image':'';
+ if(!kind||!customDraft||customImporting||e.target.disabled)return;
  const file=e.target.files?.[0];if(!file)return;
- const version=++imageImportVersion;
- $('#custom-save').disabled=true;
- $('#custom-image-status').textContent='Načítám obrázek…';
+ const version=++customImportVersion,status='#custom-'+kind+'-status';
+ customImporting=kind;
+ customImportStatus=kind==='model'?'Načítám model…':'Načítám obrázek…';
+ $(status).textContent=customImportStatus;
+ $('#custom-image').disabled=true;
+ updateCustomizationCost();
  try{
-  const decal=await importTankImage(file);
-  if(version!==imageImportVersion||!customDraft)return;
+  const asset=await (kind==='model'?importWorkshopModel(file):importTankImage(file));
+  if(version!==customImportVersion||!customDraft)return;
+  if(kind==='model'){
+   customDraft.model=asset;
+   renderCustomizationForm();
+   previewCustomization();
+   $(status).textContent='Model je připraven v náhledu.';
+   return;
+  }
   if(customDraft.decals.length>=6)throw Error('Na tank lze přidat nejvýše 6 nálepek.');
   workshopEditor?.beforeChange();
   customDraft.decal='';
-  customDraft.decals.push({image:decal,surface:'turret-right',x:0,y:0,size:.75,rotation:0});
+  customDraft.decals.push({image:asset,surface:'turret-right',x:0,y:0,size:.75,rotation:0});
   renderCustomizationForm();
   previewCustomization();
   workshopEditor?.commit();
@@ -10657,9 +11079,14 @@ $('#custom-form').addEventListener('change',async e=>{
   renderer.workshopView('right');
   $('#custom-image-status').textContent='Táhni obrázek přímo po tanku. Úchyty mění velikost a otočení.';
  }catch(error){
-   if(version===imageImportVersion&&customDraft)$('#custom-image-status').textContent=error.message.includes('decode')?'Obrázek nelze načíst. Zkus PNG, JPG nebo WebP.':error.message;
+   if(version===customImportVersion&&customDraft)$(status).textContent=kind==='model'&&error.name!=='Error'?'Model se nepodařilo načíst.':error.message.includes('decode')?'Obrázek nelze načíst. Zkus PNG, JPG nebo WebP.':error.message;
  }
- finally{if(version===imageImportVersion){$('#custom-save').disabled=false;e.target.value='';}}
+ finally{if(version===customImportVersion){
+  customImporting=customImportStatus='';
+  $('#custom-image').disabled=customDraft.decals.length>=6;
+  updateCustomizationCost();
+  e.target.value='';
+ }}
 });
 
 function showZombieShop(){
@@ -11135,27 +11562,30 @@ document.addEventListener('click',e=>{
    renderer.workshopView(customDraft.decals[Number(b.dataset.selectDecal)].surface.split('-')[1]);
  }
  if(b.dataset.removeDecal!==undefined&&customDraft){
-   imageImportVersion++;
-   $('#custom-save').disabled=false;
+   workshopEditor.beforeChange();
    customDraft.decal='';
    customDraft.decals.splice(Number(b.dataset.removeDecal),1);
+   workshopEditor.commit();
    renderCustomizationForm();
    previewCustomization();
  }
  if(b.id==='customize-button')showCustomization();
  if(b.id==='custom-save')closeCustomization(true);
  if(b.id==='custom-cancel')closeCustomization(false);
- if(b.id==='custom-remove-image'){
-   imageImportVersion++;
-   $('#custom-save').disabled=false;
-   customDraft.decal='';
-   renderCustomizationForm();
-   previewCustomization();
+ if(b.dataset.workshopAction&&customDraft){
+   if(b.dataset.workshopAction==='remove-model'){
+     if(customImporting==='model')cancelWorkshopImport();
+     customDraft.model=null;
+     renderCustomizationForm();
+     previewCustomization();
+   }else workshopEditor.action(b.dataset.workshopAction);
  }
- if(b.id==='custom-reset'){
-   imageImportVersion++;
-   $('#custom-save').disabled=false;
+ if(b.id==='custom-reset'&&customDraft){
+   cancelWorkshopImport();
+   workshopEditor.beforeChange();
    customDraft=normalizeAppearance({},progress.selected);
+   workshopEditor.commit();
+   workshopEditor.select(-1);
    renderCustomizationForm();
    previewCustomization();
  }
@@ -11210,12 +11640,13 @@ document.addEventListener('change',async e=>{
     const f=e.target.files[0];
     if(!f)return;
     try{
-      if(f.size>2500000)throw Error();
+      if(f.size>5000000)throw Error();
       const p=JSON.parse(await f.text());
       if(p.format!=='iron-front-save-v1'||!Array.isArray(p.unlocked)||!Number.isFinite(p.xp)||p.xp<0)throw Error();
       progress.unlocked=[...new Set([...defaults.unlocked,...p.unlocked.filter(id=>TANKS.some(t=>t.id===id))])];
       progress.xp=Math.floor(p.xp);
       progress.appearances=normalizeAppearances(p.appearances);
+      progress.cosmetics=normalizeCosmetics(p.cosmetics,progress.appearances);
       if(renderer)renderer.appearances=progress.appearances;
       for(const k of ['battles','wins','kills'])progress[k]=Math.max(0,Math.floor(Number(p[k])||0));
       progress.selected=progress.unlocked.includes(p.selected)?p.selected:defaults.selected;
@@ -11693,9 +12124,14 @@ account=new PlayerAccount(ONLINE_CONFIG,onlineStorage);
 accountUI=new AccountUI({
  account,getProgress:()=>progress,openModal,toast,inBattle:()=>!!game,isOpen:()=>modalView==='account'&&!$('#modal').hidden,
  applyProgress:cloud=>{
+  if(customDraft&&(cloud.selected!==progress.selected||cloud.accountOwner!==progress.accountOwner))closeCustomization(false);
   Object.assign(progress,cloud);
   progress.nation=getTank(progress.selected).nation;
-  save();if(!game){renderHangar();renderer?.setHangar(progress.selected);}
+  save();
+  if(!game){
+   renderHangar();
+   if(customDraft)updateCustomizationCost();else renderer?.setHangar(progress.selected);
+  }
  }
 });
 accountUI.restore();
