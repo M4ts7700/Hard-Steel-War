@@ -795,6 +795,9 @@ body{background:#131a18}
 }
 #hangar .offline-note{font-size:8px;margin:0;text-align:center;letter-spacing:0}
 #hangar .hangar-content{padding:20px 0 0}
+#hangar-ad{margin:40px auto 24px;max-width:970px;min-height:90px}
+#hangar-ad>ins{display:block}
+#hangar-ad:has(>ins[data-ad-status="unfilled"]){display:none}
 #hangar .garage-grid{grid-template-columns:minmax(0,1fr) 235px;gap:20px}
 #hangar .tank-cards,#hangar .tank-cards.five,#hangar .tank-cards.six,#hangar .tank-cards.three{
   grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;
@@ -1452,6 +1455,7 @@ if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))addEventLis
 // Apply the saved colour theme before the first paint (themes.js handles changes later).
 try{const theme=localStorage.getItem('hsw-theme');if(theme==='light'||theme==='m90')document.documentElement.dataset.theme=theme;}catch{}
 </script>
+<meta name="google-adsense-account" content="ca-pub-6505285417111480">
 </head>
 <body>
 <div id="app">
@@ -1465,12 +1469,41 @@ try{const theme=localStorage.getItem('hsw-theme');if(theme==='light'||theme==='m
 <section id="maps-panel" class="loadout-panel" aria-labelledby="maps-title"><div class="panel-head"><div><span class="eyebrow">02 / BOJIŠTĚ</span><h2 id="maps-title">Zvol bojiště</h2></div></div><div class="map-filters" role="group" aria-label="Typ mapy"><button data-map-filter="all" aria-pressed="true">Všechny</button><button data-map-filter="urban" aria-pressed="false">Město / CQC</button><button data-map-filter="hills" aria-pressed="false">Kopce</button><button data-map-filter="flat" aria-pressed="false">Rovina</button></div><div id="map-cards" class="map-cards"></div></section>
 </div>
 <section class="game-about" aria-labelledby="about-title"><div><span class="eyebrow">TANKOVÁ HRA ZDARMA</span><h2 id="about-title">Co je Hard Steel War?</h2></div><div><p>Hard Steel War je bezplatná 3D tanková hra, kterou hraješ přímo v prohlížeči bez stahování. Vel tankům Německa, USA a SSSR, zkoumej nové stroje a upravuj jejich vzhled vlastními 3D modely.</p><p>Bojuj proti botům, vyzkoušej online multiplayer s přáteli nebo přežij vlny zombie. V režimu Nadvláda obsazuj zóny, v týmovém deathmatchi nič soupeřovy tanky. Hra podporuje češtinu i angličtinu a po prvním načtení nabízí i hraní proti botům offline.</p><small>Pro přehled návštěvnosti odesíláme do Supabase anonymní záznam návštěvy bez jména, e-mailu a reklamních cookies. Respektujeme nastavení Do Not Track.</small></div></section><footer><span>HARD STEEL WAR <b> / </b> EXPERIMENTÁLNÍ TANKOVÝ POLYGON</span><span class="text-button">OFFLINE EDICE · VŠE V TOMTO SOUBORU</span><button class="text-button" data-view="guide">Ovládání a mechaniky ↗</button></footer></div>
+<div id="hangar-ad" hidden>
+  <ins class="adsbygoogle" data-ad-client="ca-pub-6505285417111480" data-ad-slot="4215837248" data-ad-format="auto" data-full-width-responsive="true"></ins>
+</div>
 </main>
 <section id="battle" hidden><div id="battle-scene"></div><div class="battle-top"><button id="pause-button" class="hud-button">Ⅱ</button><div class="battle-score"><div class="score-row"><span class="team-blue">SPOJENCI <b id="friendly-score">2000</b></span><span id="battle-time">12:00</span><span class="team-red"><b id="enemy-score">2000</b> NEPŘÍTEL</span></div><div class="ticket-bars"><i id="friendly-bar"></i><i id="enemy-bar"></i></div><div id="zone-hud" class="zone-hud"></div></div><span class="battle-map-label" id="battle-map-label"></span></div><div id="network-hud" hidden></div><section id="server-chat" hidden><button id="server-chat-toggle" type="button">CHAT · ENTER</button><div id="server-chat-body" hidden><div id="server-chat-log" role="log" aria-label="Chat" aria-live="polite"></div><form id="server-chat-form"><input id="server-chat-input" aria-label="Zpráva" placeholder="Napiš zprávu…" maxlength="180" autocomplete="off"><button type="submit">ODESLAT</button></form></div></section><aside id="team-roster" hidden></aside><div id="name-tags"></div><div id="zombie-hud" hidden></div><div id="scope-overlay" class="scope-overlay" hidden><canvas id="scope-canvas" aria-hidden="true"></canvas></div><div id="view-status" class="view-status"></div><button id="camera-mode-button" class="camera-mode-button">1. OSOBA</button><div id="gun-marker" hidden></div><div id="reticle"><span></span></div><div id="hit-notice" aria-live="polite"></div><div id="kill-confirmation" class="kill-confirmation" hidden><span>✦</span><strong>CÍL ZNIČEN</strong><small></small></div><div id="kill-feed" class="kill-feed"></div><div class="battle-objective" id="battle-objective">OBSAĎ A UDRŽ ZÓNY</div><div id="damage-flash"></div><div id="nuke-flash"></div><button id="nuke-button" disabled>☢ BODY 0 / 10</button><div class="battle-bottom"><div class="module-panel"><div class="hud-caption"><span id="battle-tank-name"></span><span id="crew-label">POSÁDKA</span></div><div class="module-layout"><div id="tank-diagram" class="tank-diagram"><div class="track left"></div><div class="hull"><div class="engine-block"></div><div class="turret-block"><div class="gun-block"></div></div><div class="ammo-block"></div></div><div class="track right"></div></div><div id="module-bars"></div></div><div class="module-actions"><button id="repair-button">[F] Opravit</button><button id="smoke-button">[G] Kouř <span>3</span></button></div><button id="secondary-button" class="missile-action" hidden>[R] 75 mm · PŘIPRAVENO</button><button id="missile-button" class="missile-action" hidden>[2] RAKETA 4/4</button></div><div class="driving-hud"><small id="cruise-status" hidden></small><div class="speed"><strong id="speed-value">0</strong><span>km/h</span></div><div class="ammo-hud"><div class="shell-icon"></div><div><strong id="ammo-name">APHE</strong><small id="reload-label">PŘIPRAVENO</small><div class="reload-track"><i id="reload-bar"></i></div></div><span id="reload-count"></span></div><div class="mg-hud"><span id="mg-status">KULOMET</span><div><i id="mg-heat"></i></div></div></div><div class="minimap-wrap"><canvas id="minimap" width="300" height="300" aria-label="Taktická mapa bojiště"></canvas></div></div><div id="respawn-panel" hidden><span class="eyebrow">STROJ VYŘAZEN</span><h2>Bitva ještě nekončí.</h2><p id="death-killer" translate="no"></p><p id="respawn-text">Připravuje se záložní tank…</p><button id="respawn-button" class="primary-button">ZPĚT DO BOJE →</button></div><div class="touch-controls"><div class="touch-pad"><button data-key="KeyW">▲</button><button data-key="KeyA">◀</button><button data-key="KeyS">▼</button><button data-key="KeyD">▶</button></div><div class="touch-aim-actions"><button id="touch-scope">ZAMĚŘOVAČ</button><button id="touch-fire">PALBA</button></div></div></section>
 <div id="modal" class="modal-backdrop" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button id="close-modal" class="modal-close" aria-label="Zavřít">×</button><div id="modal-content"></div></section></div>
 <section id="workshop" aria-labelledby="custom-title" hidden><div id="custom-preview"></div><aside><span class="eyebrow">DÍLNA / VLASTNÍ VZHLED</span><h2 id="custom-title" tabindex="-1"></h2><p>Pravým tlačítkem si tank prohlédni ze všech stran. Štětec a nálepky použij přímo na 3D náhledu.</p><div id="custom-form"></div><button id="custom-reset" class="text-button">Obnovit původní vzhled</button><div class="custom-actions"><small id="custom-price" role="status"></small><button id="custom-save" class="primary-button">ULOŽIT VZHLED</button><button id="custom-cancel" class="secondary-button">ZRUŠIT</button></div><small>Úpravy vzhledu nemění bojové vlastnosti. Odemčené položky a vlastní vzhledy přeneseš zálohou v nastavení.</small></aside></section><div id="toast" role="status"></div>
 </div>
 <script src="visit-tracker.js"></script>
+<script>
+(() => {
+  if (location.origin !== 'https://hsw.neplytegr.cz') return;
+  const container = document.getElementById('hangar-ad');
+  const { adClient } = container.firstElementChild.dataset;
+  const script = document.createElement('script');
+  script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adClient}`;
+  script.async = true;
+  script.crossOrigin = 'anonymous';
+  script.onload = () => {
+    container.hidden = false;
+    const observer = new IntersectionObserver(entries => {
+      if (!entries.some(entry => entry.isIntersecting) || !container.offsetWidth) return;
+      observer.disconnect();
+      try {
+        (window.adsbygoogle ||= []).push({});
+      } catch (error) {
+        container.hidden = true;
+        console.warn('AdSense banner could not load:', error);
+      }
+    });
+    observer.observe(container);
+  };
+  document.head.append(script);
+})();
+</script>
 <script src="vendor/three.js"></script>
 <script>
 const MODULES={};
