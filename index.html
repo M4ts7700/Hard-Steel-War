@@ -1,6 +1,20 @@
 <!doctype html>
 <html lang="cs">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#171b1b"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-title" content="Hard Steel War"><meta name="description" content="Vel tanku. Ovládni bojiště. 3D bitvy proti botům, realisticky inspirované poškození a rychlý výzkum. Vše běží na tvém zařízení."><title>HARD STEEL WAR — Tankové bitvy</title><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2212%22%20fill%3D%22%23171b1b%22%2F%3E%3Cpath%20d%3D%22M32%208%2054%2032%2032%2056%2010%2032Z%22%20fill%3D%22none%22%20stroke%3D%22%23e9a957%22%20stroke-width%3D%224%22%2F%3E%3Cpath%20d%3D%22M32%2018v28M18%2032h28%22%20stroke%3D%22%23e9a957%22%20stroke-width%3D%224%22%2F%3E%3C%2Fsvg%3E%0A" type="image/svg+xml"><style>@font-face{font-family:LocalCondensed;src:local('Bahnschrift Condensed'),local('Arial Narrow')}
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#171b1b"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-title" content="Hard Steel War"><meta name="description" content="Hard Steel War je bezplatná 3D tanková hra v prohlížeči. Hraj bitvy proti botům i online multiplayer, zkoumej tanky a vytvoř si vlastní vzhled."><title>Hard Steel War – tanková hra zdarma v prohlížeči</title>
+<link rel="canonical" href="https://hsw.neplytegr.cz/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="cs_CZ">
+<meta property="og:site_name" content="Hard Steel War">
+<meta property="og:title" content="Hard Steel War – tanková hra zdarma v prohlížeči">
+<meta property="og:description" content="Hard Steel War je bezplatná 3D tanková hra v prohlížeči. Hraj bitvy proti botům i online multiplayer, zkoumej tanky a vytvoř si vlastní vzhled.">
+<meta property="og:url" content="https://hsw.neplytegr.cz/">
+<meta property="og:image" content="https://hsw.neplytegr.cz/icons/icon-512.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hard Steel War – tanková hra zdarma v prohlížeči">
+<meta name="twitter:description" content="Hard Steel War je bezplatná 3D tanková hra v prohlížeči. Hraj bitvy proti botům i online multiplayer, zkoumej tanky a vytvoř si vlastní vzhled.">
+<meta name="twitter:image" content="https://hsw.neplytegr.cz/icons/icon-512.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"Hard Steel War","url":"https://hsw.neplytegr.cz/","description":"Hard Steel War je bezplatná 3D tanková hra v prohlížeči. Hraj bitvy proti botům i online multiplayer, zkoumej tanky a vytvoř si vlastní vzhled.","image":"https://hsw.neplytegr.cz/icons/icon-512.png","inLanguage":["cs","en"],"genre":["Tank combat","Action","Strategy"],"gamePlatform":"Web browser","applicationCategory":"GameApplication","operatingSystem":"Web browser","playMode":["SinglePlayer","MultiPlayer"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"CZK"}}</script><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2212%22%20fill%3D%22%23171b1b%22%2F%3E%3Cpath%20d%3D%22M32%208%2054%2032%2032%2056%2010%2032Z%22%20fill%3D%22none%22%20stroke%3D%22%23e9a957%22%20stroke-width%3D%224%22%2F%3E%3Cpath%20d%3D%22M32%2018v28M18%2032h28%22%20stroke%3D%22%23e9a957%22%20stroke-width%3D%224%22%2F%3E%3C%2Fsvg%3E%0A" type="image/svg+xml"><style>@font-face{font-family:LocalCondensed;src:local('Bahnschrift Condensed'),local('Arial Narrow')}
 *{box-sizing:border-box}
 :root{
   --bg:#171b1b;--panel:#202525;--line:#363c39;--text:#ecece3;--muted:#929a91;--gold:#e9ac5a;--blue:#77bdcc;--red:#e07869;
@@ -1398,6 +1412,38 @@ html[data-theme=m90] .primary-button,html[data-theme=m90] #hangar #play-button{
 html[data-theme=m90] .hangar-heading h1,html[data-theme=m90] .panel-head h2,html[data-theme=m90] .modal h2{
   text-transform:uppercase;letter-spacing:1.5px;
 }
+
+/* Settings: spacious cards, accessible switches and responsive fields. */
+#modal[data-view="settings"] .modal{max-width:960px;width:calc(100% - 32px);border-radius:24px;padding:36px;background:var(--modal);box-shadow:0 32px 100px #0006;scrollbar-width:thin;scrollbar-color:var(--field-line) var(--modal)}
+.settings-header{padding:2px 32px 26px 0}
+.settings-header h2{font-family:inherit;font-size:32px;letter-spacing:-1px;margin:10px 0}
+.settings-header p{color:var(--soft-text);margin:0;line-height:1.6}
+.settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.settings-card{min-width:0;background:var(--surface);border:1px solid var(--edge);border-radius:16px;padding:22px}
+.settings-card h3{display:flex;align-items:center;gap:10px;font-size:16px;letter-spacing:0;margin:0 0 14px}
+.settings-card h3>span{display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:var(--accent-soft);color:var(--accent)}
+.settings-card .settings-row{padding:18px 0;gap:16px;flex-wrap:wrap}
+.settings-card .settings-row:last-child{border-bottom:0;padding-bottom:0}
+.settings-card .settings-row>div{flex:1 1 150px;font-weight:600}
+.settings-card .settings-row p{font-size:12px;line-height:1.65;font-weight:400}
+.settings-card select,.settings-card .secondary-button{max-width:100%;padding:11px 13px;border:1px solid var(--edge-soft);border-radius:10px;background:var(--field);color:var(--text);font-size:12px;letter-spacing:0}
+.settings-switch{flex:none;position:relative;width:50px;height:28px;padding:0;border-radius:20px;background:var(--field);border:1px solid var(--field-line);font-size:0;transition:background .18s}
+.settings-switch::after{content:'';position:absolute;top:4px;left:4px;width:18px;height:18px;border-radius:50%;background:var(--soft-text);transition:transform .18s}
+.settings-switch[aria-checked="true"]{background:var(--primary);border-color:var(--primary)}
+.settings-switch[aria-checked="true"]::after{transform:translateX(22px);background:var(--primary-text)}
+.settings-footer{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-top:24px}
+.settings-footer>span{font-size:12px;color:var(--muted)}
+.settings-footer .modal-actions{margin:0}
+.settings-footer .primary-button{border-radius:12px;padding:14px 28px;letter-spacing:0}
+.model-editor{margin-top:16px;padding-top:14px;border-top:1px solid var(--edge)}
+.model-editor summary{cursor:pointer;font-weight:600;line-height:1.6}
+.model-transform-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}
+#custom-form .model-transform-grid input{width:100%;min-width:0}
+.game-about{display:grid;grid-template-columns:1fr 2fr;gap:32px;padding:36px 0;border-top:1px solid var(--edge);margin-top:32px}
+.game-about h2{font-size:23px;margin:12px 0;letter-spacing:-.5px}
+.game-about p{margin:0 0 12px;color:var(--soft-text);font-size:13px;line-height:1.8}
+.game-about small{color:var(--muted);font-size:11px;line-height:1.7;display:block}
+@media(max-width:680px){#modal[data-view="settings"] .modal{padding:24px 18px;border-radius:18px;width:calc(100% - 16px)}.settings-grid{grid-template-columns:1fr}.settings-card{padding:18px}.settings-header h2{font-size:27px}.settings-footer{align-items:flex-start}.game-about{grid-template-columns:1fr;gap:12px}}
 </style>
 <script>
 // Installable app: register the offline service worker (sw.js) when served over http(s).
@@ -1418,12 +1464,13 @@ try{const theme=localStorage.getItem('hsw-theme');if(theme==='light'||theme==='m
 <section id="vehicles-panel" class="loadout-panel" aria-labelledby="vehicles-title"><div class="panel-head"><div><span class="eyebrow">01 / VOZIDLO</span><h2 id="vehicles-title">Vyber národ a stroj</h2></div><button class="research-button" data-view="research"><span>Výzkumný strom ↗</span><small id="research-xp">✦ 0 VB</small><b id="research-ready" hidden></b></button></div><div id="nation-tabs" class="nation-picker" role="group" aria-label="Národ"></div><div class="garage-grid"><div id="tank-cards" class="tank-cards"></div><aside class="spec-panel"><div class="spec-heading"><span>TECHNICKÝ PROFIL</span><span id="spec-role">STŘEDNÍ</span></div><div id="tank-specs"></div><p id="tank-description"></p></aside></div></section>
 <section id="maps-panel" class="loadout-panel" aria-labelledby="maps-title"><div class="panel-head"><div><span class="eyebrow">02 / BOJIŠTĚ</span><h2 id="maps-title">Zvol bojiště</h2></div></div><div class="map-filters" role="group" aria-label="Typ mapy"><button data-map-filter="all" aria-pressed="true">Všechny</button><button data-map-filter="urban" aria-pressed="false">Město / CQC</button><button data-map-filter="hills" aria-pressed="false">Kopce</button><button data-map-filter="flat" aria-pressed="false">Rovina</button></div><div id="map-cards" class="map-cards"></div></section>
 </div>
-<footer><span>HARD STEEL WAR <b> / </b> EXPERIMENTÁLNÍ TANKOVÝ POLYGON</span><span class="text-button">OFFLINE EDICE · VŠE V TOMTO SOUBORU</span><button class="text-button" data-view="guide">Ovládání a mechaniky ↗</button></footer></div>
+<section class="game-about" aria-labelledby="about-title"><div><span class="eyebrow">TANKOVÁ HRA ZDARMA</span><h2 id="about-title">Co je Hard Steel War?</h2></div><div><p>Hard Steel War je bezplatná 3D tanková hra, kterou hraješ přímo v prohlížeči bez stahování. Vel tankům Německa, USA a SSSR, zkoumej nové stroje a upravuj jejich vzhled vlastními 3D modely.</p><p>Bojuj proti botům, vyzkoušej online multiplayer s přáteli nebo přežij vlny zombie. V režimu Nadvláda obsazuj zóny, v týmovém deathmatchi nič soupeřovy tanky. Hra podporuje češtinu i angličtinu a po prvním načtení nabízí i hraní proti botům offline.</p><small>Pro přehled návštěvnosti odesíláme do Supabase anonymní záznam návštěvy bez jména, e-mailu a reklamních cookies. Respektujeme nastavení Do Not Track.</small></div></section><footer><span>HARD STEEL WAR <b> / </b> EXPERIMENTÁLNÍ TANKOVÝ POLYGON</span><span class="text-button">OFFLINE EDICE · VŠE V TOMTO SOUBORU</span><button class="text-button" data-view="guide">Ovládání a mechaniky ↗</button></footer></div>
 </main>
 <section id="battle" hidden><div id="battle-scene"></div><div class="battle-top"><button id="pause-button" class="hud-button">Ⅱ</button><div class="battle-score"><div class="score-row"><span class="team-blue">SPOJENCI <b id="friendly-score">2000</b></span><span id="battle-time">12:00</span><span class="team-red"><b id="enemy-score">2000</b> NEPŘÍTEL</span></div><div class="ticket-bars"><i id="friendly-bar"></i><i id="enemy-bar"></i></div><div id="zone-hud" class="zone-hud"></div></div><span class="battle-map-label" id="battle-map-label"></span></div><div id="network-hud" hidden></div><section id="server-chat" hidden><button id="server-chat-toggle" type="button">CHAT · ENTER</button><div id="server-chat-body" hidden><div id="server-chat-log" role="log" aria-label="Chat" aria-live="polite"></div><form id="server-chat-form"><input id="server-chat-input" aria-label="Zpráva" placeholder="Napiš zprávu…" maxlength="180" autocomplete="off"><button type="submit">ODESLAT</button></form></div></section><aside id="team-roster" hidden></aside><div id="name-tags"></div><div id="zombie-hud" hidden></div><div id="scope-overlay" class="scope-overlay" hidden><canvas id="scope-canvas" aria-hidden="true"></canvas></div><div id="view-status" class="view-status"></div><button id="camera-mode-button" class="camera-mode-button">1. OSOBA</button><div id="gun-marker" hidden></div><div id="reticle"><span></span></div><div id="hit-notice" aria-live="polite"></div><div id="kill-confirmation" class="kill-confirmation" hidden><span>✦</span><strong>CÍL ZNIČEN</strong><small></small></div><div id="kill-feed" class="kill-feed"></div><div class="battle-objective" id="battle-objective">OBSAĎ A UDRŽ ZÓNY</div><div id="damage-flash"></div><div id="nuke-flash"></div><button id="nuke-button" disabled>☢ BODY 0 / 10</button><div class="battle-bottom"><div class="module-panel"><div class="hud-caption"><span id="battle-tank-name"></span><span id="crew-label">POSÁDKA</span></div><div class="module-layout"><div id="tank-diagram" class="tank-diagram"><div class="track left"></div><div class="hull"><div class="engine-block"></div><div class="turret-block"><div class="gun-block"></div></div><div class="ammo-block"></div></div><div class="track right"></div></div><div id="module-bars"></div></div><div class="module-actions"><button id="repair-button">[F] Opravit</button><button id="smoke-button">[G] Kouř <span>3</span></button></div><button id="secondary-button" class="missile-action" hidden>[R] 75 mm · PŘIPRAVENO</button><button id="missile-button" class="missile-action" hidden>[2] RAKETA 4/4</button></div><div class="driving-hud"><small id="cruise-status" hidden></small><div class="speed"><strong id="speed-value">0</strong><span>km/h</span></div><div class="ammo-hud"><div class="shell-icon"></div><div><strong id="ammo-name">APHE</strong><small id="reload-label">PŘIPRAVENO</small><div class="reload-track"><i id="reload-bar"></i></div></div><span id="reload-count"></span></div><div class="mg-hud"><span id="mg-status">KULOMET</span><div><i id="mg-heat"></i></div></div></div><div class="minimap-wrap"><canvas id="minimap" width="300" height="300" aria-label="Taktická mapa bojiště"></canvas></div></div><div id="respawn-panel" hidden><span class="eyebrow">STROJ VYŘAZEN</span><h2>Bitva ještě nekončí.</h2><p id="death-killer" translate="no"></p><p id="respawn-text">Připravuje se záložní tank…</p><button id="respawn-button" class="primary-button">ZPĚT DO BOJE →</button></div><div class="touch-controls"><div class="touch-pad"><button data-key="KeyW">▲</button><button data-key="KeyA">◀</button><button data-key="KeyS">▼</button><button data-key="KeyD">▶</button></div><div class="touch-aim-actions"><button id="touch-scope">ZAMĚŘOVAČ</button><button id="touch-fire">PALBA</button></div></div></section>
 <div id="modal" class="modal-backdrop" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button id="close-modal" class="modal-close" aria-label="Zavřít">×</button><div id="modal-content"></div></section></div>
 <section id="workshop" aria-labelledby="custom-title" hidden><div id="custom-preview"></div><aside><span class="eyebrow">DÍLNA / VLASTNÍ VZHLED</span><h2 id="custom-title" tabindex="-1"></h2><p>Pravým tlačítkem si tank prohlédni ze všech stran. Štětec a nálepky použij přímo na 3D náhledu.</p><div id="custom-form"></div><button id="custom-reset" class="text-button">Obnovit původní vzhled</button><div class="custom-actions"><small id="custom-price" role="status"></small><button id="custom-save" class="primary-button">ULOŽIT VZHLED</button><button id="custom-cancel" class="secondary-button">ZRUŠIT</button></div><small>Úpravy vzhledu nemění bojové vlastnosti. Odemčené položky a vlastní vzhledy přeneseš zálohou v nastavení.</small></aside></section><div id="toast" role="status"></div>
 </div>
+<script src="visit-tracker.js"></script>
 <script src="vendor/three.js"></script>
 <script>
 const MODULES={};
@@ -2127,6 +2174,7 @@ GRAFIKA NENÍ DOSTUPNÁ	GRAPHICS UNAVAILABLE
 Pro tuhle bitvu potřebujeme WebGL 2.	This battle needs WebGL 2.
 Otevři hru v aktuálním Chromu, Edge nebo Firefoxu a zapni hardwarovou akceleraci. Pokud používáš vestavěný náhled, zkus hru otevřít v samostatném prohlížeči.	Open the game in a current Chrome, Edge or Firefox browser with hardware acceleration enabled. If using an embedded preview, try a standalone browser.
 `.trim().split('\n').map(line=>line.split('\t'));
+pairs.push(...[["Vlastní 3D modely","Custom 3D models"],["Import zdarma, bez limitu počtu modelů a polygonů. Polohu, velikost a otočení zadej libovolně. Výkon a místo pro uložení závisí na tvém zařízení.","Free imports, with no model or polygon count limits. Enter any position, size and rotation. Performance and storage depend on your device."],["OBJ musí obsahovat platné vrcholy a alespoň jednu nenulovou plochu.","OBJ must contain valid vertices and at least one non-degenerate face."],["Náklon X (°)","X tilt (°)"],["Otočení Y (°)","Y rotation (°)"],["Náklon Z (°)","Z tilt (°)"],["Hraj po svém.","Play your way."],["Vzhled, výkon i ovládání na jednom místě.","Appearance, performance and controls in one place."],["Prostředí","Appearance"],["Zvuk a ovládání","Sound and controls"],["Obraz a výkon","Graphics and performance"],["Účet a postup","Account and progress"],["Změny se ukládají automaticky.","Changes save automatically."],["Hotovo","Done"],["TANKOVÁ HRA ZDARMA","FREE TANK GAME"],["Co je Hard Steel War?","What is Hard Steel War?"],["Hard Steel War je bezplatná 3D tanková hra, kterou hraješ přímo v prohlížeči bez stahování. Vel tankům Německa, USA a SSSR, zkoumej nové stroje a upravuj jejich vzhled vlastními 3D modely.","Hard Steel War is a free 3D tank game you play in your browser without downloads. Command German, American and Soviet tanks, research new vehicles and customize them with your own 3D models."],["Bojuj proti botům, vyzkoušej online multiplayer s přáteli nebo přežij vlny zombie. V režimu Nadvláda obsazuj zóny, v týmovém deathmatchi nič soupeřovy tanky. Hra podporuje češtinu i angličtinu a po prvním načtení nabízí i hraní proti botům offline.","Battle bots, try online multiplayer with friends or survive waves of zombies. Capture zones in Domination or destroy enemy tanks in Team Deathmatch. Play in Czech or English, with offline bot battles available after the first load."],["Pro přehled návštěvnosti odesíláme do Supabase anonymní záznam návštěvy bez jména, e-mailu a reklamních cookies. Respektujeme nastavení Do Not Track.","For traffic statistics, we send an anonymous visit record to Supabase without names, emails or advertising cookies. We respect Do Not Track."]]);
 const dictionary=new Map();
 for(const [cs,en] of [...pairs,...CONTENT_TRANSLATIONS,...MULTIPLAYER_TRANSLATIONS]){
   dictionary.set(cs,en);
@@ -2302,6 +2350,7 @@ return {MULTIPLAYER_VERSION,roomCode,normalizeRoomCode,RealtimeTransport};
 MODULES["online-config.js"]=(()=>{
 // Public browser credentials only. Never put a secret/service_role key here.
 const ONLINE_CONFIG={url:'https://jllejxiyeyshgwilfipy.supabase.co',publishableKey:'sb_publishable_nW9NGz4Ed-Zi73pUtdvF7Q_Ef4MSFjl'};
+try { window.HSWVisitTracker?.start(ONLINE_CONFIG); } catch {}
 
 return {ONLINE_CONFIG};
 })();
@@ -5060,7 +5109,8 @@ const ACCESSORIES=[
  {id:'sandbags',name:'Pytle s pískem',cost:1300},
  {id:'foliage',name:'Maskovací větve',cost:1700}
 ];
-const MODEL_LICENSE={id:'model-import',cost:12000};
+// Keep the old entitlement ID readable in backups; importing models is now free.
+const MODEL_LICENSE={id:'model-import',cost:0};
 const PAINT_SIDES=['right','left','front','back','top'];
 const PAINT_SURFACES=['hull','turret'].flatMap(part=>PAINT_SIDES.map(side=>part+'-'+side));
 const PAINT_EXTENT=6, MAX_STROKES=120, MAX_PAINT_POINTS=2400;
@@ -5094,11 +5144,11 @@ function parseWorkshopOBJ(source){
   const fields=line.trim().split(/\s+/);
   if(kind==='v'){
    const vertex=fields.slice(0,3).map(Number);
-   if(vertex.length!==3||vertex.some(n=>!Number.isFinite(n)||Math.abs(n)>1e7)||positions.length>=9000)return null;
+   if(vertex.length!==3||vertex.some(n=>!Number.isFinite(n)))return null;
    positions.push(...vertex);
   }
   if(kind==='f'){
-   if(fields.length<3||indices.length+(fields.length-2)*3>18000)return null;
+   if(fields.length<3)return null;
    const count=positions.length/3,face=[];
    for(const field of fields){
     if(!/^-?\d+(?:\/-?\d+(?:\/-?\d+)?|\/\/-?\d+)?$/.test(field))return null;
@@ -5120,14 +5170,16 @@ function parseWorkshopOBJ(source){
 }
 function normalizeWorkshopModel(value){
  if(!value||!parseWorkshopOBJ(value.source))return null;
+ const finite=(v,f)=>Number.isFinite(v)?v:f;
  return {source:value.source,name:typeof value.name==='string'?value.name.slice(0,80):'OBJ',
-  mount:mount(value.mount),x:bounded(value.x,.7,-1,1),y:bounded(value.y,0,-1,1),z:bounded(value.z,-.65,-1,1),
-  size:bounded(value.size,.85,.15,2),rotation:bounded(value.rotation,0,-180,180),color:color(value.color,'#77836a')};
+  mount:mount(value.mount),x:finite(value.x,.7),y:finite(value.y,0),z:finite(value.z,-.65),
+  size:Number.isFinite(value.size)&&value.size>0?value.size:.85,
+  rotation:finite(value.rotation,0),pitch:finite(value.pitch,0),roll:finite(value.roll,0),color:color(value.color,'#77836a')};
 }
 async function importWorkshopModel(file){
  if(!/\.obj$/i.test(file.name))throw Error('Vyber soubor OBJ.');
  const geometry=parseWorkshopOBJ(await file.text());
- if(!geometry)throw Error('OBJ musí obsahovat platné plochy, nejvýše 3 000 vrcholů a 6 000 trojúhelníků.');
+ if(!geometry)throw Error('OBJ musí obsahovat platné vrcholy a alespoň jednu nenulovou plochu.');
  // Store only the rendered mesh, so unused texture data and comments do not fill the save.
  const {positions,indices}=geometry,lines=[];
  for(let i=0;i<positions.length;i+=3)lines.push(`v ${positions[i]} ${positions[i+1]} ${positions[i+2]}`);
@@ -5135,7 +5187,7 @@ async function importWorkshopModel(file){
  return normalizeWorkshopModel({source:lines.join('\n'),name:file.name});
 }
 function workshopItems(appearance){
- return [...SKINS.filter(s=>s.id===appearance.pattern),...ACCESSORIES.filter(a=>appearance[a.id]),...(appearance.model?[MODEL_LICENSE]:[])];
+ return [...SKINS.filter(s=>s.id===appearance.pattern),...ACCESSORIES.filter(a=>appearance[a.id])];
 }
 function normalizeCosmetics(value,appearances){
  const ids=[...SKINS,...ACCESSORIES,MODEL_LICENSE].map(item=>item.id);
@@ -5173,7 +5225,7 @@ function normalizeAppearance(value={},tankId='pz4f2'){
  // Paid skins are camouflage patterns. Older saves kept them in a separate `skin` field.
  const pattern=SKINS.some(s=>s.id===v.skin)?v.skin:v.pattern;
  return {base:color(v.base,nation==='de'?'#8e8c6b':nation==='us'?'#68705a':'#60705b'),secondary:color(v.secondary,'#3e4c37'),pattern:CAMOUFLAGES.some(([id])=>id===pattern)||SKINS.some(s=>s.id===pattern)?pattern:'factory',number:typeof v.number==='string'?v.number.replace(/\D/g,'').slice(0,4):nation==='de'?'214':nation==='us'?'32':'108',stowage:v.stowage===true,sandbags:v.sandbags===true,foliage:v.foliage===true,decal:normalizeDecal(v.decal),decals:normalizeDecals(Array.isArray(v.decals)?v.decals:normalizeDecal(v.decal)?[{image:v.decal}]:[]),
-  brush:normalizePaint(v.brush),model:normalizeWorkshopModel(v.model)};
+  brush:normalizePaint(v.brush),models:(Array.isArray(v.models)?v.models:v.model?[v.model]:[]).map(normalizeWorkshopModel).filter(Boolean)};
 }
 function normalizeAppearances(values){
   const out={};
@@ -7965,7 +8017,7 @@ function addWorkshopModel(model,attachment){
   attachment.x*model.width*(turret?.25:.5),
   (turret?model.height-model.turretBaseY-.25:model.turretBaseY)+attachment.y,
   attachment.z*model.length*(turret?.25:.5));
- mesh.rotation.y=attachment.rotation*Math.PI/180;
+ mesh.rotation.set(attachment.pitch*Math.PI/180,attachment.rotation*Math.PI/180,attachment.roll*Math.PI/180);
  mesh.userData.workshopModel=true;
  model.skinMaterials.push(material);
  model.originalColors.set(material,material.color.clone());
@@ -8057,7 +8109,7 @@ function makeTank(id,appearance,enableBrush=false,brushTile=PAINT_TILE_BATTLE){
  if(!a.stowage&&!a.sandbags)cloth.dispose();
  if(!a.foliage)green.dispose();
  a.decals.forEach((decal,index)=>addCustomDecal(model,decal,index));
- if(a.model)addWorkshopModel(model,a.model);
+ for(const attachment of a.models)addWorkshopModel(model,attachment);
  if(enableBrush||a.brush.length){
   setupTankBrush(model,brushTile);
   drawTankBrush(model,a.brush);
@@ -11724,6 +11776,7 @@ function openModal(view,html){
   if(game){paused=true;releaseControls();}
   if(!modalView)returnFocus=document.activeElement;
   modalView=view;
+  $('#modal').dataset.view=view;
   $('#modal-content').innerHTML=html;
   $('#modal').hidden=false;
   $('#modal').querySelector('.modal').scrollTop=0;
@@ -11774,10 +11827,10 @@ function updateCustomizationCost(){
  $('#custom-balance').textContent='Výzkumné body · '+num(progress.xp)+' VB';
  $('#custom-price').textContent='Cena při uložení · '+num(cost)+' VB'+(cost>progress.xp?' · Chybí '+num(cost-progress.xp)+' VB':'');
  $('#custom-save').disabled=!!customImporting||cost>progress.xp;
- $('#custom-model-file').disabled=!!customImporting||(!customDraft.model&&!progress.cosmetics.includes(MODEL_LICENSE.id)&&progress.xp<MODEL_LICENSE.cost);
+ $('#custom-model-file').disabled=!!customImporting;
 }
 function renderWorkshopShop(paintControls){
- const {model}=customDraft;
+ const {models}=customDraft;
  return `<p id="custom-balance" class="custom-balance"></p>
  <p class="custom-note">Body se odečtou při uložení. Odemčené položky můžeš použít na všech svých tancích.</p>
  <fieldset><legend>Štětec</legend><p class="custom-note">Zapni štětec nad náhledem a táhni po pancíři.</p>
@@ -11787,15 +11840,14 @@ function renderWorkshopShop(paintControls){
  ${paintControls}
  <fieldset><legend>3D doplňky</legend>
  ${ACCESSORIES.map(item=>`<label class="custom-check"><input type="checkbox" id="custom-${item.id}" ${customDraft[item.id]?'checked':''}>${item.name}<small>${cosmeticPrice(item)}</small></label>`).join('')}</fieldset>
- <fieldset><legend>Vlastní 3D model</legend><p>Odemčení importu · ${cosmeticPrice(MODEL_LICENSE)}</p>
- <p class="custom-note">Jednorázové odemčení. Na každý tank lze umístit jeden model OBJ. Použije se geometrie a zvolená barva.</p>
+ <fieldset><legend>Vlastní 3D modely</legend><p class="custom-note">Import zdarma, bez limitu počtu modelů a polygonů. Polohu, velikost a otočení zadej libovolně. Výkon a místo pro uložení závisí na tvém zařízení.</p>
  <label>Přidat model OBJ<input id="custom-model-file" type="file" accept=".obj"></label>
  <p id="custom-model-status" role="status">${esc(customImporting==='model'?customImportStatus:'')}</p>
- ${model?`<strong class="custom-model-label" translate="no">${esc(model.name)}</strong>
- <label>Uchycení<select data-model-field="mount"><option value="hull">Korba</option><option value="turret" ${model.mount==='turret'?'selected':''}>Věž</option></select></label>
- ${[['x','Posun do strany',-1,1,.05],['y','Výška',-1,1,.05],['z','Posun vpřed / vzad',-1,1,.05],['size','Velikost',.15,2,.05],['rotation','Otočení',-180,180,5]].map(([id,label,min,max,step])=>`<label>${label}<input data-model-field="${id}" type="range" min="${min}" max="${max}" step="${step}" value="${model[id]}"></label>`).join('')}
- <label>Barva modelu<input data-model-field="color" type="color" value="${model.color}"></label>
- <button type="button" class="text-button" data-workshop-action="remove-model">Odstranit model</button>`:''}</fieldset>`;
+ ${models.map((model,index)=>`<details class="model-editor" open><summary class="custom-model-label" translate="no">${index+1}. ${esc(model.name)}</summary>
+ <label>Uchycení<select data-model-index="${index}" data-model-field="mount"><option value="hull">Korba</option><option value="turret" ${model.mount==='turret'?'selected':''}>Věž</option></select></label>
+ <div class="model-transform-grid">${[['x','Posun do strany'],['y','Výška'],['z','Posun vpřed / vzad'],['size','Velikost'],['pitch','Náklon X (°)'],['rotation','Otočení Y (°)'],['roll','Náklon Z (°)']].map(([id,label])=>`<label>${label}<input data-model-index="${index}" data-model-field="${id}" type="number" step="any" value="${model[id]}" aria-label="${label} · ${esc(model.name)}"></label>`).join('')}</div>
+ <label>Barva modelu<input data-model-index="${index}" data-model-field="color" type="color" value="${model.color}"></label>
+ <button type="button" class="text-button" data-model-index="${index}" data-workshop-action="remove-model">Odstranit model</button></details>`).join('')}</fieldset>`;
 }
 function renderCustomizationForm(){
  const paintControls=`<label>Kamufláž<select id="custom-pattern">${CAMOUFLAGES.map(([id,name])=>`<option value="${id}" ${customDraft.pattern===id?'selected':''}>${name}</option>`).join('')}${SKINS.map(item=>`<option value="${item.id}" ${customDraft.pattern===item.id?'selected':''}>${item.name} · ${cosmeticPrice(item)}</option>`).join('')}</select></label><div class="custom-colors"><label>Základní barva<input id="custom-base" type="color" value="${customDraft.base}"></label><label>Druhá barva<input id="custom-secondary" type="color" value="${customDraft.secondary}"></label></div><label>Číslo tanku<input id="custom-number" type="text" inputmode="numeric" maxlength="4" value="${customDraft.number}" placeholder="Bez čísla"></label><p class="custom-note">Číslo má až 4 číslice. Změnou barvy se původní nátěr přepne na jednobarevný.</p>`;
@@ -11843,8 +11895,9 @@ $('#custom-form').addEventListener('input',e=>{
  const {id,dataset,value,type,checked}=e.target;
  if(id==='brush-color'){workshopEditor.paintColor=value;return;}
  if(id==='brush-size'){workshopEditor.paintSize=Number(value);return;}
- if(dataset.modelField&&customDraft.model){
-   customDraft.model[dataset.modelField]=type==='range'?Number(value):value;
+ if(dataset.modelField&&customDraft.models[Number(dataset.modelIndex)]){
+   if(type==='number'&&(!value.trim()||!Number.isFinite(Number(value))||(dataset.modelField==='size'&&Number(value)<=0)))return;
+   customDraft.models[Number(dataset.modelIndex)][dataset.modelField]=type==='number'?Number(value):value;
    clearTimeout(customPreviewTimer);
    customPreviewTimer=setTimeout(previewCustomization,90);
    return;
@@ -11886,7 +11939,7 @@ $('#custom-form').addEventListener('change',async e=>{
   const asset=await (kind==='model'?importWorkshopModel(file):importTankImage(file));
   if(version!==customImportVersion||!customDraft)return;
   if(kind==='model'){
-   customDraft.model=asset;
+   customDraft.models.push(asset);
    renderCustomizationForm();
    previewCustomization();
    $(status).textContent='Model je připraven v náhledu.';
@@ -11924,7 +11977,7 @@ function showGuide(){
 }
 function showSettings(){
   if(game)paused=true;
-  openModal('settings',`<span class="eyebrow">NASTAVENÍ / TVŮJ POLYGON</span><h2>Připravit k boji.</h2><div class="settings-row"><div>Jazyk<p>Automaticky podle domény; ruční volba zůstane uložená.</p></div><select data-language-picker aria-label="Jazyk"><option value="auto" ${getLanguagePreference()==='auto'?'selected':''}>Automaticky</option><option value="cs" ${getLanguagePreference()==='cs'?'selected':''}>Čeština</option><option value="en" ${getLanguagePreference()==='en'?'selected':''}>English</option></select></div><div class="settings-row"><div><label for="theme-select">Motiv</label><p>Barvy nabídek, hangáru a oken</p></div><select id="theme-select">${[['default','Výchozí'],['light','Světlý'],['m90','Švédské M90']].map(([v,n])=>`<option value="${v}" ${getTheme()===v?'selected':''}>${n}</option>`).join('')}</select></div><div class="settings-row"><div>Zvuk<p>Motor, výstřely a události bitvy</p></div><button class="toggle" id="sound-toggle">${progress.settings.sound?'ZAPNUTO':'VYPNUTO'}</button></div><div class="settings-row"><div>Grafika<p>Při nízkém výkonu hra sníží rozlišení 3D obrazu. Úsporná grafika vypíná stíny.</p></div><select id="quality-select"><option value="auto" ${progress.settings.quality==='auto'?'selected':''}>Automatická</option><option value="high" ${progress.settings.quality==='high'?'selected':''}>Vysoká</option><option value="low" ${progress.settings.quality==='low'?'selected':''}>Úsporná</option></select></div><div class="settings-row"><div>Počítadlo FPS<p>Ukáže snímky za sekundu v levém horním rohu</p></div><button class="toggle" id="fps-toggle">${progress.settings.fps?'ZAPNUTO':'VYPNUTO'}</button></div><div class="settings-row"><div><label for="sensitivity-select">Citlivost myši</label><p>Stejný směr myši a pohledu; jemnější míření při přiblížení</p></div><select id="sensitivity-select">${[[.5,"Nízká"],[1,"Normální"],[1.5,"Vyšší"],[2,"Vysoká"]].map(([v,n])=>`<option value="${v}" ${Number(progress.settings.sensitivity)===v?"selected":""}>${n}</option>`).join("")}</select></div>${accountUI?.settingsRow()||''}<div class="settings-row"><div>Lokální postup<p>${progress.battles} bitev · ${progress.kills} zničených cílů · ${progress.unlocked.length}/${TANKS.length} strojů</p></div><button class="secondary-button" id="export-save">Zálohovat</button></div><div class="settings-row"><div>Obnovit zálohu<p>Nahradí aktuální výzkum uloženým postupem</p></div><label class="secondary-button" style="cursor:pointer">Načíst soubor<input id="import-save" type="file" accept="application/json,.json" hidden></label></div><div class="modal-actions"><button class="primary-button" data-action="close">HOTOVO →</button></div>`);
+  openModal('settings',`<div class="settings-header"><span class="eyebrow">NASTAVENÍ</span><h2>Hraj po svém.</h2><p>Vzhled, výkon i ovládání na jednom místě.</p></div><div class="settings-grid"><section class="settings-card"><h3><span aria-hidden="true">◐</span> Prostředí</h3><div class="settings-row"><div>Jazyk<p>Automaticky podle domény; ruční volba zůstane uložená.</p></div><select data-language-picker aria-label="Jazyk"><option value="auto" ${getLanguagePreference()==='auto'?'selected':''}>Automaticky</option><option value="cs" ${getLanguagePreference()==='cs'?'selected':''}>Čeština</option><option value="en" ${getLanguagePreference()==='en'?'selected':''}>English</option></select></div><div class="settings-row"><div><label for="theme-select">Motiv</label><p>Barvy nabídek, hangáru a oken</p></div><select id="theme-select">${[['default','Výchozí'],['light','Světlý'],['m90','Švédské M90']].map(([v,n])=>`<option value="${v}" ${getTheme()===v?'selected':''}>${n}</option>`).join('')}</select></div></section><section class="settings-card"><h3><span aria-hidden="true">♫</span> Zvuk a ovládání</h3><div class="settings-row"><div>Zvuk<p>Motor, výstřely a události bitvy</p></div><button class="settings-switch" role="switch" aria-label="Zvuk" aria-checked="${!!progress.settings.sound}" id="sound-toggle">${progress.settings.sound?'ZAPNUTO':'VYPNUTO'}</button></div><div class="settings-row"><div><label for="sensitivity-select">Citlivost myši</label><p>Stejný směr myši a pohledu; jemnější míření při přiblížení</p></div><select id="sensitivity-select">${[[.5,"Nízká"],[1,"Normální"],[1.5,"Vyšší"],[2,"Vysoká"]].map(([v,n])=>`<option value="${v}" ${Number(progress.settings.sensitivity)===v?"selected":""}>${n}</option>`).join("")}</select></div></section><section class="settings-card"><h3><span aria-hidden="true">▣</span> Obraz a výkon</h3><div class="settings-row"><div>Grafika<p>Při nízkém výkonu hra sníží rozlišení 3D obrazu. Úsporná grafika vypíná stíny.</p></div><select id="quality-select" aria-label="Grafika"><option value="auto" ${progress.settings.quality==='auto'?'selected':''}>Automatická</option><option value="high" ${progress.settings.quality==='high'?'selected':''}>Vysoká</option><option value="low" ${progress.settings.quality==='low'?'selected':''}>Úsporná</option></select></div><div class="settings-row"><div>Počítadlo FPS<p>Ukáže snímky za sekundu v levém horním rohu</p></div><button class="settings-switch" role="switch" aria-label="Počítadlo FPS" aria-checked="${!!progress.settings.fps}" id="fps-toggle">${progress.settings.fps?'ZAPNUTO':'VYPNUTO'}</button></div></section><section class="settings-card"><h3><span aria-hidden="true">↗</span> Účet a postup</h3>${accountUI?.settingsRow()||''}<div class="settings-row"><div>Lokální postup<p>${progress.battles} bitev · ${progress.kills} zničených cílů · ${progress.unlocked.length}/${TANKS.length} strojů</p></div><button class="secondary-button" id="export-save">Zálohovat</button></div><div class="settings-row"><div>Obnovit zálohu<p>Nahradí aktuální výzkum uloženým postupem</p></div><label class="secondary-button" style="cursor:pointer">Načíst soubor<input id="import-save" type="file" accept="application/json,.json" hidden></label></div></section></div><div class="settings-footer"><span>Změny se ukládají automaticky.</span><div class="modal-actions"><button class="primary-button" data-action="close">Hotovo</button></div></div>`);
 }
 function pause(){
   if(!game||game.finished)return;
@@ -12416,7 +12469,7 @@ document.addEventListener('click',e=>{
  if(b.dataset.workshopAction&&customDraft){
    if(b.dataset.workshopAction==='remove-model'){
      if(customImporting==='model')cancelWorkshopImport();
-     customDraft.model=null;
+     customDraft.models.splice(Number(b.dataset.modelIndex),1);
      renderCustomizationForm();
      previewCustomization();
    }else workshopEditor.action(b.dataset.workshopAction);
@@ -12449,12 +12502,14 @@ document.addEventListener('click',e=>{
    audio.unlock().catch(()=>{});
    save();
    b.textContent=progress.settings.sound?'ZAPNUTO':'VYPNUTO';
+   b.setAttribute('aria-checked',String(progress.settings.sound));
  }
  if(b.id==='fps-toggle'){
    progress.settings.fps=!progress.settings.fps;
    showFpsCounter(progress.settings.fps);
    save();
    b.textContent=progress.settings.fps?'ZAPNUTO':'VYPNUTO';
+   b.setAttribute('aria-checked',String(progress.settings.fps));
  }
  if(b.id==='export-save'){
    const blob=new Blob([JSON.stringify({...progress,format:'iron-front-save-v1'},null,2)],{type:'application/json'}),
@@ -12487,7 +12542,6 @@ document.addEventListener('change',async e=>{
     const f=e.target.files[0];
     if(!f)return;
     try{
-      if(f.size>5000000)throw Error();
       const p=JSON.parse(await f.text());
       if(p.format!=='iron-front-save-v1'||!Array.isArray(p.unlocked)||!Number.isFinite(p.xp)||p.xp<0)throw Error();
       progress.unlocked=[...new Set([...defaults.unlocked,...p.unlocked.filter(id=>TANKS.some(t=>t.id===id))])];
@@ -12869,9 +12923,9 @@ document.addEventListener('click',e=>{
 
 $('#language-select').value=getLanguagePreference();
 mountLocalization();
-document.title='Hard Steel War — '+(getLanguage()==='en'?'Tank battles':'Tankové bitvy');
+document.title='Hard Steel War – '+(getLanguage()==='en'?'Free browser tank game':'tanková hra zdarma v prohlížeči');
 document.addEventListener('languagechange',()=>{
-  document.title='Hard Steel War — '+(getLanguage()==='en'?'Tank battles':'Tankové bitvy');
+  document.title='Hard Steel War – '+(getLanguage()==='en'?'Free browser tank game':'tanková hra zdarma v prohlížeči');
   if(!game&&!customDraft)renderHangar();
 });
 

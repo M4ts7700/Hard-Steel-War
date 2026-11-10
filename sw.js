@@ -11,11 +11,12 @@
 // You don't need to edit this file when you update index.html. Change CACHE only
 // if you change the FILES list below.
 
-const CACHE = 'hsw-app-v2';
+const CACHE = 'hsw-app-v3';
 const NETWORK_TIMEOUT_MS = 4000;
 const FILES = [
   './',
   './vendor/three.js',
+  './visit-tracker.js',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',
