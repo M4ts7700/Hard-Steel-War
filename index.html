@@ -1536,7 +1536,6 @@ const CONTENT_TRANSLATIONS=[
  ['Žádné zóny. Každý zničený nepřítel je bod pro tým.','No zones. Every enemy destroyed scores a point for your team.'],
  ['TÝMOVÝ DEATHMATCH · PRVNÍ TÝM S 30 KILLY VYHRÁVÁ','TEAM DEATHMATCH · FIRST TEAM TO 30 KILLS WINS'],
  ['TÝMOVÝCH KILLŮ','TEAM KILLS'],['Dosažen limit zničených tanků','Kill limit reached'],['Remíza · stejný počet zničených tanků','Draw · equal kills'],
- ['JADERNÝ ÚDER · MYŠÍ OTÁČEJ KAMEROU','NUCLEAR STRIKE · MOVE MOUSE TO ORBIT'],
  ['Stíhač tanků','Tank destroyer'],['Kolové obrněné vozidlo','Wheeled armored vehicle'],
  ['Obrovský průlomový tank s masivním pancířem a 128mm dělem. Dlouhé nabíjení a pomalé otáčení vyžadují podporu týmu.','An enormous breakthrough tank with heavy armor and a 128 mm gun. Long reloads and slow turns demand team support.'],
  ['Rychlý stíhač tanků s otevřenou věží. Objížděj protivníky a měň pozici; tenký pancíř tě před přímou palbou neochrání.','A fast tank destroyer with an open turret. Flank enemies and relocate; thin armor will not protect you from direct fire.'],
@@ -1554,7 +1553,7 @@ const CONTENT_TRANSLATIONS=[
  ['Věž · zadní strana','Turret · rear'],['Korba · čelo','Hull · front'],['Korba · záď','Hull · rear'],['Věž · střecha','Turret · roof'],['Korba · horní plocha','Hull · roof'],
  ['Klikni na pancíř pro nové umístění','Click the armor to place the decal'],
  ['HORDA NA KORBĚ · ROZJEĎ SE!','HORDE ON YOUR HULL · GET MOVING!'],
- ['JADERNÝ ÚDER ZA 8 SEKUND','NUCLEAR STRIKE IN 8 SECONDS'],
+ ['JADERNÝ ÚDER ZA 10 SEKUND','NUCLEAR STRIKE IN 10 SECONDS'],
  ['Požár uhašen. Opravuji moduly…','Fire extinguished. Repairing modules…'],
  ['Mechanické moduly jsou v pořádku','Mechanical modules are in working order'],
  ['Pro opravu nejprve zastav','Stop before repairing'],['Opravuji moduly… Zůstaň stát','Repairing modules… Stay still'],
@@ -1586,7 +1585,7 @@ const CONTENT_TRANSLATIONS=[
  ['Pohyb pohledu a zaměřování; věž zaměřovač dohání','Move the view and aim; the turret follows the reticle'],
  ['LEVÉ TLAČÍTKO','LEFT BUTTON'],['Výstřel (lze držet)','Fire (hold for repeated fire)'],['MEZERNÍK','SPACE'],
  ['Kulomet; sleduj přehřátí. Silný pancíř neprostřelí.','Machine gun; watch the heat gauge. Cannot penetrate heavy armor.'],
- ['Nuke za 10 bodů: každý kill +1, smrt −1. Body zůstávají mezi životy. Odpočet 8 s, potom vítězství.','Nuke at 10 points: each kill +1, death −1. Points carry over between lives. Eight-second countdown, then victory.'],
+ ['Nuke za 20 bodů: každý kill +1, smrt −1. Body zůstávají mezi životy. Odpočet 10 s, potom vítězství.','Nuke at 20 points: each kill +1, death −1. Points carry over between lives. Ten-second countdown, then victory.'],
  ['PRAVÉ TLAČÍTKO','RIGHT BUTTON'],['Podržet pro přiblížení','Hold to zoom'],
  ['Podržet pro rozhlížení bez otáčení věže','Hold to look around without rotating the turret'],['KOLEČKO','SCROLL'],
  ['Vzdálenost kamery / zvětšení zaměřovače','Camera distance / sight magnification'],
@@ -1598,7 +1597,7 @@ const CONTENT_TRANSLATIONS=[
  ['Dálkoměr: nastaví nástřel na vzdálenost bodu pod zaměřovačem','Rangefinder: sets the sight range to the distance under the reticle'],
  ['Na dotykovém zařízení použij směrová tlačítka, dotyk bojiště pro míření a tlačítko PALBA. Nejlepší přehled máš na široké obrazovce.','On touch devices, use the direction buttons, touch the battlefield to aim and press FIRE. A wide screen gives the best view.'],
  ['ZOMBIE · Přežití','ZOMBIES · Survival'],
- ['V hangáru vyber režim Zombie. Odraz vlny, střílej kulometem na mezerníku, používej výbuchy děla a přejížděj hordy. Mezi vlnami nakupuj za šrot. Auto kulomet za 1 800 šrotu míří nezávisle na tvé věži. Posádka má jeden život; upgrady a šrot platí jen do konce přežití. Nuke je dostupný v Nadvládě i týmovém deathmatchi.','Choose Zombies in the hangar. Repel waves with the machine gun on Space, cannon explosions and running over the horde. Spend scrap between waves. The automatic machine gun costs 1,800 scrap and aims independently of your turret. You have one life; upgrades and scrap last for the current run. Nukes are available in Domination and Team Deathmatch.'],
+ ['V hangáru vyber režim Zombie. Odraz vlny, střílej kulometem na mezerníku, používej výbuchy děla a přejížděj hordy. Mezi vlnami nakupuj za šrot. Auto kulomet za 1 800 šrotu míří nezávisle na tvé věži. Posádka má jeden život; upgrady a šrot platí jen do konce přežití. Nuke je dostupný v Nadvládě, týmovém deathmatchi i v multiplayeru.','Choose Zombies in the hangar. Repel waves with the machine gun on Space, cannon explosions and running over the horde. Spend scrap between waves. The automatic machine gun costs 1,800 scrap and aims independently of your turret. You have one life; upgrades and scrap last for the current run. Nukes are available in Domination, Team Deathmatch and multiplayer.'],
  ['Nadvláda · 6 proti 6','Domination · 6 vs 6'],
  ['Týmový deathmatch','Team deathmatch'],
  ['Bez obsazování. První tým s 30 killy vyhrává. Po 12 minutách rozhoduje počet killů; při shodě je remíza. Každý zničený nepřítel má stejnou hodnotu.','No zones to capture. The first team to 30 kills wins. After 12 minutes the kill count decides; a tie is a draw. Every enemy destroyed counts the same.'],
@@ -2109,6 +2108,9 @@ Obnoví všechny moduly, posádku, kouř a rakety.	Restores all modules, crew, s
 Nový tank připraven. Zpátky do boje!	New vehicle ready. Back to battle!
 JADERNÝ ÚDER · OPERACE VYHRÁNA	NUCLEAR STRIKE · OPERATION WON
 Vítězství jaderným úderem	Victory by nuclear strike
+Bitvu ukončil jaderný úder	A nuclear strike ended the battle
+NEPŘÁTELSKÝ JADERNÝ ÚDER ZA 10 SEKUND	ENEMY NUCLEAR STRIKE IN 10 SECONDS
+NEPŘÁTELSKÝ JADERNÝ ÚDER	ENEMY NUCLEAR STRIKE
 Požár zničil tank	Fire destroyed the vehicle
 Oprava dokončena	Repair complete
 Posádka vyřazena	Crew knocked out
@@ -3938,7 +3940,7 @@ class MinHeap {
   }
 }
 
-const BATTLE_SETTINGS={tickets:2000,duration:720,killLimit:30,nukeCinematic:12};
+const BATTLE_SETTINGS={tickets:2000,duration:720,killLimit:30,nukeRequired:20,nukeCountdown:10,nukeCinematic:18,nukeShockSpeed:300};
 // FPV drone cruise speed in m/s (80 m/s ≈ 290 km/h) and blast radius in metres.
 const DRONE_SPEED=80,DRONE_BLAST=18;
 // Any hull moving into a tree pushes it over (a blocked tank creeps at a few
@@ -3970,7 +3972,7 @@ class Game {
     this.tickets=[this.initialTickets,this.initialTickets];
     this.finished=null;
     this.stats={kills:0,captures:0,damage:0,xp:0};
-    this.killStreak=0;this.nuke={required:10,ready:false,state:'locked',timer:0};
+    this.killStreak=0;this.nuke={required:BATTLE_SETTINGS.nukeRequired,ready:false,state:'locked',timer:0,team:0,launcher:null};
     this.zones=(this.mode==='deathmatch'?[]:this.map.zones).map(z=>({...z,owner:-1,progress:0,contested:false,radius:22}));
     this.shells=[];this.smokeClouds=[];this._serial=0;this._seed=(seed>>>0)||1;
     this._input={};this._repairHeld=false;this._smokeHeld=false;
@@ -4035,13 +4037,14 @@ class Game {
       this.nuke.timer=Math.max(0,this.nuke.timer-dt);
       if(this.nuke.timer===0){
         if(this.nuke.state==='incoming'){
+          const team=this.nuke.team??0;
           this.nuke.state='detonated';this.nuke.timer=BATTLE_SETTINGS.nukeCinematic;
-          this._event({type:'nuke',x:0,z:0,y:surfaceHeight(this.map.id,0,0)+5,team:0,playerRelated:true,text:'JADERNÝ ÚDER · OPERACE VYHRÁNA'});
-          for(const target of this.tanks)if(target.team===1&&target.alive)this._destroy(target,'nuke','Jaderný úder');
-        }else{this._finish(0,'Vítězství jaderným úderem');return;}
+          this._event({type:'nuke',x:0,z:0,y:surfaceHeight(this.map.id,0,0)+5,team,playerRelated:true,sourceId:this.nuke.launcher,text:'JADERNÝ ÚDER · OPERACE VYHRÁNA'});
+          for(const target of this.tanks)if(target.team!==team&&target.alive)this._destroy(target,'nuke','Jaderný úder');
+        }else{this._finish(this.nuke.team??0,this.mode==='multiplayer'?'Bitvu ukončil jaderný úder':'Vítězství jaderným úderem');return;}
       }
     }
-    if(this.nuke.state==='detonated')return;
+    if(this.nuke.state==='detonated'){this._nukeWave();return;}
     for(const cloud of this.smokeClouds){cloud.life-=dt;cloud.radius=Math.min(15,cloud.radius+dt*6);}
     this.smokeClouds=this.smokeClouds.filter(c=>c.life>0);
     for(const t of this.tanks) {
@@ -4272,6 +4275,34 @@ class Game {
     t.type='maus';t.developer=true;t.width=3.9;t.length=9.1;t.maxSpeed=350/3.6;t.reload=0;
     this.devUsed=true;return true;
   }
+  // The blast wave runs outwards from ground zero and levels every building and
+  // tree the moment it reaches them, nearest first. The battle is over, so the
+  // navigation grid is left as it is.
+  _nukeWave(){
+    if(this._replica)return;
+    const wave=this._nukeWaveState??=(()=>{
+      const gone=new Set(this.demolished),list=[];
+      this.initialProps.forEach((o,i)=>{if((o.type==='building'||o.type==='tree')&&!gone.has(i))list.push({i,d:Math.hypot(o.x,o.z)});});
+      return {list:list.sort((a,b)=>a.d-b.d),next:0};
+    })();
+    const front=20+BATTLE_SETTINGS.nukeShockSpeed*(BATTLE_SETTINGS.nukeCinematic-this.nuke.timer),hit=[];
+    while(wave.next<wave.list.length&&wave.list[wave.next].d<=front)hit.push(wave.list[wave.next++].i);
+    if(hit.length)this._wipeProps(hit,false);
+  }
+  // Removes many props at once: one obstacle filter and at most one navigation
+  // rebuild instead of one per prop. Trees fall away from ground zero unless a
+  // direction is already known.
+  _wipeProps(indices,rebuildNav=true){
+    const gone=new Set(this.demolished),removed=new Set();
+    for(const i of indices){
+      const o=this.initialProps[i];if(!o||gone.has(i))continue;
+      if(o.type==='tree')this.treeFalls[i]??=Math.round(norm(Math.atan2(o.x,o.z))*1000)/1000;
+      gone.add(i);this.demolished.push(i);removed.add(o);this._treeDamage?.delete(i);
+    }
+    if(!removed.size)return;
+    this.map.obstacles=this.map.obstacles.filter(o=>!removed.has(o));
+    if(rebuildNav){this._nav=this._buildNav();for(const t of this.tanks)t._pathAge=99;}
+  }
   demolish(index){
     const object=this.initialProps[index];if(!object||this.demolished.includes(index))return false;
     if(object.type==='tree')return this.fellTree(index,this.treeFalls[index]??0);
@@ -4329,9 +4360,19 @@ class Game {
   firePlayer() {return this.player.alive&&!this.finished?this._fire(this.player):false;}
   launchNuke(){
     if(this.finished||!this.player.alive||!this.nuke.ready||this.nuke.state!=='ready')return false;
-    this.nuke.ready=false;this.nuke.state='incoming';this.nuke.timer=8;
-    this._event({type:'nuke-warning',x:this.player.x,z:this.player.z,team:0,playerRelated:true,text:'JADERNÝ ÚDER ZA 8 SEKUND'});
+    this._startNuke(this.player);
     return true;
+  }
+  _startNuke(t){
+    const n=this.nuke;
+    Object.assign(n,{ready:false,state:'incoming',timer:BATTLE_SETTINGS.nukeCountdown,team:t.team,launcher:t.id});
+    this._event({type:'nuke-warning',x:t.x,z:t.z,team:t.team,playerRelated:true,sourceId:t.id,sourceNick:t.nick||'',duration:BATTLE_SETTINGS.nukeCountdown,text:'JADERNÝ ÚDER ZA 10 SEKUND'});
+  }
+  // Single player: the player's own kill streak arms the nuke.
+  _nukeProgress(){
+    const n=this.nuke;
+    if(n.state==='ready'&&this.killStreak<n.required){n.ready=false;n.state='locked';}
+    if(this.killStreak>=n.required&&n.state==='locked'){n.ready=true;n.state='ready';this._message('NUKE PŘIPRAVEN');}
   }
   fireMachineGunPlayer(t=this.player){
     if(t.developer)return this._fireDevAutocannon(t);
@@ -4706,16 +4747,9 @@ class Game {
     if(finisher&&finisher.team!==t.team)this.teamKills[finisher.team]++;
     if(this.mode==='deathmatch'){this.tickets[t.team]=Math.max(0,this.killLimit-this.teamKills[1-t.team]);}
     else this.tickets[t.team]=Math.max(0,this.tickets[t.team]-25);
-    if(t.isPlayer){
-      this.killStreak=Math.max(0,this.killStreak-1);
-      if(this.nuke.state==='ready'&&this.killStreak<this.nuke.required){this.nuke.ready=false;this.nuke.state='locked';}
-    }
-    if(sourceId==='player'&&t.team!==this.player.team){
-      this.stats.kills++;this.killStreak++;this._recalculateXP();
-      if(this.killStreak>=this.nuke.required&&this.nuke.state==='locked'){
-        this.nuke.ready=true;this.nuke.state='ready';this._message('NUKE PŘIPRAVEN');
-      }
-    }
+    if(t.isPlayer)this.killStreak=Math.max(0,this.killStreak-1);
+    if(sourceId==='player'&&t.team!==this.player.team){this.stats.kills++;this.killStreak++;this._recalculateXP();}
+    this._nukeProgress(t,sourceId);
     const shooter=this.tanks.find(o=>o.id===sourceId),sourceNick=shooter?.nick||'',targetNick=t.nick||'';
     const sourceType=shooter?.type||null,targetType=t.type;
     const killerName=shooter?`${sourceNick?sourceNick+' · ':''}${specName(shooter)}`:sourceId==='nuke'?'Jaderný úder':'Prostředí';
@@ -5194,7 +5228,7 @@ const modules=['engine','tracks','turret','breech','ammo','crew'];
 const tankTypes=new Set(TANKS.map(t=>t.id));
 // Commands a player can send during an online battle; HostedBattle.command() carries them out.
 // Developer commands are accepted from anyone, but only work for a developer Maus.
-const PLAYER_COMMANDS=['repair','smoke','missile','respawn'];
+const PLAYER_COMMANDS=['repair','smoke','missile','respawn','nuke'];
 const DEV_COMMANDS=['devtank','fiveSahurs','fivePatapims','drone'];
 function sanitizeInput(input={}){
  if(!input||typeof input!=='object'||Array.isArray(input))input={};
@@ -5231,7 +5265,7 @@ function memberTankId(descriptor,profileId){
  const i=descriptor.members.findIndex(m=>m.id===profileId);
  return i===0?'player':i===1?'guest':i>1?'human-'+i:null;
 }
-const emptyStats=()=>({kills:0,captures:0,damage:0,xp:0});
+const emptyStats=()=>({kills:0,captures:0,damage:0,xp:0,nukePoints:0});
 
 class HostedBattle extends Game{
  constructor(descriptor,{onEvent=()=>{}}={}){
@@ -5297,7 +5331,24 @@ class HostedBattle extends Game{
    Object.assign(result,this.humanStats?.player||{}, {xp:0});
    return result;
  }
- launchNuke(){return false;}
+ // Every human earns nuke points separately: an enemy kill +1, a death −1.
+ // One nuke at a time; the launcher's team wins once it detonates.
+ _nukeProgress(t,sourceId){
+  const shooter=this.tanks.find(o=>o.id===sourceId),points=id=>this.humanStats[id]||=emptyStats();
+  if(t.isHuman)points(t.id).nukePoints=Math.max(0,(points(t.id).nukePoints||0)-1);
+  if(shooter?.isHuman&&shooter.team!==t.team)points(shooter.id).nukePoints=(points(shooter.id).nukePoints||0)+1;
+  this._syncHostNuke();
+ }
+ _syncHostNuke(){
+  this.killStreak=this.humanStats?.[this.player?.id]?.nukePoints||0;
+  this.nuke.ready=this.nuke.state==='locked'&&!!this.player?.isHuman&&this.killStreak>=this.nuke.required;
+ }
+ _launchHumanNuke(t){
+  if(this.finished||!t.alive||this.nuke.state!=='locked'||(this.humanStats[t.id]?.nukePoints||0)<this.nuke.required)return false;
+  this._startNuke(t);this._syncHostNuke();
+  return true;
+ }
+ launchNuke(){return this.player?.isHuman?this._launchHumanNuke(this.player):false;}
  setGuestInput(input){return this.setHumanInput('guest',input);}
  command(id,name){
   const t=this.tanks.find(t=>t.id===id);if(!t?.isHuman||this.finished)return false;
@@ -5306,6 +5357,7 @@ class HostedBattle extends Game{
   if(name==='drone')return this.toggleDrone(t);
   if(name==='devtank')return this.enableDeveloperTank(t);
   if(!t.alive)return false;
+  if(name==='nuke')return this._launchHumanNuke(t);
   if(name==='repair')return this._startRepair(t);
   if(name==='smoke')return this._smoke(t);
   if(name==='missile')return this._fireMissile(t);
@@ -5320,10 +5372,11 @@ function makeSnapshot(game,sequence,ack=0,paused=false){
   sahurs:game.sahurs.map(({id,kind,x,y,z,angle})=>({id,kind,x,y,z,angle})),brokenBridges:[...game.brokenBridges],demolished:[...(game.demolished||[])],treeFalls:{...(game.treeFalls||{})},tanks:game.tanks.map(t=>({id:t.id,type:t.type,flight:t.flight?{...t.flight}:null,drone:t.drone?{...t.drone}:null,developer:!!t.developer,team:t.team,alive:t.alive,isHuman:!!t.isHuman,nick:t.nick||'',...Object.fromEntries(tankFields.map(k=>[k,rounded(t[k]||0)])),modules:{...t.modules},mgOverheated:!!t.mgOverheated,lastKiller:t.lastKiller?{...t.lastKiller}:null,_aimX:t._aimX,_aimY:t._aimY,_aimZ:t._aimZ})),
   shells:game.shells.slice(-192).map(s=>({id:s.id,developer:!!s.developer,team:s.team,shooterId:s.shooterId,weapon:s.weapon||'cannon',missile:!!s.missile,age:s.age||0,...Object.fromEntries(['x','y','z','vx','vy','vz'].map(k=>[k,rounded(s[k]||0)]))})),
   smokeClouds:game.smokeClouds.slice(-16).map(c=>({id:c.id,x:c.x,z:c.z,radius:c.radius,life:c.life})),zones:game.zones.map(z=>({id:z.id,owner:z.owner,progress:z.progress,contested:!!z.contested})),stats:structuredClone(game.humanStats),
+  nuke:{state:game.nuke.state==='ready'?'locked':game.nuke.state,timer:rounded(game.nuke.timer||0),team:game.nuke.team??0},
   finished:game.finished?{winner:game.finished.winner,reason:game.finished.reason,abandoned:!!game.finished.abandoned}:null};
 }
 function validSnapshot(s,descriptor){
- if(!s||s.match!==descriptor.id||!Number.isSafeInteger(s.sequence)||s.sequence<0||!finite(s.time,0,740)||!finite(s.remaining,0,720)||s.duration!==720||s.initialTickets!==2000||!Array.isArray(s.tickets)||s.tickets.length!==2||!s.tickets.every(v=>finite(v,0,2000)))return false;
+ if(!s||s.match!==descriptor.id||!Number.isSafeInteger(s.sequence)||s.sequence<0||!finite(s.time,0,760)||!finite(s.remaining,0,720)||s.duration!==720||s.initialTickets!==2000||!Array.isArray(s.tickets)||s.tickets.length!==2||!s.tickets.every(v=>finite(v,0,2000)))return false;
  if(!Array.isArray(s.tanks)||s.tanks.length<2||s.tanks.length>12||!s.tanks.every(t=>t&&typeof t==='object')||new Set(s.tanks.map(t=>t.id)).size!==s.tanks.length)return false;
  if(!s.tanks.some(t=>t.id==='player'&&t.team===0&&(descriptor.public||t.isHuman)))return false;
  if(!descriptor.members&&!s.tanks.some(t=>t.id==='guest'&&t.team===1&&t.isHuman))return false;
@@ -5344,6 +5397,7 @@ function validSnapshot(s,descriptor){
  if(!Array.isArray(s.smokeClouds)||s.smokeClouds.length>16||!s.smokeClouds.every(c=>c&&typeof c.id==='string'&&finite(c.x,-2000,2000)&&finite(c.z,-2000,2000)&&finite(c.radius,0,20)&&finite(c.life,0,20)))return false;
  if(!Array.isArray(s.zones)||s.zones.length!==3||!s.zones.every(z=>z&&['A','B','C'].includes(z.id)&&[-1,0,1].includes(z.owner)&&finite(z.progress,-1,1))||new Set(s.zones.map(z=>z.id)).size!==3)return false;
  for(const id of (descriptor.members?s.tanks.filter(t=>t.isHuman).map(t=>t.id):['player','guest']))if(!['kills','captures','damage','xp'].every(k=>finite(s.stats?.[id]?.[k],0,1000000)))return false;
+ if(s.nuke!==undefined&&(!s.nuke||!['locked','incoming','detonated'].includes(s.nuke.state)||!finite(s.nuke.timer,0,60)||![0,1].includes(s.nuke.team)))return false;
  return !s.finished||([0,1].includes(s.finished.winner)&&typeof s.finished.reason==='string'&&s.finished.reason.length<200);
 }
 
@@ -5377,7 +5431,9 @@ class ReplicaBattle extends Game{
   if(!Array.isArray(snapshot.brokenBridges||[])||(snapshot.brokenBridges||[]).length>this.initialBridges.length||(snapshot.brokenBridges||[]).some(i=>!Number.isInteger(i)||!this.initialBridges[i]))return false;
   for(const i of snapshot.brokenBridges||[])if(!this.brokenBridges.includes(i))this.breakBridge(i);
   if(snapshot.treeFalls&&typeof snapshot.treeFalls==='object')for(const [i,dir] of Object.entries(snapshot.treeFalls))if(this.initialProps[i]?.type==='tree'&&Number.isFinite(dir))this.treeFalls[i]??=dir;
-  for(const i of snapshot.demolished||[])if(!this.demolished.includes(i))this.demolish(i);
+  const known=new Set(this.demolished),fresh=(snapshot.demolished||[]).filter(i=>!known.has(i));
+  const blast=snapshot.nuke?.state==='detonated';
+  if(blast||fresh.length>4)this._wipeProps(fresh,!blast);else for(const i of fresh)this.demolish(i);
   this.networkSequence=snapshot.sequence;
   this.snapshots.push({state:snapshot,at:now});
   if(this.snapshots.length>5)this.snapshots.shift();
@@ -5432,6 +5488,11 @@ class ReplicaBattle extends Game{
   this.remaining=b.remaining;
   this.tickets=this.localTeam?[b.tickets[1],b.tickets[0]]:[...b.tickets];
   this.stats={...b.stats[this.localId]};
+  if(b.nuke){
+    const points=this.stats.nukePoints||0,armed=b.nuke.state==='locked'&&points>=this.nuke.required;
+    this.killStreak=points;
+    Object.assign(this.nuke,{state:armed?'ready':b.nuke.state,ready:armed,timer:b.nuke.timer,team:b.nuke.team^this.localTeam});
+  }
   if(b.finished)this.finished={...b.finished,winner:b.finished.winner^this.localTeam,...this.stats,xp:0};
  }
  advance(dt,input,now=performance.now(),rtt=0){
@@ -5468,7 +5529,10 @@ class ReplicaBattle extends Game{
  smokePlayer(){this.onCommand('smoke');return true;}
  fireMissilePlayer(){this.onCommand('missile');return true;}
  respawnPlayer(){if(!this.player.alive&&this.player.respawnIn<=0)this.onCommand('respawn');return false;}
- launchNuke(){return false;}
+ launchNuke(){
+   if(this.finished||!this.player?.alive||!this.nuke.ready)return false;
+   this.onCommand('nuke');return true;
+ }
  abandon(){return this.finished={winner:1,reason:'Multiplayer ukončen.',xp:0,abandoned:true,...this.stats};}
 }
 
@@ -5527,7 +5591,7 @@ class PublicServerRoom{
      }catch(error){this.fail(error.message);}return;
     }
     if(m.type==='state'&&this.game?.receive(m.snapshot,this.now()))this.lastStateAt=this.now();
-    if(m.type==='events'&&Array.isArray(m.events))for(const e of m.events.slice(0,48))if(e&&['shot','hit','bounce','kill','capture','repair','smoke','message','impact'].includes(e.type)&&(!e.text||typeof e.text==='string'&&e.text.length<300))this.onEvent(localEvent(e,true));
+    if(m.type==='events'&&Array.isArray(m.events))for(const e of m.events.slice(0,48))if(e&&['shot','hit','bounce','kill','capture','repair','smoke','message','impact','nuke','nuke-warning'].includes(e.type)&&(!e.text||typeof e.text==='string'&&e.text.length<300))this.onEvent(localEvent(e,true));
     if(m.type==='chat')this.onChat(m.entry);
    };
    this.socket.onerror=()=>this.fail('Server není dostupný. Zkontroluj adresu a připojení.');
@@ -5562,7 +5626,7 @@ class PublicServerRoom{
    this.game?.advance(dt,this.waiting?this.idleInput():this.latestInput,this.now(),this.latency||0);
  }
  action(name){
-   if(!['repair','smoke','missile','respawn'].includes(name)||!this.game||this.game.finished)return false;
+   if(!['repair','smoke','missile','respawn','nuke'].includes(name)||!this.game||this.game.finished)return false;
    this.commands[name]=(this.commands[name]||0)+1;
    this.sendInput(true);
    return true;
@@ -5588,7 +5652,7 @@ const randomUUID=()=>crypto.randomUUID();
 const {HostedBattle, makeSnapshot, sanitizeInput, normalizeProfile} = MODULES["multiplayer-game.js"];
 const {getTank} = MODULES["data.js"];
 const botProfile={id:'server-bot-profile',nick:'Server bot',tankId:'pz4f2'};
-const stats=()=>({kills:0,captures:0,damage:0,xp:0});
+const stats=()=>({kills:0,captures:0,damage:0,xp:0,nukePoints:0});
 
 // The existing tank simulation runs headlessly. Each connection owns exactly one
 // server-assigned tank; no client supplies positions, damage, team or score.
@@ -5656,6 +5720,7 @@ class PublicBattle extends HostedBattle {
   s.zones=s.zones.map(z=>({...z,owner:z.owner<0?-1:v.team(z.owner),progress:v.self.tank.team===1?z.progress:-z.progress}));
   s.tickets=v.self.tank.team===1?s.tickets:[s.tickets[1],s.tickets[0]];
   s.stats={guest:{...this.humanStats[v.self.tank.id]},player:stats()};
+  if(s.nuke)s.nuke={...s.nuke,team:v.team(s.nuke.team)};
   if(s.finished)s.finished.winner=v.team(s.finished.winner);
   return s;
  }
@@ -5725,8 +5790,9 @@ class CloudRoom extends PublicServerRoom{
    s.tanks.forEach((t,i)=>Object.assign(game.tanks[i],structuredClone(t)));
    s.zones.forEach((z,i)=>Object.assign(game.zones[i],z));
    game.sahurs=structuredClone(s.sahurs||[]);
+   if(s.nuke)Object.assign(game.nuke,s.nuke);
    Object.assign(game.treeFalls,s.treeFalls||{});
-   for(const i of s.demolished||[])game.demolish(i);
+   game._wipeProps(s.demolished||[],s.nuke?.state!=='detonated');
    for(const i of s.brokenBridges||[])game.breakBridge(i);
    game.networkEvents=[];
    for(const [key,profile,index] of frame.members){
@@ -5787,7 +5853,7 @@ class CloudRoom extends PublicServerRoom{
   }else if(m.type==='input'&&this.authority&&m.match===this.authority.descriptor.id){
    this.authority.input(m.sender,m.input);
    const counts=this.commandCounts.get(m.sender)||{};
-   for(const name of ['repair','respawn','smoke','missile',...devActions])if(Number.isSafeInteger(m.commands?.[name])&&m.commands[name]>(counts[name]||0)){
+   for(const name of ['repair','respawn','smoke','missile','nuke',...devActions])if(Number.isSafeInteger(m.commands?.[name])&&m.commands[name]>(counts[name]||0)){
      counts[name]=m.commands[name];
      this.authority.action(m.sender,name);
    }
@@ -5966,7 +6032,7 @@ const {MAPS} = MODULES["data.js"];
 const randomId=()=>[...globalThis.crypto.getRandomValues(new Uint8Array(16))].map(v=>v.toString(16).padStart(2,'0')).join('');
 const actions=[...PLAYER_COMMANDS,...DEV_COMMANDS];
 const options=value=>({mapId:MAPS.some(m=>m.id===value?.mapId)?value.mapId:'city',bots:value?.bots===true,difficulty:['easy','normal','hard'].includes(value?.difficulty)?value.difficulty:'normal'});
-const eventTypes=new Set(['shot','hit','bounce','kill','capture','repair','smoke','message','impact','drone-explosion']);
+const eventTypes=new Set(['shot','hit','bounce','kill','capture','repair','smoke','message','impact','drone-explosion','nuke','nuke-warning']);
 function validEvent(e){
   return e&&eventTypes.has(e.type)&&['text','sourceNick','targetNick','killerName','victimName','reason'].every(k=>e[k]===undefined||typeof e[k]==='string'&&e[k].length<=300)&&(!e.killer||typeof e.killer==='object'&&['id','nick','tankId','tankName','reason'].every(k=>e.killer[k]===null||typeof e.killer[k]==='string'&&e.killer[k].length<=200))&&['x','y','z'].every(k=>e[k]===undefined||Number.isFinite(e[k])&&Math.abs(e[k])<=5000);
 }
@@ -8716,6 +8782,207 @@ const GRAPHICS={
   low:{maxRatio:.5,maxPixels:960*540,shadowSize:0,anisotropy:1}
 };
 const RENDER_SCALES=[1,.82,.67,.55];
+// ---------------------------------------------------------------------------
+// Nuclear detonation. The mushroom cloud is one instanced set of billboards,
+// shaped analytically from its age (fireball → rolling toroidal cap, stem,
+// condensation collar, base surge) and sorted back to front every frame. A
+// flash, the fireball glow, the condensation shell and the ground shockwave
+// are drawn around it, and the scene lights flare with the blast.
+// ---------------------------------------------------------------------------
+// Matches BATTLE_SETTINGS.nukeShockSpeed: the simulation levels props at the same front.
+const NUKE_SHOCK_SPEED=300;
+function nukePuffTexture(){
+  if(TEX.has('nuke-puff'))return TEX.get('nuke-puff');
+  const s=128,canvas=document.createElement('canvas');canvas.width=canvas.height=s;
+  const ctx=canvas.getContext('2d'),img=ctx.createImageData(s,s),d=img.data,rnd=random(911);
+  const grids=[5,11,23].map(n=>({n,g:Array.from({length:n*n},()=>rnd())}));
+  const noise=(u,v)=>{
+    let sum=0,amp=.55,total=0;
+    for(const {n,g} of grids){
+      const x=u*(n-1),y=v*(n-1),i=Math.min(n-2,Math.floor(x)),j=Math.min(n-2,Math.floor(y)),fx=x-i,fy=y-j,
+        sx=fx*fx*(3-2*fx),sy=fy*fy*(3-2*fy),at=(a,b)=>g[b*n+a];
+      sum+=amp*mix(mix(at(i,j),at(i+1,j),sx),mix(at(i,j+1),at(i+1,j+1),sx),sy);total+=amp;amp*=.5;
+    }
+    return sum/total;
+  };
+  // A cauliflower lump: overlapping round billows, each lit from its upper side.
+  const blobs=[{x:.5,y:.52,r:.27}];
+  for(let i=0;i<11;i++){const a=rnd()*TAU,r=.08+rnd()*.19;blobs.push({x:.5+Math.cos(a)*r,y:.5+Math.sin(a)*r,r:.12+rnd()*.11});}
+  for(let y=0;y<s;y++)for(let x=0;x<s;x++){
+    const u=(x+.5)/s,v=(y+.5)/s,n=noise(u,v);let f=0,top=0;
+    for(const b of blobs){const k=1-Math.hypot(u-b.x,v-b.y)/b.r;if(k>f){f=k;top=clamp((b.y-v)/b.r,-1,1);}}
+    const edge=clamp((1-Math.hypot(u-.5,v-.5)*2)*4,0,1),
+      alpha=clamp((f+(n-.5)*.5)*3,0,1)*edge,
+      shade=clamp(.5+.36*top+.3*Math.sqrt(Math.max(0,f))+(n-.5)*.4,0,1),o=(y*s+x)*4;
+    d[o]=d[o+1]=d[o+2]=Math.round(shade*255);d[o+3]=Math.round(alpha*255);
+  }
+  ctx.putImageData(img,0,0);
+  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.NoColorSpace;
+  TEX.set('nuke-puff',texture);return texture;
+}
+const NUKE_CLOUD_VERTEX=`
+attribute vec3 offset;attribute vec4 tint;attribute vec3 glow;attribute vec2 shape;
+varying vec2 vUv;varying vec4 vTint;varying vec3 vGlow;
+void main(){
+  vec4 mv=modelViewMatrix*vec4(offset,1.0);
+  float c=cos(shape.y),s=sin(shape.y);
+  mv.xy+=vec2(c*position.x-s*position.y,s*position.x+c*position.y)*shape.x;
+  gl_Position=projectionMatrix*mv;
+  vUv=uv;vTint=tint;vGlow=glow;
+}`;
+const NUKE_CLOUD_FRAGMENT=`
+uniform sampler2D map;
+varying vec2 vUv;varying vec4 vTint;varying vec3 vGlow;
+void main(){
+  vec4 tex=texture2D(map,vUv);
+  float a=tex.a*vTint.a;
+  if(a<.008)discard;
+  float lit=tex.r;
+  // Lit billows on top, fire glowing through the darker folds.
+  vec3 col=vTint.rgb*(.25+1.05*lit)+vGlow*(1.3-lit)*(.35+.65*tex.a);
+  gl_FragColor=vec4(col,a);
+  #include <tonemapping_fragment>
+  #include <colorspace_fragment>
+}`;
+const NUKE_SHELL_VERTEX=`
+varying vec3 vN;varying vec3 vV;
+void main(){vec4 mv=modelViewMatrix*vec4(position,1.0);vN=normalize(normalMatrix*normal);vV=normalize(-mv.xyz);gl_Position=projectionMatrix*mv;}`;
+const NUKE_SHELL_FRAGMENT=`
+uniform vec3 color;uniform float opacity;varying vec3 vN;varying vec3 vV;
+void main(){
+  float rim=pow(1.0-abs(dot(normalize(vN),normalize(vV))),2.2);
+  gl_FragColor=vec4(color,rim*opacity);
+  #include <tonemapping_fragment>
+  #include <colorspace_fragment>
+}`;
+class NukeBlast{
+  constructor(view,x,y,z){
+    this.view=view;this.x=x;this.z=z;this.gy=y-5;this.age=0;this.life=120;
+    const rnd=random((Math.random()*4294967296)>>>0),detail=view.detailed()?1:.6,parts=this.parts=[];
+    const add=(role,n,make)=>{const c=Math.round(n*detail);for(let i=0;i<c;i++)parts.push({role,k:.75+rnd()*.5,rot:(rnd()-.5)*1.1,tone:rnd(),theta:rnd()*TAU,...make(i,c)});};
+    add(0,220,()=>({phi:rnd()*TAU,rho:1-rnd()*rnd()*.7}));          // rolling toroidal cap
+    add(1,95,()=>({q:Math.sqrt(rnd()),lift:.8+rnd()*.35}));            // billowing crown
+    add(2,40,()=>({q:Math.sqrt(rnd())}));                              // glowing underside
+    add(3,120,(i,c)=>({u:(i+rnd())/c,q:.25+rnd()*.75}));               // stem
+    add(4,46,()=>({q:rnd()}));                                         // condensation collar
+    add(5,165,()=>({q:.12+rnd()*.88,h:rnd()}));                        // base surge
+    add(6,38,()=>({u:rnd(),q:rnd()}));                                 // dust skirt
+    const count=this.count=parts.length,plane=new THREE.PlaneGeometry(1,1),geo=new THREE.InstancedBufferGeometry();
+    geo.index=plane.index;geo.setAttribute('position',plane.attributes.position);geo.setAttribute('uv',plane.attributes.uv);
+    geo.instanceCount=count;
+    const attr=(name,size)=>{const a=new THREE.InstancedBufferAttribute(new Float32Array(count*size),size);a.setUsage(THREE.DynamicDrawUsage);geo.setAttribute(name,a);return a;};
+    this.attrs={offset:attr('offset',3),tint:attr('tint',4),glow:attr('glow',3),shape:attr('shape',2)};
+    this.scratch={pos:new Float32Array(count*3),tint:new Float32Array(count*4),glow:new Float32Array(count*3),shape:new Float32Array(count*2),depth:new Float32Array(count),order:new Uint16Array(count)};
+    this.cloud=new THREE.Mesh(geo,new THREE.ShaderMaterial({uniforms:{map:{value:nukePuffTexture()}},vertexShader:NUKE_CLOUD_VERTEX,fragmentShader:NUKE_CLOUD_FRAGMENT,transparent:true,depthWrite:false}));
+    this.cloud.frustumCulled=false;this.cloud.renderOrder=5;
+    const glow=(tint,order=6)=>{const s=new THREE.Sprite(new THREE.SpriteMaterial({map:radialTexture('glow'),color:tint,blending:THREE.AdditiveBlending,transparent:true,depthWrite:false,opacity:0}));s.renderOrder=order;return s;};
+    this.flashGlow=glow('#fff6dc',7);this.coreGlow=glow('#ffa548');this.groundGlow=glow('#ff7a2c');
+    this.shell=new THREE.Mesh(geometry('nuke-shell',()=>new THREE.SphereGeometry(1,48,20,0,TAU,0,Math.PI/2)),new THREE.ShaderMaterial({uniforms:{color:{value:new THREE.Color('#f4f1ea')},opacity:{value:0}},vertexShader:NUKE_SHELL_VERTEX,fragmentShader:NUKE_SHELL_FRAGMENT,transparent:true,depthWrite:false,side:THREE.DoubleSide}));
+    const biome=view.map?.biome,dust=biome==='desert'?['#6e573d','#d2b88f']:biome==='winter'?['#6d6f70','#e3e7e9']:['#4a3f33','#a89379'];
+    this.dust=dust;
+    // A wall of dust and debris rides the shock front across the battlefield.
+    const band=localTexture('nuke-band',(ctx,s)=>{const g=ctx.createLinearGradient(0,0,0,s);g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(.5,'rgba(255,255,255,.45)');g.addColorStop(1,'rgba(255,255,255,1)');ctx.fillStyle=g;ctx.fillRect(0,0,s,s);},64);
+    this.ring=new THREE.Mesh(geometry('nuke-band',()=>new THREE.CylinderGeometry(1,1,1,160,1,true)),new THREE.MeshBasicMaterial({map:band,color:dust[1],transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false}));
+    this.ring.renderOrder=4;
+    this.objects=[this.shell,this.ring,this.cloud,this.flashGlow,this.coreGlow,this.groundGlow];
+    for(const o of this.objects)view.dynamic.add(o);
+    const c=value=>new THREE.Color(value);
+    this.colors={capLow:c('#2e241e'),capHigh:c('#cdb59c'),stemLow:c('#30271f'),stemHigh:c('#a08a76'),collarLow:c('#8f8b88'),collarHigh:c('#efece7'),
+      dustLow:c(dust[0]),dustHigh:c(dust[1]),ash:c('#8d8781'),fireLow:c('#4d1003'),fireMid:c('#ff6d17'),fireHot:c('#fff1c4'),flashLight:c('#fff3dc'),emberLight:c('#ff8a3a')};
+    this.tmp=new THREE.Color();this.tmpGlow=new THREE.Color();this.forward=new THREE.Vector3();
+    this.base={exposure:view.renderer.toneMappingExposure,hemi:view.hemi.intensity,hemiColor:view.hemi.color.clone(),
+      flashColor:view.flash.color.clone(),flashDistance:view.flash.distance,flashDecay:view.flash.decay};
+  }
+  update(dt){
+    const v=this.view,a=this.age+=dt;
+    if(a>this.life){this.dispose();return false;}
+    const gx=this.x,gz=this.z,gy=this.gy,C=this.colors,S=this.scratch;
+    const fb=.22+.78*(1-Math.exp(-a/.22)),rise=1-Math.exp(-a/5.5),grow=1-Math.exp(-a/4.5);
+    const capY=gy+38+290*rise,R=(18+125*Math.pow(grow,.85))*fb,rt=(38+48*grow)*fb;
+    const heat=Math.exp(-a/3.2),ember=Math.exp(-a/9),aged=clamp(a/20,0,1)*.45;
+    const stemTop=capY-rt*.5,stemR=12+22*grow,stemFade=clamp((a-.5)/2.5,0,1);
+    const collar=clamp((a-2.2)/1.6,0,1)*clamp((13-a)/4,0,1),surge=1-Math.exp(-a/3.2),baseFade=clamp((a-.12)/.5,0,1),skirtFade=clamp((a-.6)/2,0,1);
+    const cam=v.camera.position,fwd=v.camera.getWorldDirection(this.forward);
+    for(let i=0;i<this.count;i++){
+      const p=this.parts[i];let rad=0,th=p.theta,y=0,size=1,shade=.5,alpha=1,e=0,low=C.capLow,high=C.capHigh;
+      if(p.role===0){
+        const phi=p.phi-a*.3*(1.15-p.rho*.3),s=Math.sin(phi);
+        rad=R+rt*p.rho*Math.cos(phi);th+=a*.015;y=capY+rt*p.rho*s*.8;
+        size=(30+36*grow)*p.k*fb;shade=.12+.88*(s*.5+.5);alpha=.94;
+        e=heat*(1.7-p.rho*.9)+ember*(s<-.2?.6:.1)*(1.1-p.rho*.6);
+      }else if(p.role===1){
+        rad=p.q*(R+rt*.6);th+=a*.015;y=capY+rt*.3+rt*.8*Math.sqrt(1-p.q*p.q)*p.lift;
+        size=(36+40*grow)*p.k*fb;shade=.72+.28*p.tone;alpha=.95;e=heat*1.3*(1-p.q*.4)+ember*.06;
+      }else if(p.role===2){
+        rad=p.q*(R+rt*.15);y=capY-rt*.45;
+        size=(34+30*grow)*p.k*fb;shade=.06+.14*p.tone;alpha=.9;e=heat*1.1+ember*.8*(1-p.q*.5);
+      }else if(p.role===3){
+        const u=p.u;rad=stemR*(1+1.5*(1-u)**4+1.1*u**5)*p.q;th+=a*(.3-.2*u);y=gy+u*(stemTop-gy);
+        size=(18+24*grow)*p.k*(1+.7*(1-u)**3);shade=(.2+.5*p.tone)*(.65+.35*u);alpha=.9*stemFade;
+        e=heat*1.4*u*u+ember*.14*u;low=C.stemLow;high=C.stemHigh;
+      }else if(p.role===4){
+        rad=stemR*2.6+18*grow+p.q*20;th+=a*.05;y=gy+(stemTop-gy)*.45+(p.q-.5)*8;
+        size=22*p.k;shade=.55+.45*p.tone;alpha=.72*collar;low=C.collarLow;high=C.collarHigh;
+      }else if(p.role===5){
+        rad=(25+430*surge)*p.q;th+=a*.02*(1-p.q);
+        size=(26+46*grow)*p.k*(.85+.6*p.q);shade=.3+.6*p.tone;alpha=.84*baseFade*(1-.3*p.q*surge);
+        e=heat*.9*(1-p.q)**2;low=C.dustLow;high=C.dustHigh;
+      }else{
+        rad=(30+55*grow)*(.55+.45*p.q);th+=a*.1;y=gy+p.u*(25+75*grow);
+        size=(28+26*grow)*p.k;shade=.25+.5*p.tone;alpha=.78*skirtFade;e=heat*.6*(1-p.u);low=C.dustLow;high=C.dustHigh;
+      }
+      const x=gx+Math.cos(th)*rad,z=gz+Math.sin(th)*rad;
+      if(p.role===5)y=v.heightAt(x,z)+5+p.h*(14+30*grow)*(1.1-p.q*.6);
+      const o3=i*3,o4=i*4,o2=i*2;
+      S.pos[o3]=x;S.pos[o3+1]=y;S.pos[o3+2]=z;
+      S.depth[i]=(x-cam.x)*fwd.x+(y-cam.y)*fwd.y+(z-cam.z)*fwd.z;S.order[i]=i;
+      const col=this.tmp.copy(low).lerp(high,shade).lerp(C.ash,p.role===4?0:aged).multiplyScalar(.85+.3*p.tone);
+      S.tint[o4]=col.r;S.tint[o4+1]=col.g;S.tint[o4+2]=col.b;S.tint[o4+3]=alpha;
+      const g=this.tmpGlow;
+      if(e>.002){const t=Math.min(e,2);if(t<1)g.copy(C.fireLow).lerp(C.fireMid,t);else g.copy(C.fireMid).lerp(C.fireHot,t-1);g.multiplyScalar(e*1.8);}
+      else g.setRGB(0,0,0);
+      S.glow[o3]=g.r;S.glow[o3+1]=g.g;S.glow[o3+2]=g.b;
+      S.shape[o2]=size;S.shape[o2+1]=p.rot+a*.02*(p.tone-.5);
+    }
+    // Far billows first, so overlapping smoke blends in the right order.
+    S.order.sort((i,j)=>S.depth[j]-S.depth[i]);
+    const A=this.attrs,ao=A.offset.array,at=A.tint.array,ag=A.glow.array,as=A.shape.array;
+    for(let n=0;n<this.count;n++){
+      const i=S.order[n];
+      ao.set(S.pos.subarray(i*3,i*3+3),n*3);at.set(S.tint.subarray(i*4,i*4+4),n*4);
+      ag.set(S.glow.subarray(i*3,i*3+3),n*3);as.set(S.shape.subarray(i*2,i*2+2),n*2);
+    }
+    for(const k in A)A[k].needsUpdate=true;
+    // Flash, fireball glow, condensation shell and shockwave.
+    const flash=Math.exp(-a/.35);
+    this.flashGlow.position.set(gx,gy+45,gz);this.flashGlow.scale.setScalar(900+1400*(1-flash));this.flashGlow.material.opacity=flash;
+    this.coreGlow.position.set(gx,capY,gz);this.coreGlow.scale.setScalar((R+rt)*3.4);this.coreGlow.material.opacity=Math.min(1,.95*heat+.28*ember);
+    this.groundGlow.position.set(gx,gy+18,gz);this.groundGlow.scale.setScalar(260+260*grow);this.groundGlow.material.opacity=.85*Math.exp(-a/2.6);
+    const front=20+NUKE_SHOCK_SPEED*a;
+    this.shell.visible=a<2.4;this.shell.position.set(gx,gy,gz);this.shell.scale.set(front,front*.85,front);
+    this.shell.material.uniforms.opacity.value=.75*clamp(1-a/2.4,0,1)*clamp(a/.08,0,1);
+    this.ring.visible=a<6.5;this.ring.position.set(gx,gy+12,gz);this.ring.scale.set(front,64,front);this.ring.material.opacity=.75*clamp(1-a/6.5,0,1)*clamp(a/.15,0,1);
+    // The blast lights the whole battlefield, then the glow cools to orange.
+    const b=this.base,light=Math.exp(-a/.3);
+    v.flash.position.set(gx,capY,gz);v.flash.distance=0;v.flash.decay=0;
+    v.flash.color.copy(C.emberLight).lerp(C.flashLight,light);
+    v.flash.intensity=26*light+3.2*heat+.9*ember;
+    v.renderer.toneMappingExposure=b.exposure*(1+2.2*Math.exp(-a/.25));
+    v.hemi.intensity=b.hemi*(1+.7*heat);
+    v.hemi.color.copy(b.hemiColor).lerp(C.emberLight,.55*heat);
+    return true;
+  }
+  restore(){
+    const v=this.view,b=this.base;
+    v.flash.distance=b.flashDistance;v.flash.decay=b.flashDecay;v.flash.color.copy(b.flashColor);v.flash.intensity=0;
+    v.renderer.toneMappingExposure=b.exposure;v.hemi.intensity=b.hemi;v.hemi.color.copy(b.hemiColor);
+  }
+  dispose(){
+    if(this.disposed)return;this.disposed=true;this.restore();
+    for(const o of this.objects){o.removeFromParent();o.material.dispose();}
+    this.cloud.geometry.dispose();
+  }
+}
 class Renderer {
   constructor(canvas, { onError, quality='auto' } = {}) {
     this.canvas = canvas;
@@ -8828,6 +9095,9 @@ class Renderer {
     this.sahurModels=new Map();
     this.drawnDemolitions=new Set();
     this.fallingTrees=[];
+    this.collapses=[];
+    this.pendingChunks=new Map();
+    this.nukeBlast?.restore();this.nukeBlast=null;
     this.nukeOrbit=null;
     this.zombieMeshes=null;
     this.smokeMeshes=new Map();
@@ -9888,11 +10158,25 @@ class Renderer {
     if (this.mode !== 'battle' || !game?.player) return;
     this.game = game; this.aimCamera ||= this.camera.clone();
     if(game.nuke?.state==='detonated'&&this.nukeOrbit){
-      const o=this.nukeOrbit,age=Math.max(0,game.time-o.started),angle=o.yaw+age*.23;
-      const radius=420+Math.min(1,age/12)*130,view=this.aimCamera;
-      view.position.set(o.x+Math.sin(angle)*radius,o.y+180+Math.sin(age*.2)*35+o.lift,o.z+Math.cos(angle)*radius);
-      view.position.y=Math.max(view.position.y,this.heightAt(view.position.x,view.position.z)+65);
-      view.lookAt(o.x,o.y+95,o.z);
+      // A fixed, slow cinematic orbit the player cannot steer: low and close at
+      // the flash, then craning up and back as the cloud climbs.
+      const o=this.nukeOrbit,age=this.nukeBlast?.age??Math.max(0,game.time-o.started),view=this.aimCamera;
+      const angle=o.yaw+age*.055,radius=600+age*9,rise=1-Math.exp(-age/5.5);
+      view.position.set(o.x+Math.sin(angle)*radius,o.y+55+age*7,o.z+Math.cos(angle)*radius);
+      view.position.y=Math.max(view.position.y,this.heightAt(view.position.x,view.position.z)+45);
+      view.lookAt(o.x,o.y+70+150*rise,o.z);
+      // Violent shake at the flash, a harder one when the shockwave reaches the
+      // camera, then a long fading rumble.
+      const arrive=age-(radius-20)/NUKE_SHOCK_SPEED,
+        amp=1.1*Math.exp(-age*2.2)*Math.min(1,age/.05)+(arrive>0?2.1*Math.exp(-arrive*1.05)*Math.min(1,arrive/.06):0)+.08*Math.exp(-age/10);
+      if(amp>.002){
+        const t=this.clock,j=(f,p)=>Math.sin(t*f+p)*.55+Math.sin(t*f*2.37+p*1.9)*.3+Math.sin(t*f*5.11+p*.7)*.15;
+        view.rotateZ(j(31,1.3)*amp*.03);
+        view.rotateX(j(43,4.1)*amp*.022);
+        view.rotateY(j(37,2.2)*amp*.02);
+        view.translateX(j(29,.4)*amp*5);
+        view.translateY(j(53,3.3)*amp*5);
+      }
       view.fov=54;
       view.aspect=this.width/this.height;
       view.clearViewOffset();
@@ -10071,25 +10355,39 @@ class Renderer {
         visual.flag.rotation.y = Math.sin(this.clock * 1.9 + zone.x) * .15;
       }
       this.drawnDemolitions??=new Set();
-      // A tank ploughing through a wood fells several trees a frame: each chunk
-      // is rebuilt once.
-      const rebuilt=new Set();
+      // Felled props are grouped by chunk, so a tank ploughing through a wood
+      // rebuilds each chunk once. The nuclear blast wave touches dozens of chunks
+      // a frame: chunks are then rebuilt within a small time budget, oldest
+      // first, and each prop's fall or collapse starts as its chunk is redrawn.
+      const pending=this.pendingChunks??=new Map();
       for(const i of gameOrNull.demolished||[])if(!this.drawnDemolitions.has(i)){
         this.drawnDemolitions.add(i);
         const o=gameOrNull.initialProps[i],key=Math.floor(o.x/180)+','+Math.floor(o.z/180);
-        if(!rebuilt.has(key)){
-          rebuilt.add(key);
+        if(!pending.has(key))pending.set(key,[]);
+        pending.get(key).push(i);
+      }
+      if(pending.size){
+        const started=performance.now(),blast=!!this.nukeBlast,budget=blast?6:50;
+        if(blast)this.blastFrustum=(this.blastFrustum||new THREE.Frustum()).setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(this.camera.projectionMatrix,this.camera.matrixWorldInverse));
+        let first=true;
+        for(const [key,list] of pending){
+          if(!first&&performance.now()-started>budget)break;
+          first=false;pending.delete(key);
           const old=this.world.getObjectByName('props:'+key);
           if(old){
             const parent=old.parent;old.removeFromParent();old.traverse(m=>m.geometry?.dispose());
             if(parent&&parent!==this.world&&!parent.children.length)parent.removeFromParent();
           }
           this.buildProps(gameOrNull.map,key);
+          for(const i of list){
+            const o=gameOrNull.initialProps[i],dir=gameOrNull.treeFalls?.[i]??0;
+            if(blast)this.blastProp(o,dir,gameOrNull.map);
+            else if(o.type==='tree')this.spawnFallingTree(o,dir,gameOrNull.map);
+            else this.spawnPuff(o.x,this.heightAt(o.x,o.z)+o.h*.4,o.z,'#aa9c84',3,12,.9);
+          }
         }
-        if(o.type==='tree')this.spawnFallingTree(o,gameOrNull.treeFalls?.[i]??0,gameOrNull.map);
-        else this.spawnPuff(o.x,this.heightAt(o.x,o.z)+o.h*.4,o.z,'#aa9c84',3,12,.9);
       }
-      this.updateFallingTrees(dt);
+      this.updateFallingTrees(dt);this.updateCollapses(dt);
       for(const i of gameOrNull.brokenBridges||[]){
         const b=gameOrNull.initialBridges[i],mesh=this.world.getObjectByName('deck:'+b.id);
         if(mesh)mesh.visible=false;
@@ -10124,6 +10422,7 @@ class Renderer {
       this.setXray(this.hangarTank, !!options.xray, null);
     }
     this.updateEffects(dt); this.flash.intensity *= Math.exp(-dt * 19);
+    if (this.nukeBlast && !this.nukeBlast.update(dt)) this.nukeBlast = null;
     if (this.sky) this.sky.position.copy(this.camera.position);
     this.renderer.render(this.scene, this.camera);
   }
@@ -10289,18 +10588,9 @@ class Renderer {
     const x = event.x, z = event.z, y = event.y ?? this.heightAt(x, z) + .8;
     if(event.type==='zombie-kill'){this.spawnPuff(x,y,z,'#69815c',1.1,.7,.6);return;}
     if(event.type==='nuke'){
-      this.nukeOrbit={x,y,z,started:this.game?.time??0,yaw:this.cameraYaw||0,lift:0};
-      this.spawnGlow(x,y+30,z,460,3.4,'#fff1bd');
-      for(let i=0;i<18;i++)this.spawnPuff(x+(Math.random()-.5)*20,y+i*7,z+(Math.random()-.5)*20,i<7?'#d78d45':'#696456',22+i,12,.9,true);
-      for(let i=0;i<24;i++){
-        const a=i/24*TAU,r=30+Math.random()*55;
-        this.spawnPuff(x+Math.cos(a)*r,y+125+Math.random()*25,z+Math.sin(a)*r,i%3?'#635e53':'#cf9561',65,14,.95,true);
-      }
-      const ring=new THREE.Mesh(geometry('nuke-ring',()=>new THREE.RingGeometry(.94,1,96)),new THREE.MeshBasicMaterial({color:'#f1d8a3',transparent:true,opacity:.65,side:THREE.DoubleSide,depthWrite:false}));
-      ring.rotation.x=-Math.PI/2;
-      ring.position.set(x,y+15,z);
-      this.dynamic.add(ring);
-      this.effects.push({mesh:ring,age:0,life:4,kind:'shockwave'});
+      this.nukeBlast?.dispose();
+      this.nukeOrbit={x,y,z,started:this.game?.time??0,yaw:this.cameraYaw||0};
+      this.nukeBlast=new NukeBlast(this,x,y,z);
       return;
     }
     if(event.weapon==='machinegun'){
@@ -10399,8 +10689,8 @@ class Renderer {
     }
   }
 
-  spawnPuff(x, y, z, tint, size, life, opacity, smokeScreen = false) {
-    if (this.effects.length > 130) return;
+  spawnPuff(x, y, z, tint, size, life, opacity, smokeScreen = false, limit = 130) {
+    if (this.effects.length > limit) return;
     const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: radialTexture('smoke', '210,211,204'), color: tint, transparent: true, opacity, depthWrite: false, rotation: Math.random() * TAU }));
     sprite.position.set(x, y, z); sprite.scale.set(size, size, 1); this.dynamic.add(sprite);
     this.effects.push({ mesh: sprite, age: 0, life, size, opacity, rise: smokeScreen ? .13 : .65 + Math.random() * .8, drift: (Math.random() - .3) * .45, screen: smokeScreen, kind: 'smoke' });
@@ -10420,9 +10710,9 @@ class Renderer {
   }
   // A felled tree is drawn on its own, pivoting on its stump: it tips slowly,
   // gathers speed, bounces once on landing, lies a moment and sinks away.
-  spawnFallingTree(o, dir, map) {
+  spawnFallingTree(o, dir, map, blast = false) {
     this.fallingTrees ??= [];
-    if (this.fallingTrees.length > 40) this.removeFallingTree(0);
+    if (this.fallingTrees.length > (blast ? 180 : 40)) this.removeFallingTree(0);
     const pivot = new THREE.Group(), prop = new THREE.Group(), h = Math.max(o.h, 3), y = this.heightAt(o.x, o.z);
     this.drawTree(prop, o, this.propMaterials(map), map);
     prop.rotation.y = o.rotation || 0; pivot.add(prop);
@@ -10430,8 +10720,63 @@ class Renderer {
     this.dynamic.add(pivot);
     // Rotating about up × direction tips the crown towards the direction.
     const axis = new THREE.Vector3(Math.cos(dir), 0, -Math.sin(dir));
-    this.fallingTrees.push({ pivot, axis, age: 0, fall: .9 + h * .045, h, dir, x: o.x, y, z: o.z, kind: o.kind, landed: false });
-    this.spawnPuff(o.x, y + .6, o.z, '#7d6a4f', .9, 1.4, .5);
+    // The blast wave snaps a tree flat in a fraction of a second.
+    if (blast) pivot.traverse(m => { if (m.isMesh) m.castShadow = false; });
+    this.fallingTrees.push({ pivot, axis, age: 0, fall: blast ? .28 + h * .012 : .9 + h * .045, lie: blast ? 1.8 : 2.4, h, dir, x: o.x, y, z: o.z, kind: o.kind, landed: false });
+    if (!blast) this.spawnPuff(o.x, y + .6, o.z, '#7d6a4f', .9, 1.4, .5);
+  }
+  // A prop reached by the nuclear shock front. Only what the camera can see is
+  // animated; the rest simply disappears with its chunk.
+  blastProp(o, dir, map) {
+    const y = this.heightAt(o.x, o.z), size = Math.max(o.w || 1, o.d || 1, o.h || 1);
+    const seen = this.blastFrustum?.intersectsSphere(new THREE.Sphere(new THREE.Vector3(o.x, y + o.h * .5, o.z), size)) && this.camera.position.distanceTo(new THREE.Vector3(o.x, y, o.z)) < 1500;
+    const dust = this.nukeBlast?.dust?.[1] || '#a89379';
+    if (o.type === 'tree') {
+      if (seen) this.spawnFallingTree(o, dir, map, true);
+      if (seen && Math.random() < .35) this.spawnPuff(o.x, y + 1.5, o.z, dust, 2 + o.h * .4, 2.2, .55, false, 300);
+      return;
+    }
+    if (seen) this.spawnCollapse(o, map, dir);
+    if (seen) this.spawnPuff(o.x, y + o.h * .35, o.z, dust, Math.max(o.w, o.d) * 1.3 + 4, 3.5, .85, false, 300);
+  }
+  // A building torn down by the blast: it leans away from ground zero, sinks
+  // into its own dust and is gone.
+  spawnCollapse(o, map, dir) {
+    this.collapses ??= [];
+    // At the limit, a collapse nearer the camera replaces the farthest one.
+    if (this.collapses.length >= 60) {
+      const cam = this.camera.position, d = c => (c.x - cam.x) ** 2 + (c.z - cam.z) ** 2;
+      let far = 0;
+      for (let i = 1; i < this.collapses.length; i++) if (d(this.collapses[i]) > d(this.collapses[far])) far = i;
+      if (d(this.collapses[far]) <= d(o)) return;
+      this.removeCollapse(far);
+    }
+    const P = this.propMaterials(map), prop = new THREE.Group(), pivot = new THREE.Group(), y = this.heightAt(o.x, o.z);
+    if (o.landmark) this.drawLandmark(prop, o, P, map); else this.drawBuilding(prop, o, P, map);
+    prop.rotation.y = o.rotation || 0;
+    mergeStatic(prop);
+    prop.traverse(m => { if (m.isMesh) m.castShadow = false; });
+    pivot.add(prop); pivot.position.set(o.x, y, o.z); this.dynamic.add(pivot);
+    const away = this.nukeBlast ? Math.atan2(o.x - this.nukeBlast.x, o.z - this.nukeBlast.z) : dir;
+    this.collapses.push({ pivot, axis: new THREE.Vector3(Math.cos(away), 0, -Math.sin(away)), age: 0, life: 1.1 + Math.min(1.2, o.h * .03) + Math.random() * .4,
+      h: Math.max(3, o.h), w: Math.max(o.w, o.d), x: o.x, y, z: o.z, lean: .25 + Math.random() * .35 });
+  }
+  updateCollapses(dt) {
+    const list = this.collapses || [];
+    for (let i = list.length - 1; i >= 0; i--) {
+      const c = list[i]; c.age += dt;
+      const u = Math.min(1, c.age / c.life);
+      c.pivot.quaternion.setFromAxisAngle(c.axis, c.lean * u * u);
+      c.pivot.position.y = c.y - c.h * 1.15 * u ** 1.7;
+      if (Math.random() < dt * 5 && u < .9) this.spawnPuff(c.x + (Math.random() - .5) * c.w, c.y + 1 + Math.random() * c.h * .3, c.z + (Math.random() - .5) * c.w, this.nukeBlast?.dust?.[1] || '#a89379', c.w * .8 + 3, 2.6, .75, false, 300);
+      if (u >= 1) this.removeCollapse(i);
+    }
+  }
+  removeCollapse(i) {
+    const c = this.collapses[i], cached = new Set(GEO.values());
+    c.pivot.removeFromParent();
+    c.pivot.traverse(m => { if (m.geometry && !cached.has(m.geometry)) m.geometry.dispose(); });
+    this.collapses.splice(i, 1);
   }
   removeFallingTree(i) {
     const f = this.fallingTrees[i];
@@ -10442,7 +10787,7 @@ class Renderer {
     const list = this.fallingTrees || [];
     for (let i = list.length - 1; i >= 0; i--) {
       const f = list[i]; f.age += dt;
-      const u = f.age / f.fall, rest = Math.PI / 2 * .94, sink = f.age - f.fall - 2.4;
+      const u = f.age / f.fall, rest = Math.PI / 2 * .94, sink = f.age - f.fall - (f.lie ?? 2.4);
       let tilt;
       if (u < 1) tilt = rest * u * u;
       else {
@@ -10470,8 +10815,7 @@ class Renderer {
       const e = this.effects[i]; e.age += dt; const t = e.age / e.life;
       e.mesh.visible=!(e.muzzleOwner&&this.viewScope&&e.kind==='smoke');
       if (t >= 1) { this.dynamic.remove(e.mesh); e.mesh.material.dispose(); this.effects.splice(i, 1); continue; }
-      if(e.kind==='shockwave'){e.mesh.scale.setScalar(20+t*1100);e.mesh.material.opacity=(1-t)*.65;}
-      else if (e.kind === 'smoke') {
+      if (e.kind === 'smoke') {
         const s = e.size * (1 + t * (e.screen ? 1.1 : 2.4));
         e.mesh.scale.set(s, s, 1);
         e.mesh.position.y += dt * e.rise;
@@ -10568,11 +10912,7 @@ class Renderer {
     this.resize();
   }
   rotateCamera(dx, dy, { sensitivity = 1 } = {}) {
-    if(this.game?.nuke?.state==='detonated'&&this.nukeOrbit){
-      this.nukeOrbit.yaw-=dx*.003;
-      this.nukeOrbit.lift=clamp(this.nukeOrbit.lift+dy*.3,-50,130);
-      return;
-    }
+    if(this.game?.nuke?.state==='detonated'&&this.nukeOrbit)return;
     if (this.mode === 'hangar' && this.hangarTank) { this.hangarYaw += dx * .006; return; }
     // Positive world yaw turns left in this +Z-forward world. Screen-right mouse
     // motion must reduce yaw; downward mouse motion increases downward pitch.
@@ -10701,6 +11041,7 @@ class AudioEngine {
 
   update(game, dt) {
     if (!this.context || !this.engine || this.context.state === 'closed') return;
+    this.updateSiren(game);
     const player = game?.player;
     if (player) this.listener = { x: player.x, z: player.z };
     const t = this.context.currentTime;
@@ -10795,23 +11136,16 @@ class AudioEngine {
     if (!this.enabled || this.disposed || !ctx || ctx.state !== 'running' || !event) return;
     // Player feedback is centered and independent of the distant explosion.
     if (event.type === 'kill' && event.sourceId === 'player' && event.targetId !== 'player') this.killConfirmed();
+    if (event.type === 'nuke-warning') { this.startSiren(event.duration || 10); return; }
+    if (event.type === 'nuke') { this.nukeDetonation(); return; }
     // Battles can generate many impacts simultaneously; protect low-end devices.
     if (this.sources.size > 48) return;
     const type = event.type;
-    if (!['shot', 'impact', 'hit', 'kill', 'bounce', 'capture', 'repair', 'smoke','nuke','nuke-warning'].includes(type)) return;
+    if (!['shot', 'impact', 'hit', 'kill', 'bounce', 'capture', 'repair', 'smoke'].includes(type)) return;
     const t = ctx.currentTime;
     if (type === 'shot' && t - this.lastShot < 0.035 && !event.playerRelated) return;
     if ((type === 'impact' || type === 'hit') && t - this.lastImpact < 0.025 && !event.playerRelated) return;
-    const bus = this.makeBus(type==='nuke'||type==='nuke-warning'?{...event,x:this.listener.x,z:this.listener.z}:event);
-    if(type==='nuke-warning'){
-      for(let i=0;i<8;i++)this.tone(bus,{start:i,duration:.4,frequency:650,endFrequency:940,volume:.2,wave:'triangle'});
-      return;
-    }
-    if(type==='nuke'){
-      this.tone(bus,{frequency:60,endFrequency:20,duration:3.8,volume:.85});
-      this.noise(bus,{duration:3.8,cutoff:900,volume:.8});
-      return;
-    }
+    const bus = this.makeBus(event);
     if(event.weapon==='machinegun'){
       if(type==='shot'){
         this.tone(bus,{frequency:230,endFrequency:95,duration:.065,volume:.15});
@@ -10859,6 +11193,159 @@ class AudioEngine {
     }
   }
 
+  // Air-raid siren for the nuke countdown. Its wail follows the game's own
+  // countdown, so it pauses with the game and stays in sync in multiplayer.
+  startSiren(duration = 10) {
+    const ctx = this.context;
+    if (!ctx || this.siren) return;
+    const out = ctx.createGain();
+    out.gain.value = 0;
+    // A short slap-back echo makes it sound like it carries over the battlefield.
+    const delay = ctx.createDelay(1);
+    delay.delayTime.value = 0.23;
+    const feedback = ctx.createGain();
+    feedback.gain.value = 0.32;
+    const wet = ctx.createGain();
+    wet.gain.value = 0.45;
+    out.connect(this.master);
+    out.connect(delay); delay.connect(feedback); feedback.connect(delay); delay.connect(wet); wet.connect(this.master);
+    const tone = ctx.createBiquadFilter();
+    tone.type = 'lowpass';
+    tone.frequency.value = 2400;
+    tone.Q.value = 0.7;
+    const body = ctx.createBiquadFilter();
+    body.type = 'peaking';
+    body.frequency.value = 900;
+    body.gain.value = 5;
+    tone.connect(body); body.connect(out);
+    // The rotor chops the tone slightly; two detuned voices give the wide hum.
+    const chop = ctx.createGain();
+    chop.gain.value = 0.8;
+    chop.connect(tone);
+    const chopper = ctx.createOscillator();
+    chopper.frequency.value = 9;
+    const chopDepth = ctx.createGain();
+    chopDepth.gain.value = 0.14;
+    chopper.connect(chopDepth); chopDepth.connect(chop.gain);
+    const voices = [['sawtooth', 1, 0.17], ['square', 1.004, 0.09], ['triangle', 0.5, 0.3], ['sawtooth', 1.5, 0.05]].map(([type, ratio, level]) => {
+      const osc = ctx.createOscillator();
+      osc.type = type;
+      const gain = ctx.createGain();
+      gain.gain.value = level;
+      osc.connect(gain); gain.connect(chop);
+      return { osc, gain, ratio };
+    });
+    // A low dread drone swells under the last seconds.
+    const drone = ctx.createOscillator();
+    drone.type = 'sawtooth';
+    drone.frequency.value = 41;
+    const droneFilter = ctx.createBiquadFilter();
+    droneFilter.type = 'lowpass';
+    droneFilter.frequency.value = 160;
+    const droneGain = ctx.createGain();
+    droneGain.gain.value = 0;
+    drone.connect(droneFilter); droneFilter.connect(droneGain); droneGain.connect(this.master);
+    for (const source of [chopper, drone, ...voices.map(v => v.osc)]) source.start();
+    this.siren = { startedAt: ctx.currentTime, out, delay, feedback, wet, tone, body, chop, chopper, chopDepth, voices, drone, droneFilter, droneGain, duration };
+  }
+
+  updateSiren(game) {
+    const s = this.siren, ctx = this.context;
+    if (!s || !ctx) return;
+    const t = ctx.currentTime, nuke = game?.nuke;
+    // Network events can arrive just ahead of the snapshot that starts the countdown.
+    if (game && nuke?.state !== 'incoming' && t - s.startedAt > 1.5) { this.stopSiren(); return; }
+    const active = this.enabled && !!game && (nuke?.state === 'incoming' || t - s.startedAt <= 1.5);
+    const elapsed = Math.max(0, s.duration - (nuke?.timer ?? s.duration));
+    // Two wails over the countdown: wind up, hold, wind down a little, climb again.
+    const cycle = elapsed % 5, rise = cycle < 2.1 ? 1 - Math.exp(-cycle * 1.9) : cycle < 3.4 ? 1 : 1 - (cycle - 3.4) / 1.6 * 0.55;
+    const wail = elapsed < 5 ? rise : Math.max(rise, 0.45 + 0.55 * Math.min(1, cycle / 2.1));
+    const frequency = 170 + 470 * Math.max(0, Math.min(1, wail)) + Math.sin(elapsed * 31) * 2.5;
+    for (const v of s.voices) v.osc.frequency.setTargetAtTime(frequency * v.ratio, t, 0.035);
+    s.tone.frequency.setTargetAtTime(900 + 2200 * wail, t, 0.05);
+    s.chopper.frequency.setTargetAtTime(6 + 8 * wail, t, 0.05);
+    s.out.gain.setTargetAtTime(active ? 0.32 + 0.22 * wail : 0, t, active ? 0.12 : 0.05);
+    const dread = Math.max(0, Math.min(1, (elapsed - s.duration + 3.5) / 3.5));
+    s.droneGain.gain.setTargetAtTime(active ? 0.2 * dread * dread : 0, t, 0.15);
+    s.drone.frequency.setTargetAtTime(41 + 14 * dread, t, 0.2);
+  }
+
+  stopSiren(fade = 0.04) {
+    const s = this.siren, ctx = this.context;
+    if (!s || !ctx) return;
+    this.siren = null;
+    const t = ctx.currentTime;
+    s.out.gain.cancelScheduledValues(t); s.out.gain.setTargetAtTime(0, t, fade);
+    s.droneGain.gain.cancelScheduledValues(t); s.droneGain.gain.setTargetAtTime(0, t, fade);
+    const sources = [s.chopper, s.drone, ...s.voices.map(v => v.osc)];
+    for (const source of sources) { try { source.stop(t + fade * 8 + 0.6); } catch {} }
+    sources[0].onended = () => {
+      for (const node of [s.out, s.delay, s.feedback, s.wet, s.tone, s.body, s.chop, s.chopDepth, s.droneFilter, s.droneGain, ...sources, ...s.voices.map(v => v.gain)]) { try { node.disconnect(); } catch {} }
+    };
+  }
+
+  // Looped, filtered noise with its own long envelope: the 2 s noise buffer
+  // alone would cut the long rumble short.
+  longNoise(bus, { start = 0, attack = 0.01, duration = 3, volume = 0.5, type = 'lowpass', from = 800, to = from, q = 0.7 }) {
+    const ctx = this.context, t = ctx.currentTime + start;
+    const source = ctx.createBufferSource();
+    source.buffer = this.noiseBuffer;
+    source.loop = true;
+    source.playbackRate.value = 0.7 + Math.random() * 0.2;
+    const filter = ctx.createBiquadFilter();
+    filter.type = type;
+    filter.Q.value = q;
+    filter.frequency.setValueAtTime(Math.max(20, from), t);
+    filter.frequency.exponentialRampToValueAtTime(Math.max(20, to), t + duration);
+    const envelope = ctx.createGain();
+    envelope.gain.setValueAtTime(0.0001, t);
+    envelope.gain.exponentialRampToValueAtTime(Math.max(0.0002, volume), t + attack);
+    envelope.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+    source.connect(filter);
+    filter.connect(envelope);
+    envelope.connect(bus.input);
+    this.track(source, [source, filter, envelope], bus);
+    source.start(t, Math.random() * 1.5);
+    source.stop(t + duration + 0.05);
+  }
+
+  nukeDetonation() {
+    const ctx = this.context;
+    this.stopSiren(0.01);
+    const gain = ctx.createGain();
+    gain.gain.value = 1.35;
+    // Soft clipping adds the overdriven grit of a sound too loud to record cleanly.
+    const drive = ctx.createWaveShaper();
+    const curve = new Float32Array(1024);
+    for (let i = 0; i < curve.length; i++) { const x = i / (curve.length - 1) * 2 - 1; curve[i] = Math.tanh(x * 2.6) / Math.tanh(2.6); }
+    drive.curve = curve;
+    drive.oversample = '2x';
+    gain.connect(drive);
+    drive.connect(this.master);
+    const bus = { input: gain, nodes: [gain, drive], pending: 0 };
+    // 1. The detonation: a sharp crack over a chest-deep thump.
+    this.longNoise(bus, { duration: 0.55, attack: 0.004, volume: 1.2, type: 'highpass', from: 260, to: 120 });
+    this.longNoise(bus, { duration: 2.2, attack: 0.008, volume: 1.1, type: 'lowpass', from: 2600, to: 180 });
+    this.tone(bus, { frequency: 72, endFrequency: 17, duration: 3.4, volume: 1.1, attack: 0.006 });
+    this.tone(bus, { frequency: 46, endFrequency: 14, duration: 5, volume: 0.8, attack: 0.02, wave: 'triangle' });
+    // 2. The fireball roars and the ground keeps rumbling for many seconds.
+    this.longNoise(bus, { duration: 9, attack: 0.5, volume: 0.55, type: 'bandpass', from: 520, to: 140, q: 0.6 });
+    this.longNoise(bus, { duration: 16, attack: 1.1, volume: 0.95, type: 'lowpass', from: 220, to: 45, q: 0.9 });
+    this.tone(bus, { frequency: 34, endFrequency: 22, duration: 14, volume: 0.42, attack: 1.2, wave: 'sine' });
+    // 3. The shockwave reaches the camera with a second, heavier blow.
+    const shock = 1.93; // (camera distance 600 m − 20 m) / 300 m/s shock front
+    this.longNoise(bus, { start: shock, duration: 3.2, attack: 0.01, volume: 1.3, type: 'lowpass', from: 1500, to: 90 });
+    this.longNoise(bus, { start: shock, duration: 0.4, attack: 0.003, volume: 0.6, type: 'highpass', from: 900, to: 400 });
+    this.tone(bus, { start: shock, frequency: 58, endFrequency: 16, duration: 4.2, volume: 1.15, attack: 0.008 });
+    // 4. Rolling thunder echoes back from the hills.
+    [[3.4, 0.5], [5.2, 0.36], [7.6, 0.26], [10.4, 0.17]].forEach(([start, volume]) => {
+      this.longNoise(bus, { start, duration: 3.4, attack: 0.25, volume, type: 'lowpass', from: 420, to: 70 });
+      this.tone(bus, { start, frequency: 40, endFrequency: 20, duration: 3, volume: volume * 0.8, attack: 0.2 });
+    });
+    // 5. Afterwind rushing back towards the rising cloud.
+    this.longNoise(bus, { start: 4, duration: 10, attack: 3.5, volume: 0.16, type: 'bandpass', from: 700, to: 1500, q: 0.4 });
+  }
+
   killConfirmed() {
     const ctx = this.context;
     if (!this.enabled || this.disposed || !ctx || ctx.state !== 'running' || ctx.currentTime - this.lastKillConfirm < 0.12) return;
@@ -10876,6 +11363,7 @@ class AudioEngine {
   }
 
   dispose() {
+    this.stopSiren();
     this.disposed = true;
     for (const source of this.sources) { try { source.stop(); } catch {} }
     this.sources.clear();
@@ -11427,7 +11915,7 @@ function showZombieShop(){
  }).join('')}</div><div class="modal-actions"><button id="next-wave" class="primary-button">DALŠÍ VLNA →</button><button data-action="abandon" class="secondary-button">UKONČIT PŘEŽITÍ</button></div>`);
 }
 function showGuide(){
-  openModal('guide',`<span class="eyebrow">POLNÍ PŘÍRUČKA / ZÁKLADNÍ VÝCVIK</span><h2>Znát svůj tank. Ovládnout bojiště.</h2><p class="modal-intro">Původní prohlížečová hra inspirovaná tankovými simulátory. Model pancíře a modulů je zjednodušený pro krátké, taktické bitvy. Parametry strojů jsou herně vyvážené. BMPT Terminator je moderní ruský bonus na konci větve SSSR; odemkneš ho po IS-2. Ve větvích najdeš také Tiger II a M26 Pershing.</p><div class="guide-grid"><section><h3>Ovládání</h3><div class="controls-list"><span><kbd>W</kbd> / <kbd>S</kbd></span><span>Vpřed / zpátečka</span><span><kbd>E</kbd> / <kbd>Q</kbd></span><span>Tempomat vpřed / vzad. W nebo S jej zruší.</span><span><kbd>A</kbd> / <kbd>D</kbd></span><span>Plynulé řízení vlevo / vpravo; při couvání se korba stáčí jako u vozidla</span><span><kbd>MYŠ</kbd></span><span>Pohyb pohledu a zaměřování; věž zaměřovač dohání</span><span><kbd>LEVÉ TLAČÍTKO</kbd></span><span>Výstřel (lze držet)</span><span><kbd>MEZERNÍK</kbd></span><span>Kulomet; sleduj přehřátí. Silný pancíř neprostřelí.</span><span><kbd>N</kbd></span><span>Nuke za 10 bodů: každý kill +1, smrt −1. Body zůstávají mezi životy. Odpočet 8 s, potom vítězství.</span><span><kbd>PRAVÉ TLAČÍTKO</kbd></span><span>Podržet pro přiblížení</span><span><kbd>C</kbd></span><span>Podržet pro rozhlížení bez otáčení věže</span><span><kbd>KOLEČKO</kbd></span><span>Vzdálenost kamery / zvětšení zaměřovače</span><span><kbd>SHIFT</kbd></span><span>Přepnout do první osoby — optický zaměřovač střelce</span><span><kbd>PgUp / PgDn</kbd></span><span>Nástřel ±100 m; po nasazení 0 m</span><span><kbd>Y</kbd></span><span>Dálkoměr: nastaví nástřel na vzdálenost bodu pod zaměřovačem</span><span><kbd>F</kbd></span><span>Oprava modulů při zastavení. Míření a funkční zbraně zůstávají dostupné.</span><span><kbd>G</kbd></span><span>Kouřová clona — 5 na život</span><span><kbd>X</kbd></span><span>Podržet pro zobrazení modulů</span><span><kbd>R</kbd></span><span>Maus: druhý kanón 75 mm (lze držet). Po zničení: nasadit záložní tank.</span><span><kbd>R</kbd></span><span>BMPT: naváděná raketa; po odpalu ji řídíš mířením</span><span><kbd>TAB</kbd></span><span>Týmy a přezdívky v online bitvě</span><span><kbd>ESC</kbd></span><span>Pauza</span></div><p>Po nasazení je zaměřovač uprostřed obrazovky. Velký kroužek ukazuje, kam míříš. Menší kroužek ukazuje předpokládaný první dopad střely; překážka před hlavní může výstřel zastavit. V první osobě se kříž optiky pohybuje s hlavní a šedý kroužek ukazuje, kam míříš. Značky pod křížem (4, 8, 12, 16 = stovky metrů) ukazují, kam střela na danou vzdálenost dopadne. Pro neomezené otáčení klikni do bojiště; Esc uvolní myš a pozastaví hru. Citlivost nastavíš v nastavení.</p><p>Na dotykovém zařízení použij směrová tlačítka, dotyk bojiště pro míření a tlačítko PALBA. Nejlepší přehled máš na široké obrazovce.</p></section><section><h3>ZOMBIE · Přežití</h3><p>V hangáru vyber režim Zombie. Odraz vlny, střílej kulometem na mezerníku, používej výbuchy děla a přejížděj hordy. Mezi vlnami nakupuj za šrot. Auto kulomet za 1 800 šrotu míří nezávisle na tvé věži. Posádka má jeden život; upgrady a šrot platí jen do konce přežití. Nuke je dostupný v Nadvládě i týmovém deathmatchi.</p><h3>Nadvláda · 6 proti 6</h3><p>Ty a pět spojeneckých botů stejné země proti šesti tankům výhradně cizích zemí. Vjeď do kruhu A, B nebo C a drž pozici. Přítomnost nepřítele obsazování zastaví. Ovládané zóny ubírají soupeři body; vítězí tým, který vyčerpá jeho zásoby nebo vede po dvanácti minutách.</p><h3>Týmový deathmatch</h3><p>Bez obsazování. První tým s 30 killy vyhrává. Po 12 minutách rozhoduje počet killů; při shodě je remíza. Každý zničený nepřítel má stejnou hodnotu.</p><h3>Každý zásah má svou cestu</h3><p>Účinná tloušťka pancíře závisí na úhlu dopadu, straně korby i vzdálenosti. Prudký úhel může střelu odrazit. Průnik poškodí modul podle místa zásahu: pásy zastaví tank, motor omezí pohyb, věž zpomalí míření a závěr znemožní palbu. Zásah munice nebo vyřazení posádky může stroj zničit.</p><h3>Přežij další minutu</h3><p>Mapy zahrnují městské bloky, průmyslové dvory, otevřenou rovinu i krajinu s mnoha menšími kopci. Řeku přejížděj přes mosty; hluboká voda je neprůjezdná. Kryj boky a využívej terén i budovy. Kouř ztíží botům zaměřování a umožní opravu. Písek, bahno a hluboký sníh zpomalují přesun; cesty jsou rychlejší. Po zničení dostaneš další stroj za cenu týmových bodů.</p><h3>Postup zůstává u tebe</h3><p>Výzkum se ukládá automaticky v tomto prohlížeči. S hráčským účtem se ukládá i do cloudu, takže můžeš pokračovat na jiném zařízení. V nastavení lze stáhnout a později načíst zálohu postupu nebo změnit motiv. Vymazání dat webu smaže postup, který není uložený v účtu.</p></section></div>`);
+  openModal('guide',`<span class="eyebrow">POLNÍ PŘÍRUČKA / ZÁKLADNÍ VÝCVIK</span><h2>Znát svůj tank. Ovládnout bojiště.</h2><p class="modal-intro">Původní prohlížečová hra inspirovaná tankovými simulátory. Model pancíře a modulů je zjednodušený pro krátké, taktické bitvy. Parametry strojů jsou herně vyvážené. BMPT Terminator je moderní ruský bonus na konci větve SSSR; odemkneš ho po IS-2. Ve větvích najdeš také Tiger II a M26 Pershing.</p><div class="guide-grid"><section><h3>Ovládání</h3><div class="controls-list"><span><kbd>W</kbd> / <kbd>S</kbd></span><span>Vpřed / zpátečka</span><span><kbd>E</kbd> / <kbd>Q</kbd></span><span>Tempomat vpřed / vzad. W nebo S jej zruší.</span><span><kbd>A</kbd> / <kbd>D</kbd></span><span>Plynulé řízení vlevo / vpravo; při couvání se korba stáčí jako u vozidla</span><span><kbd>MYŠ</kbd></span><span>Pohyb pohledu a zaměřování; věž zaměřovač dohání</span><span><kbd>LEVÉ TLAČÍTKO</kbd></span><span>Výstřel (lze držet)</span><span><kbd>MEZERNÍK</kbd></span><span>Kulomet; sleduj přehřátí. Silný pancíř neprostřelí.</span><span><kbd>N</kbd></span><span>Nuke za 20 bodů: každý kill +1, smrt −1. Body zůstávají mezi životy. Odpočet 10 s, potom vítězství.</span><span><kbd>PRAVÉ TLAČÍTKO</kbd></span><span>Podržet pro přiblížení</span><span><kbd>C</kbd></span><span>Podržet pro rozhlížení bez otáčení věže</span><span><kbd>KOLEČKO</kbd></span><span>Vzdálenost kamery / zvětšení zaměřovače</span><span><kbd>SHIFT</kbd></span><span>Přepnout do první osoby — optický zaměřovač střelce</span><span><kbd>PgUp / PgDn</kbd></span><span>Nástřel ±100 m; po nasazení 0 m</span><span><kbd>Y</kbd></span><span>Dálkoměr: nastaví nástřel na vzdálenost bodu pod zaměřovačem</span><span><kbd>F</kbd></span><span>Oprava modulů při zastavení. Míření a funkční zbraně zůstávají dostupné.</span><span><kbd>G</kbd></span><span>Kouřová clona — 5 na život</span><span><kbd>X</kbd></span><span>Podržet pro zobrazení modulů</span><span><kbd>R</kbd></span><span>Maus: druhý kanón 75 mm (lze držet). Po zničení: nasadit záložní tank.</span><span><kbd>R</kbd></span><span>BMPT: naváděná raketa; po odpalu ji řídíš mířením</span><span><kbd>TAB</kbd></span><span>Týmy a přezdívky v online bitvě</span><span><kbd>ESC</kbd></span><span>Pauza</span></div><p>Po nasazení je zaměřovač uprostřed obrazovky. Velký kroužek ukazuje, kam míříš. Menší kroužek ukazuje předpokládaný první dopad střely; překážka před hlavní může výstřel zastavit. V první osobě se kříž optiky pohybuje s hlavní a šedý kroužek ukazuje, kam míříš. Značky pod křížem (4, 8, 12, 16 = stovky metrů) ukazují, kam střela na danou vzdálenost dopadne. Pro neomezené otáčení klikni do bojiště; Esc uvolní myš a pozastaví hru. Citlivost nastavíš v nastavení.</p><p>Na dotykovém zařízení použij směrová tlačítka, dotyk bojiště pro míření a tlačítko PALBA. Nejlepší přehled máš na široké obrazovce.</p></section><section><h3>ZOMBIE · Přežití</h3><p>V hangáru vyber režim Zombie. Odraz vlny, střílej kulometem na mezerníku, používej výbuchy děla a přejížděj hordy. Mezi vlnami nakupuj za šrot. Auto kulomet za 1 800 šrotu míří nezávisle na tvé věži. Posádka má jeden život; upgrady a šrot platí jen do konce přežití. Nuke je dostupný v Nadvládě, týmovém deathmatchi i v multiplayeru.</p><h3>Nadvláda · 6 proti 6</h3><p>Ty a pět spojeneckých botů stejné země proti šesti tankům výhradně cizích zemí. Vjeď do kruhu A, B nebo C a drž pozici. Přítomnost nepřítele obsazování zastaví. Ovládané zóny ubírají soupeři body; vítězí tým, který vyčerpá jeho zásoby nebo vede po dvanácti minutách.</p><h3>Týmový deathmatch</h3><p>Bez obsazování. První tým s 30 killy vyhrává. Po 12 minutách rozhoduje počet killů; při shodě je remíza. Každý zničený nepřítel má stejnou hodnotu.</p><h3>Každý zásah má svou cestu</h3><p>Účinná tloušťka pancíře závisí na úhlu dopadu, straně korby i vzdálenosti. Prudký úhel může střelu odrazit. Průnik poškodí modul podle místa zásahu: pásy zastaví tank, motor omezí pohyb, věž zpomalí míření a závěr znemožní palbu. Zásah munice nebo vyřazení posádky může stroj zničit.</p><h3>Přežij další minutu</h3><p>Mapy zahrnují městské bloky, průmyslové dvory, otevřenou rovinu i krajinu s mnoha menšími kopci. Řeku přejížděj přes mosty; hluboká voda je neprůjezdná. Kryj boky a využívej terén i budovy. Kouř ztíží botům zaměřování a umožní opravu. Písek, bahno a hluboký sníh zpomalují přesun; cesty jsou rychlejší. Po zničení dostaneš další stroj za cenu týmových bodů.</p><h3>Postup zůstává u tebe</h3><p>Výzkum se ukládá automaticky v tomto prohlížeči. S hráčským účtem se ukládá i do cloudu, takže můžeš pokračovat na jiném zařízení. V nastavení lze stáhnout a později načíst zálohu postupu nebo změnit motiv. Vymazání dat webu smaže postup, který není uložený v účtu.</p></section></div>`);
 }
 function showSettings(){
   if(game)paused=true;
@@ -11496,6 +11984,7 @@ function startBattle(){
 }
 function finishBattle(result){
   document.body.classList.remove('nuke-cinematic');
+  audio.stopSiren();
   if(game?.mode==='multiplayer'){finishMultiplayer(result);return;}
   if(awardDone||!result)return;
   awardDone=true;
@@ -11515,6 +12004,7 @@ function finishBattle(result){
 function backToHangar(research=false){
   cruise.reset();
   document.body.classList.remove('nuke-cinematic');
+  audio.stopSiren();
   $('#server-chat').hidden=true;
   $('#server-chat').classList.remove('live');
   $('#server-chat-body').hidden=true;
@@ -11545,6 +12035,14 @@ function onGameEvent(e){
   if(e.type==='kill'&&e.targetId===game?.player?.id){
     cruise.reset();
     game.player.lastKiller=e.killer||{id:e.sourceId,nick:e.sourceNick||'',tankId:e.sourceType||null,tankName:e.killerName||'',reason:e.reason||'Prostředí'};
+  }
+  if(e.type==='nuke-warning'){
+    e={...e,text:e.team===0?'JADERNÝ ÚDER ZA 10 SEKUND':'NEPŘÁTELSKÝ JADERNÝ ÚDER ZA 10 SEKUND'};
+    feed.unshift({text:e.text,team:e.team,time:performance.now()});feed=feed.slice(0,5);
+    clearTimeout(noticeTimer);
+    $('#hit-notice').textContent=e.text;
+    $('#hit-notice').style.opacity='1';
+    noticeTimer=setTimeout(()=>$('#hit-notice').style.opacity='0',3500);
   }
   if(e.type==='nuke'){
     scope=false;
@@ -11616,7 +12114,7 @@ function updateHUD(){
   }
   const n=game.nuke,nb=$('#nuke-button');
   nb.disabled=!n.ready||!game.player.alive;
-  nb.textContent=n.state==='incoming'?'☢ ÚDER ZA '+Math.ceil(n.timer)+' s':n.state==='detonated'?'☢ JADERNÝ ÚDER':n.ready?'[N] ☢ VYPUSTIT NUKE':'☢ BODY '+Math.min(game.killStreak,n.required)+' / '+n.required;
+  nb.textContent=n.state==='incoming'?(n.team===0?'☢ ÚDER ZA ':'☢ NEPŘÍTEL · ÚDER ZA ')+Math.ceil(n.timer)+' s':n.state==='detonated'?'☢ JADERNÝ ÚDER':n.ready?'[N] ☢ VYPUSTIT NUKE':'☢ BODY '+Math.min(game.killStreak,n.required)+' / '+n.required;
   $('#mg-status').textContent=game.player.developer?'30 mm 2A42':game.player.mgOverheated?'KULOMET · CHLADÍ SE':'KULOMET';
   $('#mg-heat').style.width=(game.player.developer?0:(game.player.mgHeat||0)*100)+'%';
   const p=game.player,t=getTank(p.type);
