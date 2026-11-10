@@ -8704,12 +8704,16 @@ function gableGeometry(w,d,h,rise,alongX){
   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(v,3));
   geo.computeVertexNormals();return geo;
 }
-// Automatic starts as sharp as high and only lowers the render resolution
-// (see observeFrame) while the frame rate is actually low.
+// High and Low are fixed: High renders everything at its best (native
+// screen resolution, largest shadow map, full texture filtering), Low at its
+// cheapest (half resolution, no shadows, no antialiasing, no grass).
+// Only Automatic adapts: it starts at its own ceiling and lowers the render
+// resolution (see observeFrame) while the frame rate is actually low.
+// anisotropy null keeps each texture's own default.
 const GRAPHICS={
-  auto:{maxRatio:1.4,maxPixels:2560*1440,shadowSize:2048},
-  high:{maxRatio:1.4,maxPixels:2560*1440,shadowSize:2048},
-  low:{maxRatio:.85,maxPixels:1280*720,shadowSize:0}
+  auto:{maxRatio:1.6,maxPixels:2560*1440,shadowSize:2048,anisotropy:null},
+  high:{maxRatio:Infinity,maxPixels:Infinity,shadowSize:4096,anisotropy:16},
+  low:{maxRatio:.5,maxPixels:960*540,shadowSize:0,anisotropy:1}
 };
 const RENDER_SCALES=[1,.82,.67,.55];
 class Renderer {
@@ -8790,7 +8794,7 @@ class Renderer {
     const rect = parent.getBoundingClientRect(), width = Math.max(1, Math.round(rect.width)), height = Math.max(1, Math.round(rect.height));
     const {maxRatio,maxPixels}=GRAPHICS[this.quality];
     const ratio=Math.max(1/Math.min(width,height),
-      Math.min(window.devicePixelRatio||1,maxRatio,Math.sqrt(maxPixels/(width*height)))*RENDER_SCALES[this.renderTier]);
+      Math.min(window.devicePixelRatio||1,maxRatio,Math.sqrt(maxPixels/(width*height)))*(this.quality==='auto'?RENDER_SCALES[this.renderTier]:1));
     if (this.width===width&&this.height===height&&this.renderer.getPixelRatio()===ratio) return;
     this.width=width;this.height=height;
     this.renderer.setDrawingBufferSize(width,height,ratio);
@@ -9042,6 +9046,7 @@ class Renderer {
     const tex = groundTexture().clone();
     tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
     tex.repeat.set(size / 5, size / 5);
+    tex.anisotropy = this.anisotropy(tex.anisotropy);
     tex.needsUpdate = true;
     const material = mat('#ffffff', { vertexColors: true, map: tex, roughness: 1, metalness: 0 });
     this.paintSurfaces(material, map);
@@ -9051,7 +9056,7 @@ class Renderer {
     this.buildBackdrop(map);
     this.buildWater(map);
     this.buildRoads(map);
-    if (map.kind !== 'urban') this.buildClutter(map);
+    if (map.kind !== 'urban' && this.quality !== 'low') this.buildClutter(map);
   }
 
   terrainTiles(geo, material) {
@@ -9132,7 +9137,7 @@ class Renderer {
     ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.lineWidth = 4; ctx.strokeRect(0, 0, N, N);
     const texture = this.surfaceMask = new THREE.CanvasTexture(canvas);
     texture.colorSpace = THREE.NoColorSpace; texture.flipY = false;
-    texture.anisotropy = Math.min(8, this.renderer.capabilities.getMaxAnisotropy());
+    texture.anisotropy = this.anisotropy(Math.min(8, this.renderer.capabilities.getMaxAnisotropy()));
     const road = map.theme === 'works' ? TERRAIN.asphalt : map.biome === 'winter' ? TERRAIN.packed : map.biome === 'desert' ? TERRAIN.firm : TERRAIN.dirt, paved = road === TERRAIN.asphalt;
     const uniforms = {
       uSurfMask: { value: texture }, uSurfScale: { value: 1 / (2 * E) },
@@ -10501,6 +10506,13 @@ class Renderer {
     return this.quality==='high'||(this.quality==='auto'&&this.renderTier<2);
   }
 
+  // Texture filtering for battle textures: High uses the most the GPU allows,
+  // Low none, Automatic keeps the texture's own default.
+  anisotropy(fallback) {
+    const wanted=GRAPHICS[this.quality].anisotropy;
+    return wanted==null?fallback:Math.min(wanted,this.renderer.capabilities.getMaxAnisotropy());
+  }
+
   // A battle's first seconds stall on shader and texture uploads; they say
   // nothing about the frame rate of actual play, so they are not judged.
   startObserving() {
@@ -10509,7 +10521,8 @@ class Renderer {
   }
 
   observeFrame(elapsed) {
-    if(elapsed<=0)return;
+    // Only Automatic adapts; High and Low are fixed, as the player chose.
+    if(elapsed<=0||this.quality!=='auto')return;
     if(this.warmupMs>0){this.warmupMs-=elapsed;return;}
     this.frameMs+=Math.min(elapsed,250);
     this.frames++;
@@ -10543,7 +10556,7 @@ class Renderer {
   }
 
   updateGraphics() {
-    const {shadowSize}=GRAPHICS[this.quality],shadow=this.sun.shadow;
+    const shadowSize=Math.min(GRAPHICS[this.quality].shadowSize,this.renderer.capabilities.maxTextureSize),shadow=this.sun.shadow;
     const useShadows=!!shadowSize&&(this.quality==='high'||this.renderTier<2);
     if(shadow.map&&(!useShadows||shadow.mapSize.x!==shadowSize)){
       shadow.map.dispose();
@@ -11778,7 +11791,7 @@ let scopeRadius=0;
 // ring where the player is aiming. Returns where the range readout goes,
 // relative to the aim point: inside the optic, left of centre.
 function drawScope(rect,aimX,aimY,showAim){
-  const box=scopeOverlay.getBoundingClientRect(),w=box.width,h=box.height,dpr=renderer.renderer.getPixelRatio();
+  const box=scopeOverlay.getBoundingClientRect(),w=box.width,h=box.height,dpr=Math.min(2,devicePixelRatio||1);
   const pw=Math.round(w*dpr),ph=Math.round(h*dpr);
   if(scopeCanvas.width!==pw||scopeCanvas.height!==ph){scopeCanvas.width=pw;scopeCanvas.height=ph;}
   sc.setTransform(dpr,0,0,dpr,0,0);sc.clearRect(0,0,w,h);
