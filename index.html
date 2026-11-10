@@ -2027,8 +2027,6 @@ Barva štětce	Brush color
 Smazat malbu	Clear paint
 Zapni štětec nad náhledem a táhni po pancíři.	Enable the brush above the preview and drag across the armor.
 Táhni štětcem po pancíři	Drag the brush across the armor
-Skin	Skin
-Vlastní nátěr	Custom paint
 Zimní led	Winter Ice
 Pouštní bouře	Desert Storm
 Městský stín	Urban Shadow
@@ -5083,7 +5081,7 @@ function normalizePaint(value){
    points.push(Math.round(x*100)/100,Math.round(y*100)/100);
    remaining--;
   }
-  if(points.length)strokes.push({surface:stroke.surface,color:color(stroke.color,'#ffffff'),size:bounded(stroke.size,.25,.1,1.5),points});
+  if(points.length)strokes.push({surface:stroke.surface,color:color(stroke.color,'#ffffff'),size:bounded(stroke.size,.12,.04,1.5),points});
   if(!remaining)break;
  }
  return strokes;
@@ -5137,7 +5135,7 @@ async function importWorkshopModel(file){
  return normalizeWorkshopModel({source:lines.join('\n'),name:file.name});
 }
 function workshopItems(appearance){
- return [...SKINS.filter(s=>s.id===appearance.skin),...ACCESSORIES.filter(a=>appearance[a.id]),...(appearance.model?[MODEL_LICENSE]:[])];
+ return [...SKINS.filter(s=>s.id===appearance.pattern),...ACCESSORIES.filter(a=>appearance[a.id]),...(appearance.model?[MODEL_LICENSE]:[])];
 }
 function normalizeCosmetics(value,appearances){
  const ids=[...SKINS,...ACCESSORIES,MODEL_LICENSE].map(item=>item.id);
@@ -5172,8 +5170,10 @@ function normalizeDecals(values){
 }
 function normalizeAppearance(value={},tankId='pz4f2'){
  const v=value&&typeof value==='object'?value:{},nation=getTank(tankId).nation;
- return {base:color(v.base,nation==='de'?'#8e8c6b':nation==='us'?'#68705a':'#60705b'),secondary:color(v.secondary,'#3e4c37'),pattern:CAMOUFLAGES.some(([id])=>id===v.pattern)?v.pattern:'factory',number:typeof v.number==='string'?v.number.replace(/\D/g,'').slice(0,4):nation==='de'?'214':nation==='us'?'32':'108',stowage:v.stowage===true,sandbags:v.sandbags===true,foliage:v.foliage===true,decal:normalizeDecal(v.decal),decals:normalizeDecals(Array.isArray(v.decals)?v.decals:normalizeDecal(v.decal)?[{image:v.decal}]:[]),
-  skin:SKINS.some(s=>s.id===v.skin)?v.skin:'',brush:normalizePaint(v.brush),model:normalizeWorkshopModel(v.model)};
+ // Paid skins are camouflage patterns. Older saves kept them in a separate `skin` field.
+ const pattern=SKINS.some(s=>s.id===v.skin)?v.skin:v.pattern;
+ return {base:color(v.base,nation==='de'?'#8e8c6b':nation==='us'?'#68705a':'#60705b'),secondary:color(v.secondary,'#3e4c37'),pattern:CAMOUFLAGES.some(([id])=>id===pattern)||SKINS.some(s=>s.id===pattern)?pattern:'factory',number:typeof v.number==='string'?v.number.replace(/\D/g,'').slice(0,4):nation==='de'?'214':nation==='us'?'32':'108',stowage:v.stowage===true,sandbags:v.sandbags===true,foliage:v.foliage===true,decal:normalizeDecal(v.decal),decals:normalizeDecals(Array.isArray(v.decals)?v.decals:normalizeDecal(v.decal)?[{image:v.decal}]:[]),
+  brush:normalizePaint(v.brush),model:normalizeWorkshopModel(v.model)};
 }
 function normalizeAppearances(values){
   const out={};
@@ -7133,7 +7133,7 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const copy=v=>JSON.parse(JSON.stringify(v));
 class WorkshopEditor {
  constructor({canvas,renderer,getDraft,onChange}){
-  Object.assign(this,{canvas,renderer,getDraft,onChange,selected:-1,drag:null,history:[],future:[],placing:false,painting:false,paintColor:'#d53333',paintSize:.3});
+  Object.assign(this,{canvas,renderer,getDraft,onChange,selected:-1,drag:null,history:[],future:[],placing:false,painting:false,paintColor:'#d53333',paintSize:.12});
   this.root=canvas.parentElement;
   this.ui=document.createElement('div');this.ui.className='workshop-tools';
   this.ui.innerHTML=`<div class="workshop-camera" aria-label="Pohled na tank">${[['front','Čelo'],['back','Záď'],['left','Levý bok'],['right','Pravý bok'],['top','Shora'],['reset','Celý tank']].map(([id,label])=>`<button data-camera="${id}">${label}</button>`).join('')}<button data-camera="closer" aria-label="Přiblížit tank">＋</button><button data-camera="farther" aria-label="Oddálit tank">−</button></div><div class="workshop-selection"><strong id="decal-selection-label">Vyber nálepku přímo na tanku</strong><div><button data-edit="place">Umístit kliknutím</button><button data-edit="duplicate">Duplikovat</button><button data-edit="delete">Smazat</button><button data-edit="undo">↶ Zpět</button><button data-edit="redo">↷ Znovu</button></div></div><div class="workshop-help">Nálepka: klikni a táhni · rohy: velikost · horní úchyt: otočení<br>Pravé tlačítko / prázdné místo: otáčení pohledu · kolečko: přiblížení</div><div class="decal-gizmo" hidden><span class="decal-rotate-line"></span><button data-handle="rotate" aria-label="Otočit vybranou nálepku">↻</button>${['nw','ne','sw','se'].map(id=>`<button data-handle="${id}" aria-label="Změnit velikost nálepky — ${id}"></button>`).join('')}</div>`;
@@ -7853,16 +7853,18 @@ function addCustomDecal(model,decal,index=0){
  return mesh;
 }
 
-const PAINT_TILE=192, PAINT_INSET=2, PAINT_PIXELS=PAINT_TILE-2*PAINT_INSET, PAINT_COLS=4, PAINT_ROWS=3;
-function setupTankBrush(model){
+// Pixels per armor face. Each face spans 2*PAINT_EXTENT metres, so 512 gives ~42 px per metre
+// for the close hangar view; battle tanks are seen from further away and use a smaller canvas.
+const PAINT_TILE_HANGAR=512, PAINT_TILE_BATTLE=256, PAINT_INSET=2, PAINT_COLS=4, PAINT_ROWS=3;
+function setupTankBrush(model,tileSize=PAINT_TILE_BATTLE){
  const canvas=document.createElement('canvas');
- canvas.width=PAINT_COLS*PAINT_TILE;canvas.height=PAINT_ROWS*PAINT_TILE;
+ canvas.width=PAINT_COLS*tileSize;canvas.height=PAINT_ROWS*tileSize;
  const texture=new THREE.CanvasTexture(canvas);
  texture.colorSpace=THREE.SRGBColorSpace;
  texture.generateMipmaps=false;
  texture.minFilter=THREE.LinearFilter;
  const shade={value:1};
- model.brush={canvas,texture,shade};
+ model.brush={canvas,texture,shade,tileSize};
  // The static armor meshes have already been merged in hull or turret coordinates.
  // Use the same five projections as the brush raycast, so paint moves with each part.
  for(const [partIndex,part] of [model.hull,model.turret].entries()){
@@ -7877,11 +7879,13 @@ function setupTankBrush(model){
      shader.uniforms.brushMap={value:texture};
      shader.uniforms.brushShade=shade;
      shader.uniforms.brushPart={value:partIndex*PAINT_SIDES.length};
+     // Tile size is a uniform, not baked into the source, because every brush material shares one compiled program.
+     shader.uniforms.brushTile={value:tileSize};
      const varyings='varying vec3 brushPosition; varying vec3 brushNormal;\n';
      shader.vertexShader=varyings+shader.vertexShader.replace('#include <begin_vertex>',
       '#include <begin_vertex>\nbrushPosition = position; brushNormal = objectNormal;');
      shader.fragmentShader=varyings+`uniform sampler2D brushMap;
-uniform float brushShade, brushPart;
+uniform float brushShade, brushPart, brushTile;
 `+shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
 vec3 n = normalize(brushNormal);
 vec3 p = brushPosition;
@@ -7898,10 +7902,10 @@ if (n.y > .65) {
  }
 }
 float tile = side + brushPart;
-vec2 corner = vec2(mod(tile, ${PAINT_COLS}.0), floor(tile / ${PAINT_COLS}.0)) * ${PAINT_TILE}.0;
-vec2 pixel = corner + ${PAINT_INSET}.0 + (vec2(point.x, -point.y) / ${PAINT_EXTENT*2}.0 + .5) * ${PAINT_PIXELS}.0;
+vec2 corner = vec2(mod(tile, ${PAINT_COLS}.0), floor(tile / ${PAINT_COLS}.0)) * brushTile;
+vec2 pixel = corner + ${PAINT_INSET}.0 + (vec2(point.x, -point.y) / ${PAINT_EXTENT*2}.0 + .5) * (brushTile - ${PAINT_INSET*2}.0);
 if (max(abs(point.x), abs(point.y)) <= ${PAINT_EXTENT}.0) {
- vec2 coord = pixel / vec2(${canvas.width}.0, ${canvas.height}.0);
+ vec2 coord = pixel / (vec2(${PAINT_COLS}.0, ${PAINT_ROWS}.0) * brushTile);
  vec4 paintSample = texture2D(brushMap, vec2(coord.x, 1.0 - coord.y));
  diffuseColor.rgb = mix(diffuseColor.rgb, paintSample.rgb * brushShade, paintSample.a);
 }`);
@@ -7916,16 +7920,16 @@ if (max(abs(point.x), abs(point.y)) <= ${PAINT_EXTENT}.0) {
  }
 }
 function drawTankBrush(model,strokes){
- const {canvas,texture}=model.brush,ctx=canvas.getContext('2d');
- const scale=PAINT_PIXELS/(2*PAINT_EXTENT);
+ const {canvas,texture,tileSize}=model.brush,ctx=canvas.getContext('2d');
+ const pixels=tileSize-2*PAINT_INSET,scale=pixels/(2*PAINT_EXTENT);
  ctx.clearRect(0,0,canvas.width,canvas.height);
  ctx.lineCap=ctx.lineJoin='round';
  for(const stroke of strokes){
-  const i=PAINT_SURFACES.indexOf(stroke.surface),left=i%PAINT_COLS*PAINT_TILE,top=Math.floor(i/PAINT_COLS)*PAINT_TILE;
-  const centerX=left+PAINT_TILE/2,centerY=top+PAINT_TILE/2,points=stroke.points;
+  const i=PAINT_SURFACES.indexOf(stroke.surface),left=i%PAINT_COLS*tileSize,top=Math.floor(i/PAINT_COLS)*tileSize;
+  const centerX=left+tileSize/2,centerY=top+tileSize/2,points=stroke.points;
   const x=centerX+points[0]*scale,y=centerY-points[1]*scale;
   ctx.save();
-  ctx.beginPath();ctx.rect(left+PAINT_INSET,top+PAINT_INSET,PAINT_PIXELS,PAINT_PIXELS);ctx.clip();
+  ctx.beginPath();ctx.rect(left+PAINT_INSET,top+PAINT_INSET,pixels,pixels);ctx.clip();
   ctx.strokeStyle=ctx.fillStyle=stroke.color;
   ctx.lineWidth=stroke.size*scale;
   ctx.beginPath();
@@ -7967,10 +7971,10 @@ function addWorkshopModel(model,attachment){
  model.originalColors.set(material,material.color.clone());
 }
 
-function makeTank(id,appearance,enableBrush=false){
+function makeTank(id,appearance,enableBrush=false,brushTile=PAINT_TILE_BATTLE){
  const model=makeTankBase(id);if(!appearance)return model;
  const a=normalizeAppearance(appearance,id),nation=getTank(id).nation,paint=model.skinMaterials[0];
- const skin=SKINS.find(s=>s.id===a.skin);
+ const skin=SKINS.find(s=>s.id===a.pattern);
  if(skin||a.pattern!=='factory'){
   const canvas=document.createElement('canvas');
   canvas.width=canvas.height=512;
@@ -8055,7 +8059,7 @@ function makeTank(id,appearance,enableBrush=false){
  a.decals.forEach((decal,index)=>addCustomDecal(model,decal,index));
  if(a.model)addWorkshopModel(model,a.model);
  if(enableBrush||a.brush.length){
-  setupTankBrush(model);
+  setupTankBrush(model,brushTile);
   drawTankBrush(model,a.brush);
  }
  return model;
@@ -9154,7 +9158,7 @@ class Renderer {
 
   setHangarAppearance(tankId,appearance) {
     const previous=this.hangarTank?.group;
-    this.hangarTank=makeTank(tankId,appearance,this.canvas.parentElement?.id==='custom-preview');
+    this.hangarTank=makeTank(tankId,appearance,this.canvas.parentElement?.id==='custom-preview',PAINT_TILE_HANGAR);
     this.hangarTank.group.rotation.y=this.hangarYaw;
     this.world.add(this.hangarTank.group);
     if(previous){
@@ -9198,7 +9202,13 @@ class Renderer {
     return {surface:part+'-'+side,x:xValue,y:side==='top'?-point.z:point.y-base};
   }
   setWorkshopPaint(strokes){
-    if(this.hangarTank?.brush)drawTankBrush(this.hangarTank,strokes);
+    // Redrawing and uploading the full-size paint canvas is costly, so do it at most once per frame.
+    this.pendingPaint=strokes;
+    if(this.paintFrame)return;
+    this.paintFrame=requestAnimationFrame(()=>{
+      this.paintFrame=0;
+      if(this.hangarTank?.brush)drawTankBrush(this.hangarTank,this.pendingPaint);
+    });
   }
   setWorkshopDecals(decals){
     const model=this.hangarTank;if(!model)return;
@@ -11767,16 +11777,14 @@ function updateCustomizationCost(){
  $('#custom-model-file').disabled=!!customImporting||(!customDraft.model&&!progress.cosmetics.includes(MODEL_LICENSE.id)&&progress.xp<MODEL_LICENSE.cost);
 }
 function renderWorkshopShop(paintControls){
- const {skin,model}=customDraft;
+ const {model}=customDraft;
  return `<p id="custom-balance" class="custom-balance"></p>
+ <p class="custom-note">Body se odečtou při uložení. Odemčené položky můžeš použít na všech svých tancích.</p>
  <fieldset><legend>Štětec</legend><p class="custom-note">Zapni štětec nad náhledem a táhni po pancíři.</p>
  <div class="custom-colors"><label>Barva štětce<input id="brush-color" type="color" value="${workshopEditor?.paintColor||'#d53333'}"></label>
- <label>Šířka štětce<input id="brush-size" type="range" min=".1" max="1.5" step=".05" value="${workshopEditor?.paintSize||.3}"></label></div>
+ <label>Šířka štětce<input id="brush-size" type="range" min=".04" max="1" step=".02" value="${workshopEditor?.paintSize||.12}"></label></div>
  <button type="button" class="text-button" data-workshop-action="clear-paint" ${customDraft.brush.length?'':'disabled'}>Smazat malbu</button></fieldset>
  ${paintControls}
- <fieldset><legend>Skin</legend><label>Skin<select id="custom-skin"><option value="">Vlastní nátěr</option>
- ${SKINS.map(item=>`<option value="${item.id}" ${skin===item.id?'selected':''}>${item.name} · ${cosmeticPrice(item)}</option>`).join('')}</select></label>
- <p class="custom-note">Body se odečtou při uložení. Odemčené položky můžeš použít na všech svých tancích.</p></fieldset>
  <fieldset><legend>3D doplňky</legend>
  ${ACCESSORIES.map(item=>`<label class="custom-check"><input type="checkbox" id="custom-${item.id}" ${customDraft[item.id]?'checked':''}>${item.name}<small>${cosmeticPrice(item)}</small></label>`).join('')}</fieldset>
  <fieldset><legend>Vlastní 3D model</legend><p>Odemčení importu · ${cosmeticPrice(MODEL_LICENSE)}</p>
@@ -11790,7 +11798,7 @@ function renderWorkshopShop(paintControls){
  <button type="button" class="text-button" data-workshop-action="remove-model">Odstranit model</button>`:''}</fieldset>`;
 }
 function renderCustomizationForm(){
- const paintControls=`<label>Kamufláž<select id="custom-pattern">${CAMOUFLAGES.map(([id,name])=>`<option value="${id}" ${customDraft.pattern===id?'selected':''}>${name}</option>`).join('')}</select></label><div class="custom-colors"><label>Základní barva<input id="custom-base" type="color" value="${customDraft.base}"></label><label>Druhá barva<input id="custom-secondary" type="color" value="${customDraft.secondary}"></label></div><label>Číslo tanku<input id="custom-number" type="text" inputmode="numeric" maxlength="4" value="${customDraft.number}" placeholder="Bez čísla"></label><p class="custom-note">Číslo má až 4 číslice. Změnou barvy se původní nátěr přepne na jednobarevný.</p>`;
+ const paintControls=`<label>Kamufláž<select id="custom-pattern">${CAMOUFLAGES.map(([id,name])=>`<option value="${id}" ${customDraft.pattern===id?'selected':''}>${name}</option>`).join('')}${SKINS.map(item=>`<option value="${item.id}" ${customDraft.pattern===item.id?'selected':''}>${item.name} · ${cosmeticPrice(item)}</option>`).join('')}</select></label><div class="custom-colors"><label>Základní barva<input id="custom-base" type="color" value="${customDraft.base}"></label><label>Druhá barva<input id="custom-secondary" type="color" value="${customDraft.secondary}"></label></div><label>Číslo tanku<input id="custom-number" type="text" inputmode="numeric" maxlength="4" value="${customDraft.number}" placeholder="Bez čísla"></label><p class="custom-note">Číslo má až 4 číslice. Změnou barvy se původní nátěr přepne na jednobarevný.</p>`;
  $('#custom-form').innerHTML=`${renderWorkshopShop(paintControls)}<fieldset><legend>Vlastní nálepky · ${customDraft.decals.length}/6</legend><label>Přidat obrázek<input id="custom-image" type="file" accept="image/*" ${customDraft.decals.length>=6?'disabled':''}></label><p class="custom-note">Klikni na nálepku na tanku a přetáhni ji. Rohové úchyty mění velikost, kulatý úchyt otáčí. Až 6 obrázků. Soubory do 20 MB zůstávají na tvém zařízení.</p>${customDraft.decals.map((d,i)=>`<div class="decal-editor" data-decal-card="${i}"><strong>Nálepka ${i+1}</strong><button type="button" class="decal-pick" data-select-decal="${i}" aria-label="Vybrat nálepku ${i+1} na tanku"><img class="custom-decal-preview" src="${d.image}" alt="Nálepka ${i+1}"></button><details><summary>Přesné nastavení</summary><label>Umístění<select data-decal="${i}" data-field="surface">${DECAL_SURFACES.map(([id,label])=>`<option value="${id}" ${d.surface===id?'selected':''}>${label}</option>`).join('')}</select></label>${[['x','Vodorovný posun',-4,4,.05],['y','Svislý posun',-4,4,.05],['size','Velikost',.15,3,.05],['rotation','Otočení',-180,180,5]].map(([key,label,min,max,step])=>`<label>${label}<input aria-label="${label} nálepky ${i+1}" data-decal="${i}" data-field="${key}" type="range" min="${min}" max="${max}" step="${step}" value="${d[key]}"></label>`).join('')}</details><button type="button" class="text-button" data-remove-decal="${i}">Odstranit nálepku ${i+1}</button></div>`).join('')}<p id="custom-image-status" role="status">${esc(customImporting==='image'?customImportStatus:'')}</p></fieldset>`;
  $('#custom-image').disabled=!!customImporting||customDraft.decals.length>=6;
  updateCustomizationCost();
@@ -11851,13 +11859,10 @@ $('#custom-form').addEventListener('input',e=>{
    return;
  }
  const key=id.replace('custom-','');
- if(!['base','secondary','number','pattern','skin',...ACCESSORIES.map(item=>item.id)].includes(key))return;
+ if(!['base','secondary','number','pattern',...ACCESSORIES.map(item=>item.id)].includes(key))return;
  customDraft[key]=type==='checkbox'?checked:value;
- if(['base','secondary','pattern'].includes(key)){
-   customDraft.skin='';
-   $('#custom-skin').value='';
- }
- if((key==='base'||key==='secondary')&&customDraft.pattern==='factory'){
+ // Factory paint and the paid camouflages have fixed colours, so picking a colour switches to plain paint.
+ if((key==='base'||key==='secondary')&&(customDraft.pattern==='factory'||SKINS.some(s=>s.id===customDraft.pattern))){
    customDraft.pattern='plain';
    $('#custom-pattern').value='plain';
  }
