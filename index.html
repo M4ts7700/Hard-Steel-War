@@ -3941,6 +3941,10 @@ class MinHeap {
 const BATTLE_SETTINGS={tickets:2000,duration:720,killLimit:30,nukeCinematic:12};
 // FPV drone cruise speed in m/s (80 m/s ≈ 290 km/h) and blast radius in metres.
 const DRONE_SPEED=80,DRONE_BLAST=18;
+// Any hull moving into a tree pushes it over (a blocked tank creeps at a few
+// cm/s, so the threshold stays tiny). Machine-gun rounds to fell one: bushes
+// take ~8, the tallest trees ~14.
+const TREE_RAM_SPEED=.02,treeStrength=o=>Math.round(6+o.h*.5);
 
 class Game {
   constructor({mode='battle',tankId='pz4f2',mapId='valley',difficulty='normal',onEvent=()=>{},randomTerrain=true,seed=Math.floor(Math.random()*4294967296)}={}) {
@@ -3951,6 +3955,7 @@ class Game {
     this.brokenBridges=[];
     this.initialProps=this.map.obstacles;
     this.demolished=[];
+    this.treeFalls={};
     this.difficulty=DIFFICULTY[difficulty]?difficulty:'normal';
     this.onEvent=onEvent;
     this.devUsed=false;
@@ -4173,7 +4178,8 @@ class Game {
     // Players and wading bots may enter deep water; other bots keep to the banks.
     const wade=t.isPlayer||t.isHuman||t.developer||WADERS.has(t.type);
     const geometry=weaponGeometry(t.type),body={width:t.width,length:t.length,angle:t.angle,height:geometry.turretBaseY+(geometry.turretHeight??1)};
-    const free=(x,z)=>this._free(x,z,t.width*.52,wade)&&(surfaceHeight(this.map.id,x,z,t.y)-surfaceHeight(this.map.id,ox,oz,t.y)<=Math.hypot(x-ox,z-oz)*.85+.03)&&bridgeAllows(this.map.id,ox,oz,x,z,t.y,body)&&!this.tanks.some(other=>other!==t&&!other.fall&&!other.flight&&other.alive&&Math.hypot(other.x-x,other.z-z)<(other.width+t.width)*.61);
+    if(Math.abs(t.speed)>TREE_RAM_SPEED)this._ramTrees(t,nx,nz);
+    const free=(x,z)=>this._free(x,z,t.width*.52,wade,this._rammed)&&(surfaceHeight(this.map.id,x,z,t.y)-surfaceHeight(this.map.id,ox,oz,t.y)<=Math.hypot(x-ox,z-oz)*.85+.03)&&bridgeAllows(this.map.id,ox,oz,x,z,t.y,body)&&!this.tanks.some(other=>other!==t&&!other.fall&&!other.flight&&other.alive&&Math.hypot(other.x-x,other.z-z)<(other.width+t.width)*.61);
     if(free(nx,nz)){t.x=nx;t.z=nz;}
     else if(free(nx,oz)){t.x=nx;t.speed*=.8;}
     else if(free(ox,nz)){t.z=nz;t.speed*=.8;}
@@ -4217,6 +4223,7 @@ class Game {
     for(let i=0;i<this.initialProps.length;i++){
       const o=this.initialProps[i];
       if(o.type==='building'&&Math.hypot(o.x-origin.x,o.z-origin.z)<DRONE_BLAST)this.demolish(i);
+      if(o.type==='tree'&&Math.hypot(o.x-origin.x,o.z-origin.z)<DRONE_BLAST)this.fellTree(i,Math.atan2(o.x-origin.x,o.z-origin.z));
     }
   }
   breakBridge(i){
@@ -4267,9 +4274,57 @@ class Game {
   }
   demolish(index){
     const object=this.initialProps[index];if(!object||this.demolished.includes(index))return false;
+    if(object.type==='tree')return this.fellTree(index,this.treeFalls[index]??0);
     this.demolished.push(index);this.map.obstacles=this.map.obstacles.filter(o=>o!==object);this._nav=this._buildNav();
     for(const t of this.tanks)t._pathAge=99;
     this._event({type:'demolition',x:object.x,z:object.z});return true;
+  }
+  // Trees: a tank with momentum pushes them over, a gun round fells one outright
+  // and machine-gun fire chews through the trunk a round at a time. A felled
+  // tree drops in the direction it was struck (treeFalls, radians like angle).
+  _treeIndex(o){
+    if(this._propIndex?.source!==this.initialProps)this._propIndex={source:this.initialProps,map:new Map(this.initialProps.map((p,i)=>[p,i]))};
+    return this._propIndex.map.get(o)??-1;
+  }
+  _shootTree(o,shell){
+    const i=this._treeIndex(o);if(i<0)return;
+    const damage=shell.developer?Infinity:shell.weapon==='machinegun'?1:shell.weapon==='autocannon'?4:Infinity;
+    this._treeDamage??=new Map();
+    const total=(this._treeDamage.get(i)||0)+damage;
+    if(total<treeStrength(o))this._treeDamage.set(i,total);
+    else this.fellTree(i,Math.atan2(shell.vx||0,shell.vz||0));
+  }
+  // The hull at (x,z) knocks over every tree it overlaps. Each tree costs speed,
+  // tall trees more than bushes and light tanks more than heavy ones. A replica
+  // only predicts: it drives through and slows, the host decides the felling.
+  _ramTrees(t,x,z){
+    const r=t.width*.52,heavy=getTank(t.type).role==='Těžký tank'||t.developer;
+    for(const o of this._obstacles(x-r,z-r,x+r,z+r)){
+      if(o.type!=='tree'||obstacleDistance(x,z,o)>=r||this._rammed?.has(o))continue;
+      (this._rammed??=new WeakSet()).add(o);
+      t.speed*=1-clamp(o.h/16,.15,1)*(t.developer?.05:heavy?.3:.45);
+      if(this._replica)continue;
+      const back=t.speed<0?Math.PI:0,ax=Math.sin(t.angle+back),az=Math.cos(t.angle+back),
+        ox=o.x-t.x,oz=o.z-t.z,od=Math.hypot(ox,oz)||1;
+      // Mostly along the hull's travel, leaning away from its centre line.
+      this.fellTree(this._treeIndex(o),Math.atan2(ax+ox/od*.45,az+oz/od*.45));
+    }
+  }
+  fellTree(index,dir=0){
+    const o=this.initialProps[index];
+    if(o?.type!=='tree'||this.demolished.includes(index))return false;
+    this.treeFalls[index]=Math.round(norm(dir)*1000)/1000;
+    this.demolished.push(index);this.map.obstacles=this.map.obstacles.filter(p=>p!==o);
+    this._treeDamage?.delete(index);
+    // Only the navigation cells around the stump can open up.
+    if(this._nav){
+      const {size,step,offset,cells}=this._nav,reach=3.3+Math.hypot(o.w,o.d)*.5,
+        cell=v=>clamp(Math.round((v-offset)/step),0,size-1);
+      for(let z=cell(o.z-reach);z<=cell(o.z+reach);z++)for(let x=cell(o.x-reach);x<=cell(o.x+reach);x++){
+        const c=cells[z*size+x];if(!c.open)c.open=this._free(c.x,c.z,3.3);
+      }
+    }
+    return true;
   }
   firePlayer() {return this.player.alive&&!this.finished?this._fire(this.player):false;}
   launchNuke(){
@@ -4533,6 +4588,7 @@ class Game {
     if(shell.developer&&hit.tank){this._destroy(hit.tank,shell.shooterId,'Ničivý zásah');return;}
     if(hit.sahur)this.sahurs=this.sahurs.filter(s=>s!==hit.sahur);
     if(hit.obstacle&&shell.developer&&hit.obstacle.type==='building')this.demolish(this.initialProps.indexOf(hit.obstacle));
+    if(hit.obstacle?.type==='tree')this._shootTree(hit.obstacle,shell);
     if(hit.tank)this._hit(shell,hit.tank,hit,point);
     else this._event({type:'impact',text:'',...point,team:shell.team,playerRelated:shell.shooterId==='player',missile:!!shell.missile,weapon:shell.weapon});
   }
@@ -4845,10 +4901,10 @@ class Game {
       turn=norm(heading+(back?Math.PI:0)-t.angle);
     this._move(t,dt,(back?-1:1)*(Math.abs(turn)>.7?.22:.95),clamp(turn*2,-1,1));return true;
   }
-  _free(x,z,radius=2.2,wade=false) {
+  _free(x,z,radius=2.2,wade=false,ignore=null) {
     const bound=this.map.size*.5-5;
     if(Math.abs(x)>bound-radius||Math.abs(z)>bound-radius)return false;
-    for(const o of this._obstacles(x-radius,z-radius,x+radius,z+radius))if(obstacleDistance(x,z,o)<radius)return false;
+    for(const o of this._obstacles(x-radius,z-radius,x+radius,z+radius))if(obstacleDistance(x,z,o)<radius&&!ignore?.has(o))return false;
     if(wade)return true;
     for(const [dx,dz] of [[0,0],[radius,0],[-radius,0],[0,radius],[0,-radius]])if(blockedAt(this.map.id,x+dx,z+dz))return false;
     return true;
@@ -5261,7 +5317,7 @@ const tankFields=['fall','x','z','y','angle','turretAngle','gunPitch','speed','y
 const rounded=v=>Math.round(v*10000)/10000;
 function makeSnapshot(game,sequence,ack=0,paused=false){
  return {match:game.descriptor.id,sequence,ack,paused:!!paused,time:rounded(game.time),remaining:rounded(game.remaining),duration:game.duration,initialTickets:game.initialTickets,tickets:game.tickets.map(rounded),
-  sahurs:game.sahurs.map(({id,kind,x,y,z,angle})=>({id,kind,x,y,z,angle})),brokenBridges:[...game.brokenBridges],demolished:[...(game.demolished||[])],tanks:game.tanks.map(t=>({id:t.id,type:t.type,flight:t.flight?{...t.flight}:null,drone:t.drone?{...t.drone}:null,developer:!!t.developer,team:t.team,alive:t.alive,isHuman:!!t.isHuman,nick:t.nick||'',...Object.fromEntries(tankFields.map(k=>[k,rounded(t[k]||0)])),modules:{...t.modules},mgOverheated:!!t.mgOverheated,lastKiller:t.lastKiller?{...t.lastKiller}:null,_aimX:t._aimX,_aimY:t._aimY,_aimZ:t._aimZ})),
+  sahurs:game.sahurs.map(({id,kind,x,y,z,angle})=>({id,kind,x,y,z,angle})),brokenBridges:[...game.brokenBridges],demolished:[...(game.demolished||[])],treeFalls:{...(game.treeFalls||{})},tanks:game.tanks.map(t=>({id:t.id,type:t.type,flight:t.flight?{...t.flight}:null,drone:t.drone?{...t.drone}:null,developer:!!t.developer,team:t.team,alive:t.alive,isHuman:!!t.isHuman,nick:t.nick||'',...Object.fromEntries(tankFields.map(k=>[k,rounded(t[k]||0)])),modules:{...t.modules},mgOverheated:!!t.mgOverheated,lastKiller:t.lastKiller?{...t.lastKiller}:null,_aimX:t._aimX,_aimY:t._aimY,_aimZ:t._aimZ})),
   shells:game.shells.slice(-192).map(s=>({id:s.id,developer:!!s.developer,team:s.team,shooterId:s.shooterId,weapon:s.weapon||'cannon',missile:!!s.missile,age:s.age||0,...Object.fromEntries(['x','y','z','vx','vy','vz'].map(k=>[k,rounded(s[k]||0)]))})),
   smokeClouds:game.smokeClouds.slice(-16).map(c=>({id:c.id,x:c.x,z:c.z,radius:c.radius,life:c.life})),zones:game.zones.map(z=>({id:z.id,owner:z.owner,progress:z.progress,contested:!!z.contested})),stats:structuredClone(game.humanStats),
   finished:game.finished?{winner:game.finished.winner,reason:game.finished.reason,abandoned:!!game.finished.abandoned}:null};
@@ -5301,6 +5357,7 @@ class ReplicaBattle extends Game{
  constructor(descriptor,{onCommand=()=>{},onEvent=()=>{},profileId}={}){
   const d=normalizeMatch(descriptor),profile=d.members?.find(m=>m.id===(profileId||d.guest.id))||d.guest;
   super({tankId:profile.tankId,mapId:d.mapId,seed:d.seed,difficulty:d.difficulty,mode:'battle',onEvent});
+  this._replica=true;
   this.localId=memberTankId(d,profile.id);this.localTeam=d.members?(profile.team===d.members[0].team?0:1):1;
   this.mode='multiplayer';
   this.descriptor=d;
@@ -5319,6 +5376,7 @@ class ReplicaBattle extends Game{
   if(!Array.isArray(snapshot.sahurs||[])||(snapshot.sahurs||[]).length>32||(snapshot.sahurs||[]).some(s=>!xyz(s)||!['sahur','patapim',undefined].includes(s.kind)||!/^sahur-\d+$/.test(s.id)||!Number.isFinite(s.angle)))return false;
   if(!Array.isArray(snapshot.brokenBridges||[])||(snapshot.brokenBridges||[]).length>this.initialBridges.length||(snapshot.brokenBridges||[]).some(i=>!Number.isInteger(i)||!this.initialBridges[i]))return false;
   for(const i of snapshot.brokenBridges||[])if(!this.brokenBridges.includes(i))this.breakBridge(i);
+  if(snapshot.treeFalls&&typeof snapshot.treeFalls==='object')for(const [i,dir] of Object.entries(snapshot.treeFalls))if(this.initialProps[i]?.type==='tree'&&Number.isFinite(dir))this.treeFalls[i]??=dir;
   for(const i of snapshot.demolished||[])if(!this.demolished.includes(i))this.demolish(i);
   this.networkSequence=snapshot.sequence;
   this.snapshots.push({state:snapshot,at:now});
@@ -5667,6 +5725,7 @@ class CloudRoom extends PublicServerRoom{
    s.tanks.forEach((t,i)=>Object.assign(game.tanks[i],structuredClone(t)));
    s.zones.forEach((z,i)=>Object.assign(game.zones[i],z));
    game.sahurs=structuredClone(s.sahurs||[]);
+   Object.assign(game.treeFalls,s.treeFalls||{});
    for(const i of s.demolished||[])game.demolish(i);
    for(const i of s.brokenBridges||[])game.breakBridge(i);
    game.networkEvents=[];
@@ -8764,6 +8823,7 @@ class Renderer {
     this.droneModels=new Map();
     this.sahurModels=new Map();
     this.drawnDemolitions=new Set();
+    this.fallingTrees=[];
     this.nukeOrbit=null;
     this.zombieMeshes=null;
     this.smokeMeshes=new Map();
@@ -10006,13 +10066,25 @@ class Renderer {
         visual.flag.rotation.y = Math.sin(this.clock * 1.9 + zone.x) * .15;
       }
       this.drawnDemolitions??=new Set();
+      // A tank ploughing through a wood fells several trees a frame: each chunk
+      // is rebuilt once.
+      const rebuilt=new Set();
       for(const i of gameOrNull.demolished||[])if(!this.drawnDemolitions.has(i)){
         this.drawnDemolitions.add(i);
-        const o=gameOrNull.initialProps[i],key=Math.floor(o.x/180)+','+Math.floor(o.z/180),
-          old=this.world.getObjectByName('props:'+key);
-        if(old){old.removeFromParent();old.traverse(m=>m.geometry?.dispose());}
-        this.buildProps(gameOrNull.map,key);this.spawnPuff(o.x,this.heightAt(o.x,o.z)+o.h*.4,o.z,'#aa9c84',3,12,.9);
+        const o=gameOrNull.initialProps[i],key=Math.floor(o.x/180)+','+Math.floor(o.z/180);
+        if(!rebuilt.has(key)){
+          rebuilt.add(key);
+          const old=this.world.getObjectByName('props:'+key);
+          if(old){
+            const parent=old.parent;old.removeFromParent();old.traverse(m=>m.geometry?.dispose());
+            if(parent&&parent!==this.world&&!parent.children.length)parent.removeFromParent();
+          }
+          this.buildProps(gameOrNull.map,key);
+        }
+        if(o.type==='tree')this.spawnFallingTree(o,gameOrNull.treeFalls?.[i]??0,gameOrNull.map);
+        else this.spawnPuff(o.x,this.heightAt(o.x,o.z)+o.h*.4,o.z,'#aa9c84',3,12,.9);
       }
+      this.updateFallingTrees(dt);
       for(const i of gameOrNull.brokenBridges||[]){
         const b=gameOrNull.initialBridges[i],mesh=this.world.getObjectByName('deck:'+b.id);
         if(mesh)mesh.visible=false;
@@ -10340,6 +10412,53 @@ class Renderer {
     mesh.position.set(x, y, z);
     this.dynamic.add(mesh);
     this.effects.push({ mesh, age: 0, life: .4 + Math.random() * .4, vx: (Math.random() - .5) * 16, vy: Math.random() * 7, vz: (Math.random() - .5) * 16, kind: 'spark' });
+  }
+  // A felled tree is drawn on its own, pivoting on its stump: it tips slowly,
+  // gathers speed, bounces once on landing, lies a moment and sinks away.
+  spawnFallingTree(o, dir, map) {
+    this.fallingTrees ??= [];
+    if (this.fallingTrees.length > 40) this.removeFallingTree(0);
+    const pivot = new THREE.Group(), prop = new THREE.Group(), h = Math.max(o.h, 3), y = this.heightAt(o.x, o.z);
+    this.drawTree(prop, o, this.propMaterials(map), map);
+    prop.rotation.y = o.rotation || 0; pivot.add(prop);
+    pivot.position.set(o.x, y, o.z);
+    this.dynamic.add(pivot);
+    // Rotating about up × direction tips the crown towards the direction.
+    const axis = new THREE.Vector3(Math.cos(dir), 0, -Math.sin(dir));
+    this.fallingTrees.push({ pivot, axis, age: 0, fall: .9 + h * .045, h, dir, x: o.x, y, z: o.z, kind: o.kind, landed: false });
+    this.spawnPuff(o.x, y + .6, o.z, '#7d6a4f', .9, 1.4, .5);
+  }
+  removeFallingTree(i) {
+    const f = this.fallingTrees[i];
+    f.pivot.removeFromParent();
+    this.fallingTrees.splice(i, 1);
+  }
+  updateFallingTrees(dt) {
+    const list = this.fallingTrees || [];
+    for (let i = list.length - 1; i >= 0; i--) {
+      const f = list[i]; f.age += dt;
+      const u = f.age / f.fall, rest = Math.PI / 2 * .94, sink = f.age - f.fall - 2.4;
+      let tilt;
+      if (u < 1) tilt = rest * u * u;
+      else {
+        const b = f.age - f.fall; tilt = rest - Math.abs(Math.sin(b * 9)) * .11 * Math.exp(-b * 5);
+        if (!f.landed) {
+          f.landed = true;
+          const leafy = f.kind === 'pine' ? '#4f6650' : this.map?.biome === 'winter' ? '#c9d3d0' : f.kind === 'palm' ? '#8b8a5c' : '#6e7d52';
+          for (let k = 0; k < 4; k++) {
+            const r = f.h * (.35 + k * .17);
+            this.spawnPuff(f.x + Math.sin(f.dir) * r, f.y + .8, f.z + Math.cos(f.dir) * r, k % 2 ? leafy : '#9a8e72', 1 + f.h * .1, 1.8 + Math.random(), .6);
+          }
+        }
+      }
+      f.pivot.quaternion.setFromAxisAngle(f.axis, tilt);
+      if (sink > 0) {
+        const v = Math.min(1, sink / 1.1);
+        f.pivot.position.y = f.y - v * v * Math.max(2, f.h * .2);
+        f.pivot.scale.setScalar(1 - v * .65);
+        if (v >= 1) this.removeFallingTree(i);
+      }
+    }
   }
   updateEffects(dt) {
     for (let i = this.effects.length - 1; i >= 0; i--) {
