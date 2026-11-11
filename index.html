@@ -162,7 +162,9 @@ footer b{font-weight:400;color:var(--gold);margin:0 7px}
   position:relative;background:var(--modal);border:1px solid var(--modal-line);width:min(1100px,100%);max-height:92dvh;
   overflow:auto;padding:35px 40px;box-shadow:0 30px 100px #0008;
 }
-.modal-close{position:absolute;right:15px;top:10px;color:var(--muted);font-size:28px;z-index:3}
+.modal-close{position:sticky;float:right;top:0;margin:-20px -10px -24px 8px;width:44px;height:44px;background:var(--modal);border:1px solid var(--modal-line);border-radius:6px;color:var(--text);font-size:28px;z-index:3}
+.modal-close:hover,.modal-close:focus-visible{border-color:var(--accent);outline:2px solid var(--accent)}
+#modal-content h2{padding-right:40px}
 .modal h2{font-family:LocalCondensed,'Arial Narrow',sans-serif;font-size:37px;margin:10px 0 15px;font-weight:650}
 .modal-intro{color:var(--soft-text);line-height:1.7;font-size:12px;max-width:700px}
 .modal .balance{color:var(--gold);font-size:15px}
@@ -3893,7 +3895,7 @@ function weaponGeometry(type) {
     turretBaseY: (sherman ? 2.12 : tiger ? 1.95 : 1.82) + .02,
     turretOffsetZ: sherman ? .27 : tiger ? -.02 : .3,
     gunY: .55, mantletZ: sherman ? .99 : tiger ? 1.16 : 1.05,
-    barrelLength: tiger ? 3.85 : type === 'is1' ? 4.15 : ['m4a376', 't3485'].includes(type) ? 3.8 : type.startsWith('pz4') ? 3.7 : sherman ? 2.65 : 2.95,
+    barrelLength: tiger ? 3.85 : type === 'is1' ? 4.15 : ['m4a376', 't3485'].includes(type) ? 3.8 : type === 'pz4h' ? 3.7 : type === 'pz4f2' ? 3.25 : sherman ? 2.65 : 2.95,
     speed: ({pz4f2:740,pz4h:750,tigerh1:773,tigere:773,m4a1:619,m4a2:619,m4a376:792,t341941:662,t341942:662,t3485:792,is1:792})[type]||750,
     minPitch: spec.nation === 'ussr' ? -.105 : -.175,
     maxPitch: .35,
@@ -8296,6 +8298,11 @@ function makeTankBase(id) {
     addMesh(turret, slopedHull(2.85, 3.35, .08, 1.25, 2.2, 2.65), paint, 0, 0, -.12);
     box(turret, paint, 0, .57, -1.45, 2.12, .87, .54);
     for (const side of [-1, 1]) for (let i = 0; i < 5; i++) box(turret, steel, side * 1.26, .67, -.75 + i * .3, .14, .48, .25);
+  } else if (name === 'm4a376') {
+    // Larger T23 turret with a long rear bustle for the 76 mm Sherman.
+    addMesh(turret,slopedHull(2.45,3.15,.08,1.3,2.05,2.8),paint,0,0,-.22);
+    const shoulder=cyl(turret,paint,0,.62,.65,.61,2.15,'x');shoulder.scale.z=.75;
+    box(turret,darkPaint,0,.65,-1.85,1.65,.5,.22);
   } else if (sherman || is || t3485 || pershing) {
     // Cast armor has a broad vertical shoulder and a flattened roof, not a sphere.
     const profile=[[.72,.08],[.96,.23],[1,.55],[.91,.94],[.68,1.22],[.45,1.29],[0,1.29]];
@@ -8312,6 +8319,11 @@ function makeTankBase(id) {
     cyl(turret, paint, 0, .61, -.08, 1.29, 1.08);
     box(turret, paint, 0, .58, -1.1, 1.82, .81, .74);
     box(turret, paint, 0, .58, 1.02, 1.8, .76, .47);
+  } else if (name === 't341942') {
+    // Hexagonal turret and twin roof hatches distinguish the later T-34/76.
+    const hex=new THREE.CylinderGeometry(1.02,1.24,1.06,6);
+    const shell=addMesh(turret,hex,paint,0,.61,-.1,1,1,1.25);
+    shell.rotation.y=Math.PI/6;
   } else {
     const tw = panzer ? 2.05 : name.includes('1942') ? 2.16 : 1.96;
     addMesh(turret, slopedHull(tw, panzer ? 2.4 : 2.75, .08, 1.08, tw * .74, panzer ? 1.89 : 2.05), paint, 0, 0, -.05);
@@ -8339,6 +8351,10 @@ function makeTankBase(id) {
     cyl(gun, rubber, 0, gunY, muzzleZ + .081, .085, .006, 'z');
   }
   const cupolaX = tiger || panzer ? -.53 : sherman ? -.45 : .45, roofY = sherman || is ? 1.2 : 1.08;
+  if(name==='t341941'||name==='t341942'){
+    if(name==='t341941')box(turret,paint,0,roofY+.06,-.25,1.18,.12,.85);
+    else for(const side of [-1,1])cyl(turret,paint,side*.48,roofY+.08,-.25,.36,.12);
+  }else{
   cyl(turret, darkPaint, cupolaX, roofY + .06, -.42, .4, .16);
   cyl(turret, paint, cupolaX, roofY + .2, -.42, .34, tiger || panzer ? .3 : .15);
   cyl(turret, darkPaint, cupolaX, roofY + .37, -.42, .35, .06);
@@ -8348,6 +8364,29 @@ function makeTankBase(id) {
   }
   cyl(turret, paint, -.6 * Math.sign(cupolaX), roofY + .02, -.15, .32, .07);
   box(turret, steel, -.6 * Math.sign(cupolaX), roofY + .1, -.15, .16, .05, .035);
+  }
+  if(name==='tigere'){
+    // Late low-profile commander's cupola, spare track links and single lamp.
+    for(const part of turret.children)if(part.position.x===cupolaX&&part.position.y>roofY)part.position.y=roofY+(part.position.y-roofY)*.55;
+    for(const side of [-1,1])for(let i=0;i<5;i++)box(turret,steel,side*1.32,.65,-.7+i*.28,.12,.5,.23);
+    cyl(hull,light,0,hullHeight*.8,length*.46,.14,.12,'z');
+  }
+  if(name==='tigerh1')for(const side of [-1,1]){
+    cyl(hull,darkPaint,side*.95,hullHeight+.12,-length*.47,.24,.9);
+    cyl(hull,steel,side*.95,hullHeight+.5,-length*.38,.08,.75,'z');
+  }
+  if(name==='pz4h'){
+    for(const side of [-1,1])box(turret,paint,side*1.24,.65,-.3,.07,1.05,2.35);
+    box(turret,paint,0,.65,-1.5,2.55,1.05,.07);
+    box(hull,paint,0,1.28,length*.44,upperW,.55,.15);
+  }
+  if(name==='m4a2')for(const side of [-1,1]){
+    box(hull,paint,side*width*.405,1.58,.25,.08,.65,1.4);
+    box(turret,paint,side*1.08,.58,.45,.12,.6,.7);
+  }
+  if(name==='t3485'||is)for(const side of [-1,1])for(let i=0;i<2;i++){
+    cyl(hull,paint,side*width*.4,hullHeight+.12,-length*.25+i*.95,.25,.82,'z');
+  }
   cyl(turret, steel, -.81, roofY + .9, -.78, .012, 1.8);
   cyl(turret, darkPaint, -.81, roofY + .09, -.78, .065, .18);
   if (sherman || pershing || is2) {
@@ -12597,7 +12636,7 @@ document.addEventListener('click',e=>{
    const blob=new Blob([JSON.stringify({...progress,format:'iron-front-save-v1'},null,2)],{type:'application/json'}),
      url=URL.createObjectURL(blob),a=document.createElement('a');
    a.href=url;
-   a.download='iron-front-postup.json';
+   a.download='hard-steel-war-postup.json';
    a.click();
    setTimeout(()=>URL.revokeObjectURL(url),1000);
    toast('Záloha postupu připravena.');
@@ -12689,7 +12728,6 @@ document.addEventListener('keydown',e=>{
     else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}
     return;
   }
-  if(e.target.matches('input,select'))return;
   if(e.code==='Escape'){
     e.preventDefault();
     // Some browsers deliver Esc after the pointerlockchange event.
@@ -12697,6 +12735,7 @@ document.addEventListener('keydown',e=>{
     if(modalView&&modalView!=='result')closeModal();else if(game)pause();
     return;
   }
+  if(e.target.matches('input,select,textarea,[contenteditable="true"]'))return;
   if(!game||paused)return;
   if(game.player.developer&&!game.finished&&['KeyH','KeyT','KeyB','KeyV'].includes(e.code)){
     e.preventDefault();if(e.repeat||chatTyping)return;
