@@ -6907,7 +6907,7 @@ class AccountUI{
  constructor({account,getProgress,applyProgress,openModal,isOpen,toast,inBattle}){
   Object.assign(this,{account,getProgress,applyProgress,openModal,isOpen,toast,inBattle,busy:false,submitting:false,lastError:'',timer:null,retryTimer:null,mode:'login',state:account.session?'restoring':'guest'});
   document.addEventListener('click',e=>{
-   if(e.target.closest('[data-view="account"]'))this.open();
+   if(e.target.closest('button[data-view="account"]'))this.open();
    const mode=e.target.closest('[data-account-mode]')?.dataset.accountMode;
    if(mode)this.setMode(mode);
    const action=e.target.closest('[data-account]')?.dataset.account;
@@ -13070,7 +13070,7 @@ function showScoreEntry(result){
  });
 }
 document.addEventListener('click',e=>{
-  if(e.target.closest('[data-view="scores"]'))showScores();
+  if(e.target.closest('button[data-view="scores"]'))showScores();
   const period=e.target.closest('[data-score-period]')?.dataset.scorePeriod;
   if(period)showScores(period);
 });

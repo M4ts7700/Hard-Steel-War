@@ -50,3 +50,37 @@ test('Escape closes account and scores even while a form field has focus',()=>{
     assert.equal(closed,1);assert.equal(prevented,1);
   }
 });
+
+test('account and scores click handlers do not reopen a dialog after its close button',()=>{
+  // Model the actual ancestor relationship: the backdrop also has data-view.
+  function element(tag,dataset={},parent=null){
+    return {tag,dataset,parent,closest(selector){
+      const match=/^(button)?\[data-([a-z-]+)(?:="([^"]+)")?\]$/.exec(selector);
+      assert.ok(match,'supported selector: '+selector);
+      const key=match[2].replace(/-([a-z])/g,(_,c)=>c.toUpperCase());
+      for(let node=this;node;node=node.parent){
+        if((!match[1]||node.tag===match[1])&&key in node.dataset&&
+          (match[3]===undefined||node.dataset[key]===match[3]))return node;
+      }
+      return null;
+    }};
+  }
+  for(const view of ['account','scores']){
+    let handler,opened=0;
+    const marker=view==='account'?'class AccountUI{':'async function showScores(';
+    const start=html.indexOf("document.addEventListener('click',e=>{",html.indexOf(marker));
+    const end=html.indexOf('\n  });',start);
+    const source=view==='account'?html.slice(start,end+6):html.slice(start,html.indexOf('\n});',start)+4);
+    const ctx=vm.createContext({document:{addEventListener:(_,fn)=>handler=fn},
+      open:()=>opened++,showScores:()=>opened++});
+    vm.runInContext(source,ctx);
+    const backdrop=element('div',{view}),dialog=element('section',{},backdrop);
+    const closeButton=element('button',{},dialog);
+    handler({target:closeButton});
+    handler({target:element('span',{},closeButton)});
+    handler({target:element('p',{},dialog)});
+    assert.equal(opened,0,view+' stays closed and content clicks do not reopen it');
+    handler({target:element('span',{},element('button',{view},dialog))});
+    assert.equal(opened,1,view+' still opens from its navigation button');
+  }
+});
