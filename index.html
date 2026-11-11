@@ -165,6 +165,12 @@ footer b{font-weight:400;color:var(--gold);margin:0 7px}
 .modal-close{position:sticky;float:right;top:0;margin:-20px -10px -24px 8px;width:44px;height:44px;background:var(--modal);border:1px solid var(--modal-line);border-radius:6px;color:var(--text);font-size:28px;z-index:3}
 .modal-close:hover,.modal-close:focus-visible{border-color:var(--accent);outline:2px solid var(--accent)}
 #modal-content h2{padding-right:40px}
+.scores-page{max-width:1100px;margin:32px auto;padding:32px 40px;background:var(--modal);border:1px solid var(--modal-line);min-height:65vh}
+.scores-page h1{font-size:42px;margin:24px 0 8px}
+.scores-page h2{font-size:26px;margin:24px 0 16px}
+.scores-page .account-actions{gap:8px}
+.scores-page [aria-pressed="true"]{border-color:var(--accent);color:var(--accent-text)}
+@media(max-width:680px){.scores-page{margin:16px;padding:20px}.scores-page h1{font-size:32px}}
 .modal h2{font-family:LocalCondensed,'Arial Narrow',sans-serif;font-size:37px;margin:10px 0 15px;font-weight:650}
 .modal-intro{color:var(--soft-text);line-height:1.7;font-size:12px;max-width:700px}
 .modal .balance{color:var(--gold);font-size:15px}
@@ -1524,6 +1530,7 @@ try{const theme=localStorage.getItem('hsw-theme');if(theme==='light'||theme==='m
 </div>
 </main>
 <section id="battle" hidden><div id="battle-scene"></div><div class="battle-top"><button id="pause-button" class="hud-button">Ⅱ</button><div class="battle-score"><div class="score-row"><span class="team-blue">SPOJENCI <b id="friendly-score">2000</b></span><span id="battle-time">12:00</span><span class="team-red"><b id="enemy-score">2000</b> NEPŘÍTEL</span></div><div class="ticket-bars"><i id="friendly-bar"></i><i id="enemy-bar"></i></div><div id="zone-hud" class="zone-hud"></div></div><span class="battle-map-label" id="battle-map-label"></span></div><div id="network-hud" hidden></div><section id="server-chat" hidden><button id="server-chat-toggle" type="button">CHAT · ENTER</button><div id="server-chat-body" hidden><div id="server-chat-log" role="log" aria-label="Chat" aria-live="polite"></div><form id="server-chat-form"><input id="server-chat-input" aria-label="Zpráva" placeholder="Napiš zprávu…" maxlength="180" autocomplete="off"><button type="submit">ODESLAT</button></form></div></section><aside id="team-roster" hidden></aside><div id="name-tags"></div><div id="zombie-hud" hidden></div><div id="scope-overlay" class="scope-overlay" hidden><canvas id="scope-canvas" aria-hidden="true"></canvas></div><div id="view-status" class="view-status"></div><button id="camera-mode-button" class="camera-mode-button">1. OSOBA</button><div id="gun-marker" hidden></div><div id="reticle"><span></span></div><div id="hit-notice" aria-live="polite"></div><div id="kill-confirmation" class="kill-confirmation" hidden><span>✦</span><strong>CÍL ZNIČEN</strong><small></small></div><div id="kill-feed" class="kill-feed"></div><div class="battle-objective" id="battle-objective">OBSAĎ A UDRŽ ZÓNY</div><div id="damage-flash"></div><div id="nuke-flash"></div><button id="nuke-button" disabled>☢ BODY 0 / 10</button><div class="battle-bottom"><div class="module-panel"><div class="hud-caption"><span id="battle-tank-name"></span><span id="crew-label">POSÁDKA</span></div><div class="module-layout"><div id="tank-diagram" class="tank-diagram"><div class="track left"></div><div class="hull"><div class="engine-block"></div><div class="turret-block"><div class="gun-block"></div></div><div class="ammo-block"></div></div><div class="track right"></div></div><div id="module-bars"></div></div><div class="module-actions"><button id="repair-button">[F] Opravit</button><button id="smoke-button">[G] Kouř <span>3</span></button></div><button id="secondary-button" class="missile-action" hidden>[R] 75 mm · PŘIPRAVENO</button><button id="missile-button" class="missile-action" hidden>[2] RAKETA 4/4</button></div><div class="driving-hud"><small id="cruise-status" hidden></small><div class="speed"><strong id="speed-value">0</strong><span>km/h</span></div><div class="ammo-hud"><div class="shell-icon"></div><div><strong id="ammo-name">APHE</strong><small id="reload-label">PŘIPRAVENO</small><div class="reload-track"><i id="reload-bar"></i></div></div><span id="reload-count"></span></div><div class="mg-hud"><span id="mg-status">KULOMET</span><div><i id="mg-heat"></i></div></div></div><div class="minimap-wrap"><canvas id="minimap" width="300" height="300" aria-label="Taktická mapa bojiště"></canvas></div></div><div id="respawn-panel" hidden><span class="eyebrow">STROJ VYŘAZEN</span><h2>Bitva ještě nekončí.</h2><p id="death-killer" translate="no"></p><p id="respawn-text">Připravuje se záložní tank…</p><button id="respawn-button" class="primary-button">ZPĚT DO BOJE →</button></div><div class="touch-controls"><div id="touch-stick" role="group" aria-label="Joystick"><span>POHYB</span><i></i></div><div class="touch-pad"><button data-key="KeyW">▲</button><button data-key="KeyA">◀</button><button data-key="KeyS">▼</button><button data-key="KeyD">▶</button></div><div class="touch-aim-actions"><button id="touch-scope">ZAMĚŘOVAČ</button><button id="touch-mg">KULOMET</button><button id="touch-fire">PALBA</button></div></div></section>
+<main id="scores-page" class="scores-page" hidden aria-labelledby="scores-title"><button class="secondary-button" data-view="hangar">← Hangár</button><h1 id="scores-title" tabindex="-1">TOP 5</h1><div id="scores-content"></div></main>
 <div id="modal" class="modal-backdrop" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button id="close-modal" class="modal-close" aria-label="Zavřít">×</button><div id="modal-content"></div></section></div>
 <section id="workshop" aria-labelledby="custom-title" hidden><div id="custom-preview"></div><aside><span class="eyebrow">DÍLNA / VLASTNÍ VZHLED</span><h2 id="custom-title" tabindex="-1"></h2><p>Pravým tlačítkem si tank prohlédni ze všech stran. Štětec a nálepky použij přímo na 3D náhledu.</p><div id="custom-form"></div><button id="custom-reset" class="text-button">Obnovit původní vzhled</button><div class="custom-actions"><small id="custom-price" role="status"></small><button id="custom-save" class="primary-button">ULOŽIT VZHLED</button><button id="custom-cancel" class="secondary-button">ZRUŠIT</button></div><small>Úpravy vzhledu nemění bojové vlastnosti. Odemčené položky a vlastní vzhledy přeneseš zálohou v nastavení.</small></aside></section><div id="toast" role="status"></div>
 </div>
@@ -11893,6 +11900,7 @@ function selectTank(id){
   renderer?.setHangar(id);
 }
 function openModal(view,html){
+  if(view==='multiplayer')leaveScoresPage();
   if(modalView==='multiplayer'&&view!=='multiplayer'&&!game)multiplayerUI?.leave(true);
   if(game){paused=true;releaseControls();}
   if(!modalView)returnFocus=document.activeElement;
@@ -11912,7 +11920,7 @@ function closeModal(){
   if(game&&paused){paused=false;clearControls();captureMouse();}
   $('#modal').hidden=true;
   modalView='';
-  $$('.nav').forEach(b=>b.classList.toggle('active',b.dataset.view==='hangar'));
+  $$('.nav').forEach(b=>b.classList.toggle('active',b.dataset.view===($('#scores-page').hidden?'hangar':'scores')));
   if(returnFocus?.isConnected)returnFocus.focus();
   returnFocus=null;
   lastTime=performance.now();
@@ -12528,7 +12536,7 @@ function drawTags(){
 document.addEventListener('click',e=>{
  const b=e.target.closest('button,a.brand');
  if(!b)return;
- if(b.matches('.brand')){e.preventDefault();if(!game)closeModal();return}
+ if(b.matches('.brand')){e.preventDefault();if(!game){leaveScoresPage();closeModal();}return}
  if(b.dataset.jump){
    const panel=$('#'+b.dataset.jump);
    panel?.scrollIntoView({behavior:'smooth',block:'nearest'});
@@ -12540,7 +12548,7 @@ document.addEventListener('click',e=>{
    renderHangar();
  }
  if(b.dataset.view){
-   if(b.dataset.view==='hangar')closeModal();
+   if(b.dataset.view==='hangar'){leaveScoresPage();closeModal();}
    if(b.dataset.view==='research')showResearch();
    if(b.dataset.view==='guide')showGuide();
    if(b.dataset.view==='multiplayer'&&!game)multiplayerUI?.open();
@@ -12732,7 +12740,7 @@ document.addEventListener('keydown',e=>{
     e.preventDefault();
     // Some browsers deliver Esc after the pointerlockchange event.
     if(performance.now()-lastUnlock<250)return;
-    if(modalView&&modalView!=='result')closeModal();else if(game)pause();
+    if(modalView&&modalView!=='result')closeModal();else if(!$('#scores-page').hidden)leaveScoresPage();else if(game)pause();
     return;
   }
   if(e.target.matches('input,select,textarea,[contenteditable="true"]'))return;
@@ -12901,7 +12909,7 @@ function countFps(now){
 showFpsCounter(!!progress.settings.fps);
 function loop(now){
   requestAnimationFrame(loop);
-  if(!renderer||document.hidden)return;
+  if(!renderer||document.hidden||!$('#scores-page').hidden)return;
   const live=!!game&&!game.finished&&(!paused||game.mode==='multiplayer');
   const elapsed=Math.max(0,now-lastTime),interval=game?(live?0:80):32;
   if(elapsed<interval)return;
@@ -13027,9 +13035,37 @@ function scoreTable(mode){
   return rows.length?'<ol class="highscores">'+rows.map(r=>'<li><span translate="no">'+esc(r.nick)+'</span><strong>'+num(r.score)+'</strong></li>').join('')+'</ol>':'<p>Zatím žádný uložený výsledek.</p>';
 }
 
+function leaveScoresPage(updateURL=true){
+ const page=$('#scores-page');
+ if(page.hidden)return;
+ page.hidden=true;
+ $('#scores-content').innerHTML='';
+ $('#hangar').hidden=!!game||!!customDraft;
+ if(updateURL&&location.hash==='#top5')history.pushState(null,'',location.pathname+location.search);
+ $$('.nav').forEach(b=>b.classList.toggle('active',b.dataset.view==='hangar'));
+ renderer?.resize();
+ if(!game)$('.nav[data-view="hangar"]')?.focus();
+}
+function syncPageRoute(){
+ if(game)return;
+ if(location.hash==='#top5')showScores();
+ else {
+  leaveScoresPage(false);
+  if(modalView)closeModal();
+ }
+}
 async function showScores(period='month'){
+ if(game)return;
+ if(location.hash!=='#top5')history.pushState(null,'','#top5');
+ if(customDraft)closeCustomization(false);
+ if(modalView)closeModal();
+ $('#hangar').hidden=true;
+ $('#scores-page').hidden=false;
+ $$('.nav').forEach(b=>b.classList.toggle('active',b.dataset.view==='scores'));
  const titles={month:'Tento měsíc',all:'Rekordy účtů',legacy:'Původní rekordy'};
- openModal('scores','<span class="eyebrow">TANKOVÉ BITVY / TOP 5</span><h2>'+titles[period]+'</h2><div class="account-notice"><strong>Vyhraj web zdarma!</strong><p>Hráč s nejvyšším skóre mezi způsobilými účastníky na konci měsíce od nás dostane web zdarma.</p><p>Pro účast musíš hrát přihlášený a mít v nastavení účtu vyplněný Instagram, Discord nebo e-mail. Počítá se nejlepší dokončená tanková bitva daného měsíce. Zombie a tréninkový multiplayer se nezapočítávají.</p><small>Měsíc končí o půlnoci podle času v Praze. Při shodě vyhrává dříve dosažené skóre. Kontakty nejsou veřejné.</small></div><div class="account-actions"><button class="secondary-button" data-score-period="month">TENTO MĚSÍC</button><button class="secondary-button" data-score-period="all">REKORDY ÚČTŮ</button><button class="secondary-button" data-score-period="legacy">PŮVODNÍ REKORDY</button><button class="secondary-button" data-view="account">MŮJ ÚČET</button></div><p>Skóre odpovídá bodům z jedné dokončené bitvy. Výsledek počítá zařízení hráče.</p><div id="online-table" role="status">Načítám…</div>');
+ $('#scores-content').innerHTML='<span class="eyebrow">TANKOVÉ BITVY / TOP 5</span><h2>'+titles[period]+'</h2><div class="account-notice"><strong>Vyhraj web zdarma!</strong><p>Hráč s nejvyšším skóre mezi způsobilými účastníky na konci měsíce od nás dostane web zdarma.</p><p>Pro účast musíš hrát přihlášený a mít v nastavení účtu vyplněný Instagram, Discord nebo e-mail. Počítá se nejlepší dokončená tanková bitva daného měsíce. Zombie a tréninkový multiplayer se nezapočítávají.</p><small>Měsíc končí o půlnoci podle času v Praze. Při shodě vyhrává dříve dosažené skóre. Kontakty nejsou veřejné.</small></div><div class="account-actions"><button class="secondary-button" data-score-period="month">TENTO MĚSÍC</button><button class="secondary-button" data-score-period="all">REKORDY ÚČTŮ</button><button class="secondary-button" data-score-period="legacy">PŮVODNÍ REKORDY</button><button class="secondary-button" data-view="account">MŮJ ÚČET</button></div><p>Skóre odpovídá bodům z jedné dokončené bitvy. Výsledek počítá zařízení hráče.</p><div id="online-table" role="status">Načítám…</div>';
+ $$('#scores-content [data-score-period]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scorePeriod===period)));
+ $('#scores-title').focus({preventScroll:true});
  const target=$('#online-table');
  try{
   const rows=period==='legacy'?await onlineScores.list():await account.list(period==='month');
@@ -13228,6 +13264,8 @@ accountUI=new AccountUI({
  }
 });
 accountUI.restore();
+window.addEventListener('hashchange',syncPageRoute);
+if(location.hash==='#top5')syncPageRoute();
 
 return {};
 })();
