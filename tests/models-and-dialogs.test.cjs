@@ -13,7 +13,7 @@ test('tank models build with finite geometry and distinct variant shapes',()=>{
     const start=html.indexOf(`MODULES["${name}"]=`,0);
     let source=html.slice(start,html.indexOf('\nMODULES[',start+1));
     if(name==='renderer.js')source=source.replace('return {terrainGeometry,muzzleEffectProfile,Renderer};',
-      'localTexture=()=>null; return {makeTankBase};');
+      'localTexture=()=>null; return {makeTankBase,Renderer};');
     vm.runInContext(source,ctx);
   }
   const models=vm.runInContext(`MODULES['data.js'].TANKS.map(t=>[t.id,MODULES['renderer.js'].makeTankBase(t.id)])`,ctx);
@@ -32,6 +32,27 @@ test('tank models build with finite geometry and distinct variant shapes',()=>{
   for(const [a,b] of [['pz4f2','pz4h'],['tigerh1','tigere'],['m4a1','m4a2'],['m4a2','m4a376'],['t341941','t341942'],['t341942','t3485'],['is1','is2']]){
     assert.notEqual(signatures.get(a),signatures.get(b),a+' differs from '+b);
   }
+  const lineup=vm.runInContext(`(()=>{
+    const r=Object.create(MODULES['renderer.js'].Renderer.prototype);
+    r.camera=new THREE.PerspectiveCamera(34,1600/340,.1,180);
+    r.scene=new THREE.Scene();r.scene.fog=new THREE.FogExp2('#111b1e',.01);
+    r.world=new THREE.Group();r.dynamic=new THREE.Group();r.resize=()=>{};
+    r.setHangar=()=>{r.world.clear();r.dynamic.clear();};
+    const members=MODULES['data.js'].TANKS.slice(0,8).map((t,i)=>({id:String(i),tankId:t.id,team:i%2}));
+    r.setLobby(members,8);
+    const tanks=r.dynamic.children.filter(c=>c.isGroup),first=tanks[0];
+    r.setLobby(members.map(m=>({...m,ready:true})),8);
+    const reused=r.dynamic.children.includes(first);
+    const positions=tanks.map(t=>t.position.x);
+    r.setLobby(members.slice(0,2),4);
+    return {positions,reused,count:r.dynamic.children.filter(c=>c.isGroup).length,
+      cameraWidth:r.lobbyCamera.right-r.lobbyCamera.left,mode:r.mode};
+  })()`,ctx);
+  assert.equal(new Set(lineup.positions).size,8,'each player has a separate position');
+  assert.ok(lineup.reused,'ready changes do not rebuild the models');
+  assert.equal(lineup.count,2,'departed players are removed');
+  assert.equal(lineup.cameraWidth,36);
+  assert.equal(lineup.mode,'lobby');
 });
 
 test('Escape closes account and scores even while a form field has focus',()=>{

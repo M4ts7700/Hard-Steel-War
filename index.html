@@ -1033,6 +1033,16 @@ body.nuke-cinematic #view-status{top:auto;bottom:8%;font-size:12px;letter-spacin
   color:var(--text);font:12px monospace;
 }
 .mp-room-controls{margin-bottom:16px}
+.mp-lineup-scroll{overflow-x:auto;border:1px solid var(--edge);border-radius:12px;margin:20px 0;background:#111b1e}
+.mp-lineup{min-width:calc(var(--slots) * 200px)}
+#mp-lobby-scene{position:relative;height:340px;overflow:hidden}
+#mp-lobby-scene #scene{pointer-events:none}
+.mp-lineup-members{display:grid;grid-template-columns:repeat(var(--slots),minmax(0,1fr));gap:8px;padding:12px}
+.mp-lineup-members .mp-player{min-width:0;border-top:3px solid #81bcd6;background:var(--card);padding:12px;border-radius:6px}
+.mp-lineup-members .mp-player[data-team="1"]{border-top-color:#dc9785}
+.mp-lineup-members .mp-player.is-you{box-shadow:inset 0 0 0 1px var(--accent)}
+.mp-lineup-members strong,.mp-lineup-members small{display:block;overflow-wrap:anywhere;margin-top:6px}
+.mp-lineup-members .mp-empty-slot{justify-content:center;min-height:100px}
 .mp-teams{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:18px 0 22px}
 .mp-team{border:1px solid #668d9c60;border-radius:8px;overflow:hidden;background:#12232b50}
 .mp-team-1{border-color:#aa78665c;background:#2c1f1950}
@@ -6527,8 +6537,8 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const tankOptions=(progress,selected)=>TANKS.filter(t=>progress.unlocked.includes(t.id)||t.id===selected).map(t=>`<option value="${t.id}" ${t.id===selected?'selected':''}>${esc(t.name+' '+t.variant)}</option>`).join('');
 const mapOptions=selected=>MAPS.map(m=>`<option value="${m.id}" ${m.id===selected?'selected':''}>${esc(m.name)} · ${m.size} m</option>`).join('');
 class MultiplayerUI{
- constructor({getProgress,save,openModal,closeModal,onBattle,onClosed,toast}){
-  Object.assign(this,{getProgress,save,openModal,closeModal,onBattle,onClosed,toast,room:null,operation:0,inviteCode:roomInviteCode(location.href)});
+ constructor({getProgress,save,openModal,closeModal,onBattle,onClosed,onLobbyPreview,toast}){
+  Object.assign(this,{getProgress,save,openModal,closeModal,onBattle,onClosed,onLobbyPreview,toast,room:null,operation:0,inviteCode:roomInviteCode(location.href)});
   this.servers=new PublicServerUI(this);
   document.addEventListener('click',e=>{
    const b=e.target.closest('[data-mp]');if(!b)return;
@@ -6633,14 +6643,15 @@ class MultiplayerUI{
  }
  renderRoom(){
   const room=this.room;if(!room||room.phase==='battle')return;
-  const members=room.members||[],me=members.find(p=>p.id===room.profile.id)||room.profile,
+  const members=room.members?.length?room.members:[room.profile],me=members.find(p=>p.id===room.profile.id)||room.profile,
     teamLimit=room.maxTeamPlayers||4,connected=room.host||!!room.peer,editable=connected&&room.phase==='lobby';
   const signature=JSON.stringify([room.code,room.host,members,me,room.ready,room.phase,room.canStart,room.settings,room.error]);
   if(signature===this.signature&&document.querySelector('.mp-room-code'))return;this.signature=signature;
-  const focusId=document.activeElement?.id,scroll=document.querySelector('#modal .modal')?.scrollTop||0;
+  const focusId=document.activeElement?.id,scroll=document.querySelector('#modal .modal')?.scrollTop||0,
+    lineupScroll=document.querySelector('.mp-lineup-scroll')?.scrollLeft||0;
   const teamSize=team=>members.filter(p=>p.team===team).length;
-  const card=p=>`<article class="mp-player ${p.id===me.id?'is-you':''}"><div class="mp-player-label"><span>${p.host?'HOSTITEL':'HRÁČ'}${p.id===me.id?' · TY':''}</span><span class="mp-ready ${p.ready||p.host?'ready':''}">${p.ready||p.host?'PŘIPRAVEN':'ČEKÁ'}</span></div><strong translate="no">${esc(p.nick)}</strong><small>${esc(getTank(p.tankId).name+' '+getTank(p.tankId).variant)}</small></article>`;
-  const team=number=>`<section class="mp-team mp-team-${number}" aria-labelledby="mp-team-title-${number}"><header><h3 id="mp-team-title-${number}">${number===0?'MODRÝ TÝM':'ČERVENÝ TÝM'}</h3><span>${teamSize(number)} / ${teamLimit}</span></header><div class="mp-team-members">${members.filter(p=>p.team===number).map(card).join('')}${Array.from({length:Math.max(0,teamLimit-teamSize(number))},()=>'<div class="mp-empty-slot">Volné místo</div>').join('')}</div></section>`;
+  const card=p=>`<article class="mp-player ${p.id===me.id?'is-you':''}" data-team="${p.team===1?1:0}"><div class="mp-player-label"><span>${p.host?'HOSTITEL':'HRÁČ'}${p.id===me.id?' · TY':''}</span><span class="mp-ready ${p.ready||p.host?'ready':''}">${p.ready||p.host?'PŘIPRAVEN':'ČEKÁ'}</span></div><strong translate="no">${esc(p.nick)}</strong><small>${esc(getTank(p.tankId).name+' '+getTank(p.tankId).variant)}</small><small>${p.team===1?'ČERVENÝ TÝM':'MODRÝ TÝM'}</small></article>`;
+  const slots=Math.max(4,members.length);
   const bothTeams=teamSize(0)>0&&teamSize(1)>0;
   const status=room.phase==='starting'?'Načítám společné bojiště…':!connected?'Čekám na odpověď hostitele…':members.length<2?'Pozvi další hráče odkazem nebo kódem místnosti.':!room.settings.bots&&!bothTeams?'Rozdělte se do obou týmů.':room.host?(room.canStart?'Všichni jsou připraveni. Můžeš spustit bitvu.':'Čekám, až ostatní hráči potvrdí připravenost.'):(room.ready?'Jsi připraven. Čekám na spuštění hostitelem.':'Potvrď připravenost a hostitel spustí bitvu.');
   const link=roomInviteLink(location.href,room.code);
@@ -6648,12 +6659,14 @@ class MultiplayerUI{
    <div class="mp-room-code"><span>KÓD MÍSTNOSTI</span><strong translate="no">${esc(room.code)}</strong><div class="mp-share-actions"><button class="secondary-button" data-mp="copy">KOPÍROVAT KÓD</button><button class="primary-button" data-mp="copy-link" ${link?'':'disabled'}>KOPÍROVAT ODKAZ</button></div></div>
    ${link?`<details class="mp-share-details"><summary>Odkaz pro připojení</summary><input id="mp-share-link" aria-label="Odkaz pro připojení" value="${esc(link)}" readonly translate="no"></details>`:'<p class="mp-note">Odkaz lze sdílet z webové adresy hry. Ze staženého souboru pošli kód místnosti.</p>'}
    <div class="mp-profile mp-room-controls"><label>Tvůj tank<select id="mp-room-tank" ${editable?'':'disabled'}>${tankOptions(this.getProgress(),me.tankId)}</select></label><label>Tvůj tým<select id="mp-room-team" ${editable?'':'disabled'}>${[0,1].map(n=>`<option value="${n}" ${me.team===n?'selected':''} ${teamSize(n)>=teamLimit&&me.team!==n?'disabled':''}>${n===0?'MODRÝ TÝM':'ČERVENÝ TÝM'} · ${teamSize(n)} / ${teamLimit}${teamSize(n)>=teamLimit?' · PLNÝ':''}</option>`).join('')}</select></label></div>
-   <div class="mp-teams">${team(0)}${team(1)}</div>
+   <div class="mp-lineup-scroll" tabindex="0" aria-label="Tanky hráčů"><div class="mp-lineup" style="--slots:${slots}"><div id="mp-lobby-scene" aria-hidden="true"></div><div class="mp-lineup-members">${members.map(card).join('')}${Array.from({length:slots-members.length},()=>'<div class="mp-empty-slot">＋ · Volné místo</div>').join('')}</div></div></div>
    ${room.host?`<div class="mp-profile mp-room-settings"><label>Bojiště<select id="mp-room-map" ${editable?'':'disabled'}>${mapOptions(room.settings.mapId)}</select></label><label class="mp-checkbox"><input id="mp-room-bots" type="checkbox" ${room.settings.bots?'checked':''} ${editable?'':'disabled'}>Doplnit týmy boty do 6 proti 6</label></div>`:''}
    <div class="mp-match-info"><strong>${esc(getMap(room.settings.mapId).name)}</strong><span>${room.settings.bots?'6 proti 6 · volná místa doplní boti':'Pouze hráči · až 4 proti 4'}</span></div>
    <p class="mp-note">Tank i tým můžeš změnit před začátkem bitvy. Změny nastavení zruší připravenost hráčů.</p>
    <p class="modal-intro" role="status">${status}</p>${room.error?`<p class="mp-room-error" role="alert">${esc(room.error)}</p>`:''}
    <div class="modal-actions">${room.host?`<button class="primary-button" data-mp="start" ${room.canStart?'':'disabled'}>SPUSTIT BITVU →</button>`:`<button class="primary-button" data-mp="ready" ${editable?'':'disabled'}>${room.ready?'ZRUŠIT PŘIPRAVENOST':'JSEM PŘIPRAVEN →'}</button>`}<button class="secondary-button" data-mp="leave">OPUSTIT MÍSTNOST</button></div><p class="mp-note">Hostitel počítá bitvu. Jeho zavření místnosti ukončí spojení. Při přepnutí jeho hry na pozadí se bitva pozastaví.</p>`);
+  this.onLobbyPreview?.(members,slots);
+  const lineup=document.querySelector('.mp-lineup-scroll');if(lineup)lineup.scrollLeft=lineupScroll;
   localize(document.querySelector('#modal-content'));
   if(focusId){
     const restored=document.getElementById(focusId);
@@ -9251,6 +9264,7 @@ class Renderer {
     this.camera.aspect = width / height;
     this.camera.clearViewOffset();
     this.camera.updateProjectionMatrix();
+    if(this.mode==='lobby')this.updateLobbyCamera();
   }
 
   disposeRenderTrees(...roots) {
@@ -9290,6 +9304,8 @@ class Renderer {
     this.zoneMeshes.clear();
     this.shellMeshes.clear();
     this.hangarTank = null;
+    this.lobbyCamera = null;
+    this.lobbySignature = '';
     this.terrain = null;
     this.sky = null;
     this.surfaceMask?.dispose(); this.surfaceMask = null;
@@ -9333,6 +9349,35 @@ class Renderer {
     this.setHangarAppearance(tankId,appearance);
     this.camera.fov = 34; this.camera.position.set(10.5, 6.3, 11.8); this.camera.lookAt(0, 1.25, 0); this.resize();
     this.camera.updateProjectionMatrix();
+  }
+
+  setLobby(members,slots) {
+    const signature=JSON.stringify([slots,members.map(p=>[p.id,p.tankId,p.appearance,p.team])]);
+    if(this.mode==='lobby'&&signature===this.lobbySignature){this.resize();return;}
+    this.setHangar(members[0].tankId);
+    this.disposeRenderTrees(this.world);this.hangarTank=null;
+    box(this.world,mat('#303e3c',{roughness:.9}),0,-.2,0,140,.3,120);
+    this.mode='lobby';this.lobbySignature=signature;this.lobbySlots=slots;
+    this.lobbyCamera=new THREE.OrthographicCamera(-18,18,9,-9,.1,180);
+    this.lobbyCamera.position.set(0,16,26);this.lobbyCamera.lookAt(0,1,0);
+    this.scene.fog.density=.008;
+    for(let i=0;i<slots;i++){
+      const x=(i-(slots-1)/2)*9,member=members[i];
+      const platform=mat(member?(member.team===1?'#a86957':'#568da3'):'#3a4948',{roughness:.65,metalness:.3});
+      cyl(this.dynamic,platform,x,.02,0,3.5,.12);
+      if(!member)continue;
+      const model=makeTank(member.tankId,member.appearance);
+      model.group.position.x=x;model.group.rotation.y=-.3;
+      this.dynamic.add(model.group);
+    }
+    this.updateLobbyCamera();this.resize();
+  }
+
+  updateLobbyCamera(){
+    if(!this.lobbyCamera)return;
+    const halfWidth=this.lobbySlots*4.5,halfHeight=halfWidth/Math.max(.1,this.camera.aspect);
+    Object.assign(this.lobbyCamera,{left:-halfWidth,right:halfWidth,top:halfHeight,bottom:-halfHeight});
+    this.lobbyCamera.updateProjectionMatrix();
   }
 
   setHangarAppearance(tankId,appearance) {
@@ -10613,7 +10658,7 @@ class Renderer {
     this.updateEffects(dt); this.flash.intensity *= Math.exp(-dt * 19);
     if (this.nukeBlast && !this.nukeBlast.update(dt)) this.nukeBlast = null;
     if (this.sky) this.sky.position.copy(this.camera.position);
-    this.renderer.render(this.scene, this.camera);
+    this.renderer.render(this.scene, this.mode==='lobby'?this.lobbyCamera:this.camera);
   }
 
   aimFromScreen(clientX, clientY) {
@@ -11900,6 +11945,10 @@ function selectTank(id){
   renderer?.setHangar(id);
 }
 function openModal(view,html){
+  if(canvas.parentElement?.id==='mp-lobby-scene'){
+    hero.prepend(canvas);
+    if(view!=='multiplayer')renderer?.setHangar(progress.selected);
+  }
   if(view==='multiplayer')leaveScoresPage();
   if(modalView==='multiplayer'&&view!=='multiplayer'&&!game)multiplayerUI?.leave(true);
   if(game){paused=true;releaseControls();}
@@ -11917,6 +11966,9 @@ function openModal(view,html){
 function closeModal(){
   if(modalView==='multiplayer'&&multiplayerUI?.room){multiplayerUI.leave();return;}
   if(modalView==='result'||(modalView==='zshop'&&game?.phase==='shop'))return;
+  if(canvas.parentElement?.id==='mp-lobby-scene'){
+    hero.prepend(canvas);renderer?.setHangar(progress.selected);
+  }
   if(game&&paused){paused=false;clearControls();captureMouse();}
   $('#modal').hidden=true;
   modalView='';
@@ -13170,7 +13222,10 @@ function finishMultiplayer(result){
  if(awardDone||!result)return;awardDone=true;paused=true;releaseControls();
  openModal('result','<span class="eyebrow">MULTIPLAYER / KONEC BITVY</span><h2>'+(result.winner===0?'Vítězství patří tvému týmu.':'Dnes jsme ztratili bojiště.')+'</h2><p class="modal-intro">'+esc(result.reason||'Bitva skončila.')+'</p><div class="result-stats"><div><strong>'+num(result.kills||0)+'</strong><small>ZNIČENÝCH CÍLŮ</small></div><div><strong>'+num(result.captures||0)+'</strong><small>OBSAZENÝCH ZÓN</small></div><div><strong>'+num(result.damage||0)+'</strong><small>POŠKOZENÍ MODULŮ</small></div></div><p class="mp-note">Tréninkový multiplayer nemění výzkum ani online žebříček.</p>'+(multiplayerUI?.room?.public?'<p class="mp-note">Další kolo začne automaticky za 12 sekund.</p>':'')+'<div class="modal-actions"><button class="primary-button" data-action="result-hangar">ZPĚT DO HANGÁRU →</button></div>');
 }
-multiplayerUI=new MultiplayerUI({getProgress:()=>progress,save,openModal,closeModal,onBattle:enterMultiplayer,toast,onClosed:message=>{
+multiplayerUI=new MultiplayerUI({getProgress:()=>progress,save,openModal,closeModal,onBattle:enterMultiplayer,toast,onLobbyPreview:(members,slots)=>{
+  const stage=$('#mp-lobby-scene');if(!stage||!renderer)return;
+  stage.append(canvas);renderer.setLobby(members,slots);
+},onClosed:message=>{
   if(game?.mode==='multiplayer'&&!game.finished)backToHangar();else if(modalView==='multiplayer')closeModal();
   if(message)toast(message);
 }});
@@ -13259,7 +13314,10 @@ accountUI=new AccountUI({
   save();
   if(!game){
    renderHangar();
-   if(customDraft)updateCustomizationCost();else renderer?.setHangar(progress.selected);
+   if(customDraft)updateCustomizationCost();
+   else if(canvas.parentElement?.id==='mp-lobby-scene'){
+    multiplayerUI.signature='';multiplayerUI.renderRoom();
+   }else renderer?.setHangar(progress.selected);
   }
  }
 });
