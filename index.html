@@ -1417,7 +1417,7 @@ html[data-theme=m90] .hangar-heading h1,html[data-theme=m90] .panel-head h2,html
 }
 
 /* Settings: spacious cards, accessible switches and responsive fields. */
-#modal[data-view="settings"] .modal{max-width:960px;width:calc(100% - 32px);border-radius:24px;padding:36px;background:var(--modal);box-shadow:0 32px 100px #0006;scrollbar-width:thin;scrollbar-color:var(--field-line) var(--modal)}
+#modal[data-view="settings"] .modal{max-width:960px;width:calc(100% - 32px);border-radius:24px;padding:36px;background:var(--modal);box-shadow:0 32px 100px #0006;scrollbar-width:none}
 .settings-header{padding:2px 32px 26px 0}
 .settings-header h2{font-family:inherit;font-size:32px;letter-spacing:-1px;margin:10px 0}
 .settings-header p{color:var(--soft-text);margin:0;line-height:1.6}
@@ -1492,6 +1492,9 @@ html[data-theme=m90] .hangar-heading h1,html[data-theme=m90] .panel-head h2,html
   .module-panel{width:150px}
   #zombie-hud{top:60px;font-size:10px}
 }
+/* Keep wheel, touch and keyboard scrolling without native scrollbar rails. */
+*{scrollbar-width:none}
+*::-webkit-scrollbar{display:none;width:0;height:0}
 </style>
 <script>
 // Installable app: register the offline service worker (sw.js) when served over http(s).
@@ -13075,7 +13078,7 @@ function enterMultiplayer(gameInstance,room){
  $('#kill-confirmation').hidden=true;
  $('#respawn-panel').hidden=true;
  $('#zombie-hud').hidden=true;
- $('#nuke-button').hidden=true;
+ $('#nuke-button').hidden=false;
  $('.battle-score').hidden=false;
  $('#battle-map-label').textContent=game.map.name.toUpperCase();
  $('#battle-tank-name').textContent=fullName(getTank(game.player.type));
