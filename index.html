@@ -1604,7 +1604,7 @@ const CONTENT_TRANSLATIONS=[
  ["Instagram · uživatelské jméno","Instagram · username"],
  ["Discord · uživatelské jméno","Discord · username"],
  ["Kontaktní e-mail","Contact email"],
- ["Kontakty uvidí pouze provozovatel hry pro kontaktování výherce. Nezobrazují se v žebříčku.","Only the game operator can see your contact details to contact the winner. They are not shown on the leaderboard."],
+ ["Provozovatel hry může použít kontakty včetně e-mailu účtu k oslovení výherce. V žebříčku se nezobrazují.","The game operator may use contact details, including the account email, to contact the winner. They are hidden from the leaderboard."],
  ["ULOŽIT KONTAKTY","SAVE CONTACTS"],
  ["ODHLÁSIT SE","SIGN OUT"],
  ["Tento měsíc","This month"],
@@ -1646,7 +1646,7 @@ const CONTENT_TRANSLATIONS=[
  ['Postup v cloudu se změnil na jiném zařízení.','Cloud progress changed on another device.'],['Synchronizace se nezdařila.','Sync failed.'],
  ['PŘIHLÁSIT SE','SIGN IN'],['Přihlásit se','Sign in'],['Přihlásit se nebo vytvořit účet','Sign in or create an account'],['Nový účet','New account'],
  ['Načte se postup uložený v účtu. Tvůj dosavadní postup v tomto prohlížeči se vrátí po odhlášení.','Loads the progress saved in your account. Your current progress in this browser comes back when you sign out.'],
- ['Nový účet převezme tvůj současný výzkum. Na e-mail ti může přijít odkaz pro potvrzení účtu.','A new account takes over your current research. You may get an email with a link to confirm the account.'],
+ ['Nový účet převezme tvůj současný výzkum. Na e-mail ti může přijít odkaz pro potvrzení účtu. Tato adresa slouží také jako kontakt pro měsíční soutěž.','A new account takes over your current research. You may get an email with a link to confirm the account. This address also serves as your contact email for the monthly contest.'],
  ['Hraj s účtem.','Play with an account.'],['Bez účtu se postup ukládá jen v tomto prohlížeči. S účtem pokračuješ na libovolném zařízení.','Without an account, progress is saved only in this browser. With one, you can continue on any device.'],
  ['Heslo znovu','Repeat password'],['Postup v cloudu','Progress in the cloud'],['Výzkum, tanky a rekordy na každém zařízení.','Research, tanks and records on every device.'],
  ['Měsíční soutěž','Monthly competition'],['Nejlepší bitva měsíce může vyhrát web zdarma.','The best battle of the month can win a free website.'],
@@ -6924,8 +6924,8 @@ class PlayerAccount{
   this.storage.setItem(this.pendingKey,JSON.stringify(this.pending));
   await this.flush();return this.profile;
  }
- async contacts(instagram,discord,email){
-  const data=await this.rpc('hsw_save_contacts',{p_instagram:instagram,p_discord:discord,p_email:email});
+ async contacts(instagram,discord){
+  const data=await this.rpc('hsw_save_contacts',{p_instagram:instagram,p_discord:discord,p_email:this.profile?.contact_email??null});
   Object.assign(this.profile,data);return data;
  }
  async submit(score,run){
@@ -6963,7 +6963,7 @@ const CHIP_STATUS={restoring:'Načítám…',synced:'Uloženo v cloudu',saving:'
 const SYNC_TEXT={restoring:'Načítám účet…',synced:'Postup je uložený v cloudu.',saving:'Ukládám postup do cloudu…',offline:'Bez připojení. Postup se uloží, až budeš online.',conflict:'Postup v cloudu se změnil na jiném zařízení.'};
 const MODES={
  login:{button:'PŘIHLÁSIT SE',hint:'Načte se postup uložený v účtu. Tvůj dosavadní postup v tomto prohlížeči se vrátí po odhlášení.',password:'current-password'},
- register:{button:'VYTVOŘIT ÚČET',hint:'Nový účet převezme tvůj současný výzkum. Na e-mail ti může přijít odkaz pro potvrzení účtu.',password:'new-password'}
+ register:{button:'VYTVOŘIT ÚČET',hint:'Nový účet převezme tvůj současný výzkum. Na e-mail ti může přijít odkaz pro potvrzení účtu. Tato adresa slouží také jako kontakt pro měsíční soutěž.',password:'new-password'}
 };
 class AccountUI{
  constructor({account,getProgress,applyProgress,openModal,isOpen,toast,inBattle}){
@@ -7158,7 +7158,7 @@ class AccountUI{
   html+='<div id="account-conflict" class="account-notice warn" hidden><strong>Na jiném zařízení se uložil jiný postup.</strong><p>Vyber, který postup chceš zachovat. Druhý bude přepsán.</p><div class="account-actions"><button class="secondary-button" data-account="remote">POUŽÍT POSTUP Z CLOUDU</button><button class="secondary-button" data-account="local">ZACHOVAT TOTO ZAŘÍZENÍ</button></div></div>';
   if(p){
    html+='<div class="account-stats"><div><strong>'+number(p.best_score)+'</strong><small>OSOBNÍ REKORD</small></div><div><strong>'+progress.unlocked.length+' / '+TANKS.length+'</strong><small>VYZKOUMÁNO</small></div><div><strong>'+number(progress.xp)+'</strong><small>VÝZKUMNÝCH BODŮ</small></div></div>';
-   html+='<section class="account-section"><div class="account-section-head"><h3>Měsíční soutěž</h3><span class="account-badge'+(contact?' ok':'')+'">'+(contact?'✓ Účast v soutěži':'Doplň kontakt')+'</span></div><p>Hráč s nejvyšším skóre mezi způsobilými účastníky na konci měsíce od nás dostane web zdarma.</p><details class="account-contacts"'+(contact?'':' open')+'><summary>'+(contact?'Upravit kontakty':'Vyplnit kontakt')+'</summary><form id="account-contacts" class="account-form"><label>Instagram · uživatelské jméno<input name="instagram" maxlength="100" value="'+escapeHTML(p.instagram)+'" autocomplete="off"></label><label>Discord · uživatelské jméno<input name="discord" maxlength="100" value="'+escapeHTML(p.discord)+'" autocomplete="off"></label><label>Kontaktní e-mail<input name="email" type="email" maxlength="254" value="'+escapeHTML(p.contact_email)+'" autocomplete="email"></label><small>Kontakty uvidí pouze provozovatel hry pro kontaktování výherce. Nezobrazují se v žebříčku.</small><button class="primary-button" type="submit">ULOŽIT KONTAKTY</button></form></details></section>';
+   html+='<section class="account-section"><div class="account-section-head"><h3>Měsíční soutěž</h3><span class="account-badge'+(contact?' ok':'')+'">'+(contact?'✓ Účast v soutěži':'Doplň kontakt')+'</span></div><p>Hráč s nejvyšším skóre mezi způsobilými účastníky na konci měsíce od nás dostane web zdarma.</p><details class="account-contacts"'+(contact?'':' open')+'><summary>'+(contact?'Upravit kontakty':'Vyplnit kontakt')+'</summary><form id="account-contacts" class="account-form"><label>Instagram · uživatelské jméno<input name="instagram" maxlength="100" value="'+escapeHTML(p.instagram)+'" autocomplete="off"></label><label>Discord · uživatelské jméno<input name="discord" maxlength="100" value="'+escapeHTML(p.discord)+'" autocomplete="off"></label><label>Kontaktní e-mail<input type="email" value="'+escapeHTML(p.contact_email)+'" readonly></label><small>Provozovatel hry může použít kontakty včetně e-mailu účtu k oslovení výherce. V žebříčku se nezobrazují.</small><button class="primary-button" type="submit">ULOŽIT KONTAKTY</button></form></details></section>';
   }
   html+='<p id="account-status" class="account-status" role="status"></p><div class="account-footer">'+(p?'<button class="secondary-button" data-account="sync">ULOŽIT TEĎ</button>':'<span></span>')+'<button class="text-button account-logout" data-account="logout">ODHLÁSIT SE</button></div><p class="account-fineprint">Účet ukládá tanky, výzkum a rekordy. Vzhledy a kosmetická odemčení přenes zálohou v nastavení.</p></div>';
   this.openModal('account',html);
@@ -7170,7 +7170,7 @@ class AccountUI{
    const form=e.currentTarget,button=form.querySelector('button');
    button.disabled=true;
    try{
-     await this.account.contacts(form.elements.instagram.value,form.elements.discord.value,form.elements.email.value);
+     await this.account.contacts(form.elements.instagram.value,form.elements.discord.value);
      this.busy=false;
      this.openProfile();
      this.status('Kontakty uloženy.');
