@@ -23,7 +23,7 @@ function setup(hash=''){
  game:null,customDraft:null,modalView:'',renderer:{resize(){}},
  closeModal(){ctx.modalView='';},closeCustomization(){ctx.customDraft=null;},
  account:{list:()=>new Promise(resolve=>pending.push(resolve))},
- onlineScores:{list:()=>Promise.resolve([])},esc:s=>s,num:n=>n});
+ esc:s=>s,num:n=>n});
  const start=html.indexOf('function leaveScoresPage(');
  vm.runInContext(html.slice(start,html.indexOf('\nfunction showScoreEntry',start)),ctx);
  return {ctx,node,location,history,pending,table:()=>table};

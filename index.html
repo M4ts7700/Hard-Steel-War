@@ -1594,6 +1594,8 @@ const CONTENT_TRANSLATIONS=[
  ["Akci nelze provést na tomto místě.","This action is not possible here."],
  ["ZPĚT DO HRY","BACK TO GAME"],
  ["Uživatelské jméno","Username"],
+ ["E-mail","Email"],["Přezdívka","Nickname"],
+ ["Ukazuje se v žebříčku a multiplayeru. 3–20 znaků, bez diakritiky. E-mail nikdo neuvidí.","Shown in the leaderboard and multiplayer. 3–20 ASCII letters, digits or underscores. Nobody sees your email."],
  ["Heslo","Password"],
  ["PŘIHLÁSIT","SIGN IN"],
  ["VYTVOŘIT ÚČET","CREATE ACCOUNT"],
@@ -1624,9 +1626,16 @@ const CONTENT_TRANSLATIONS=[
  // Account window, top-bar chip and account errors.
  ['Postup v účtu se změnil na jiném zařízení. Otevři Účet a vyber, který postup zachovat.','Your account progress changed on another device. Open Account and choose which progress to keep.'],
  ['Přihlas se k hráčskému účtu.','Sign in to a player account.'],['Zkontroluj délku kontaktů a formát e-mailu.','Check the contact lengths and the email format.'],
- ['Před dalším odesláním skóre počkej 30 sekund.','Wait 30 seconds before submitting another score.'],['Nesprávné uživatelské jméno nebo heslo.','Incorrect username or password.'],
- ['Toto uživatelské jméno už existuje.','This username is already taken.'],['Správce musí dokončit nastavení přihlášení v Supabase.','The administrator needs to finish the sign-in setup in Supabase.'],
- ['Jméno musí mít 3–20 znaků: písmena bez diakritiky, číslice nebo podtržítko.','The username needs 3–20 characters: letters without accents, digits or underscores.'],
+ ['Před dalším odesláním skóre počkej 30 sekund.','Wait 30 seconds before submitting another score.'],['Nesprávný e-mail nebo heslo.','Incorrect email or password.'],
+ ['Účet s tímto e-mailem už existuje. Přihlas se.','An account with this email already exists. Sign in.'],['Tuto přezdívku už má jiný hráč.','Another player already has this nickname.'],
+ ['Zkontroluj e-mailovou adresu.','Check the email address.'],['Odesláno příliš mnoho e-mailů. Zkus to za chvíli.','Too many emails sent. Try again in a while.'],
+ ['Nejdřív potvrď e-mail. Klikni na odkaz, který ti přišel.','Confirm your email first. Click the link we sent you.'],
+ ['Přezdívka musí mít 3–20 znaků: písmena bez diakritiky, číslice nebo podtržítko.','The nickname needs 3–20 characters: letters without accents, digits or underscores.'],
+ ['Poslali jsme ti e-mail. Potvrď účet odkazem v něm a pak se přihlas.','We sent you an email. Confirm your account with the link in it, then sign in.'],
+ ['Odkaz pro potvrzení už neplatí. Zkus se přihlásit, nebo se zaregistruj znovu.','The confirmation link has expired. Try signing in, or register again.'],
+ ['Potvrzení e-mailu se nezdařilo. Zkus to znovu.','Email confirmation failed. Try again.'],['E-mail je potvrzený. Jsi přihlášený.','Email confirmed. You are signed in.'],
+ ['Zapsat do online TOP 5','Enter the online TOP 5'],['PŘIHLÁSIT SE / VYTVOŘIT ÚČET','SIGN IN / CREATE ACCOUNT'],
+ ['Do žebříčku se zapisuje jen s hráčským účtem. Vytvoř si účet e-mailem nebo se přihlas a další bitvy se ti budou započítávat.','Only player accounts can enter the leaderboard. Create an account with your email or sign in, and your next battles will count.'],
  ['Server není dostupný. Postup zůstává uložený na tomto zařízení.','Server unavailable. Your progress stays saved on this device.'],
  ['Příliš mnoho pokusů. Zkus to za chvíli.','Too many attempts. Try again in a moment.'],['Požadavek se nezdařil. Zkus to znovu.','The request failed. Try again.'],
  ['Účet zatím není připravený. Zkontroluj nastavení registrace.','The account is not ready yet. Check the sign-up settings.'],['Relace byla změněna.','The session changed.'],
@@ -1637,11 +1646,11 @@ const CONTENT_TRANSLATIONS=[
  ['Postup v cloudu se změnil na jiném zařízení.','Cloud progress changed on another device.'],['Synchronizace se nezdařila.','Sync failed.'],
  ['PŘIHLÁSIT SE','SIGN IN'],['Přihlásit se','Sign in'],['Přihlásit se nebo vytvořit účet','Sign in or create an account'],['Nový účet','New account'],
  ['Načte se postup uložený v účtu. Tvůj dosavadní postup v tomto prohlížeči se vrátí po odhlášení.','Loads the progress saved in your account. Your current progress in this browser comes back when you sign out.'],
- ['Nový účet převezme tvůj současný výzkum. Heslo nejde obnovit, proto si ho bezpečně ulož.','A new account takes over your current research. Passwords cannot be recovered, so store yours safely.'],
+ ['Nový účet převezme tvůj současný výzkum. Na e-mail ti může přijít odkaz pro potvrzení účtu.','A new account takes over your current research. You may get an email with a link to confirm the account.'],
  ['Hraj s účtem.','Play with an account.'],['Bez účtu se postup ukládá jen v tomto prohlížeči. S účtem pokračuješ na libovolném zařízení.','Without an account, progress is saved only in this browser. With one, you can continue on any device.'],
  ['Heslo znovu','Repeat password'],['Postup v cloudu','Progress in the cloud'],['Výzkum, tanky a rekordy na každém zařízení.','Research, tanks and records on every device.'],
  ['Měsíční soutěž','Monthly competition'],['Nejlepší bitva měsíce může vyhrát web zdarma.','The best battle of the month can win a free website.'],
- ['Jedno jméno','One name'],['Jméno účtu se použije i jako přezdívka v multiplayeru.','Your account name is also your multiplayer nickname.'],
+ ['Jedno jméno','One name'],['Přezdívka účtu se použije v žebříčku i v multiplayeru.','Your account nickname is used in the leaderboard and in multiplayer.'],
  ['Přihlas se po návratu do hangáru, aby se během bitvy nezměnil účet.','Sign in after returning to the hangar so the account does not change mid-battle.'],
  ['Hesla se neshodují.','The passwords do not match.'],['Vytvářím účet…','Creating account…'],['Přihlašuji…','Signing in…'],
  ['Účet vytvořen. Postup se teď ukládá do cloudu.','Account created. Progress now saves to the cloud.'],['Přihlášení proběhlo úspěšně.','Signed in successfully.'],
@@ -2454,7 +2463,7 @@ return {MULTIPLAYER_VERSION,roomCode,normalizeRoomCode,RealtimeTransport};
 })();
 MODULES["online-config.js"]=(()=>{
 // Public browser credentials only. Never put a secret/service_role key here.
-const ONLINE_CONFIG={url:'https://jllejxiyeyshgwilfipy.supabase.co',publishableKey:'sb_publishable_nW9NGz4Ed-Zi73pUtdvF7Q_Ef4MSFjl'};
+const ONLINE_CONFIG={url:'https://qbgneskwttgxmcktqkfr.supabase.co',publishableKey:'sb_publishable_ejODdODtHU4qry6db1s3Fw_myP001aW'};
 try { window.HSWVisitTracker?.start(ONLINE_CONFIG); } catch {}
 
 return {ONLINE_CONFIG};
@@ -6709,14 +6718,24 @@ const errors={
  registered_account_required:'Přihlas se k hráčskému účtu.',
  invalid_contacts:'Zkontroluj délku kontaktů a formát e-mailu.',
  score_cooldown:'Před dalším odesláním skóre počkej 30 sekund.',
- invalid_credentials:'Nesprávné uživatelské jméno nebo heslo.',
- user_already_exists:'Toto uživatelské jméno už existuje.',
- email_not_confirmed:'Správce musí dokončit nastavení přihlášení v Supabase.'
+ invalid_credentials:'Nesprávný e-mail nebo heslo.',
+ user_already_exists:'Účet s tímto e-mailem už existuje. Přihlas se.',
+ email_exists:'Účet s tímto e-mailem už existuje. Přihlas se.',
+ username_taken:'Tuto přezdívku už má jiný hráč.',
+ email_address_invalid:'Zkontroluj e-mailovou adresu.',
+ validation_failed:'Zkontroluj e-mailovou adresu.',
+ over_email_send_rate_limit:'Odesláno příliš mnoho e-mailů. Zkus to za chvíli.',
+ email_not_confirmed:'Nejdřív potvrď e-mail. Klikni na odkaz, který ti přišel.'
 };
 function accountUsername(value){
  const name=String(value||'').trim().toLowerCase();
- if(!/^[a-z0-9_]{3,20}$/.test(name))throw Error('Jméno musí mít 3–20 znaků: písmena bez diakritiky, číslice nebo podtržítko.');
+ if(!/^[a-z0-9_]{3,20}$/.test(name))throw Error('Přezdívka musí mít 3–20 znaků: písmena bez diakritiky, číslice nebo podtržítko.');
  return name;
+}
+function accountEmail(value){
+ const email=String(value||'').trim();
+ if(email.length>254||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))throw Error('Zkontroluj e-mailovou adresu.');
+ return email;
 }
 function cloudProgress(value={}){
  const unlocked=[...new Set([...STARTERS,...(Array.isArray(value.unlocked)?value.unlocked:[]).filter(id=>TANKS.some(t=>t.id===id))])].sort();
@@ -6833,13 +6852,31 @@ class PlayerAccount{
   }
   return this.profile;
  }
- async login(username,password,register=false){
+ // Sign-in uses the email address. Registration also sends the chosen nickname;
+ // when email confirmation is on, no session comes back until the link is clicked.
+ async login(address,password,register=false,nickname=''){
+  const email=accountEmail(address);
   if(typeof password!=='string'||password.length<8||password.length>128)throw Error('Heslo musí mít 8–128 znaků.');
+  let name='';
+  if(register){
+   name=accountUsername(nickname);
+   if(await this.rpc('hsw_username_available',{p_username:name},false)!==true)throw Object.assign(Error(errors.username_taken),{code:'username_taken'});
+  }
   await this.flush().catch(()=>{});
-  const name=accountUsername(username),email=name+'@accounts.hardsteelwar.invalid';
-  const session=await this.request(register?'/auth/v1/signup':'/auth/v1/token?grant_type=password',{email,password});
-  this.epoch++;this.profile=null;this.pending=null;this.conflicted=false;this.persist(session,{username:name});
+  const session=await this.request(register?'/auth/v1/signup':'/auth/v1/token?grant_type=password',register?{email,password,data:{username:name}}:{email,password});
+  if(register&&!session?.access_token)return {pending:true,email};
+  this.epoch++;this.profile=null;this.pending=null;this.conflicted=false;this.persist(session,name?{username:name}:undefined);
   return this.load();
+ }
+ // The confirmation link returns to the game with the session in the URL fragment.
+ adoptRedirect(params){
+  const access=params.get('access_token'),refresh=params.get('refresh_token');
+  let id='';
+  try{id=JSON.parse(atob(access.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).sub;}catch{}
+  if(!access||!refresh||!id)return false;
+  this.epoch++;this.profile=null;this.pending=null;this.conflicted=false;
+  this.persist({access_token:access,refresh_token:refresh,expires_in:params.get('expires_in'),expires_at:params.get('expires_at'),user:{id}});
+  return true;
  }
  // Changes are queued even before the profile has loaded (for example offline);
  // the cached revision lets load() tell whether another device saved in between.
@@ -6910,10 +6947,10 @@ class PlayerAccount{
  }
 }
 
-return {accountUsername,cloudProgress,PlayerAccount};
+return {accountUsername,accountEmail,cloudProgress,PlayerAccount};
 })();
 MODULES["account-ui.js"]=(()=>{
-const {cloudProgress,accountUsername} = MODULES["accounts.js"];
+const {cloudProgress,accountUsername,accountEmail} = MODULES["accounts.js"];
 const {TANKS} = MODULES["data.js"];
 const escapeHTML=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const hasContact=p=>!!(p.instagram||p.discord||p.contact_email);
@@ -6926,7 +6963,7 @@ const CHIP_STATUS={restoring:'Načítám…',synced:'Uloženo v cloudu',saving:'
 const SYNC_TEXT={restoring:'Načítám účet…',synced:'Postup je uložený v cloudu.',saving:'Ukládám postup do cloudu…',offline:'Bez připojení. Postup se uloží, až budeš online.',conflict:'Postup v cloudu se změnil na jiném zařízení.'};
 const MODES={
  login:{button:'PŘIHLÁSIT SE',hint:'Načte se postup uložený v účtu. Tvůj dosavadní postup v tomto prohlížeči se vrátí po odhlášení.',password:'current-password'},
- register:{button:'VYTVOŘIT ÚČET',hint:'Nový účet převezme tvůj současný výzkum. Heslo nejde obnovit, proto si ho bezpečně ulož.',password:'new-password'}
+ register:{button:'VYTVOŘIT ÚČET',hint:'Nový účet převezme tvůj současný výzkum. Na e-mail ti může přijít odkaz pro potvrzení účtu.',password:'new-password'}
 };
 class AccountUI{
  constructor({account,getProgress,applyProgress,openModal,isOpen,toast,inBattle}){
@@ -7064,21 +7101,23 @@ class AccountUI{
   document.querySelectorAll('[data-account-mode]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.accountMode===this.mode)));
   form.elements.password.autocomplete=m.password;
   form.elements.confirm.required=this.mode==='register';
+  form.elements.username.required=this.mode==='register';
   form.querySelector('#account-hint').textContent=m.hint;
   form.querySelector('#account-submit').firstChild.textContent=m.button+' ';
   this.status('');
  }
  openLogin(){
-  this.openModal('account','<div class="account-view"><span class="eyebrow">HRÁČSKÝ ÚČET</span><h2>Hraj s účtem.</h2><p class="modal-intro">Bez účtu se postup ukládá jen v tomto prohlížeči. S účtem pokračuješ na libovolném zařízení.</p><div class="account-layout"><div><div class="account-tabs" role="tablist" aria-label="Účet"><button type="button" role="tab" data-account-mode="login" aria-selected="true">Přihlásit se</button><button type="button" role="tab" data-account-mode="register" aria-selected="false">Nový účet</button></div><form id="account-login" class="account-form" data-mode="login" novalidate><label>Uživatelské jméno<input name="username" autocomplete="username" autocapitalize="none" spellcheck="false" minlength="3" maxlength="20" required></label><small class="account-register-only">3–20 znaků, bez diakritiky. Velikost písmen nerozhoduje.</small><label>Heslo<input name="password" type="password" autocomplete="current-password" minlength="8" maxlength="128" required></label><label class="account-register-only">Heslo znovu<input name="confirm" type="password" autocomplete="new-password" minlength="8" maxlength="128"></label><p id="account-hint" class="account-hint"></p><button id="account-submit" class="primary-button" type="submit">PŘIHLÁSIT SE <span>→</span></button></form><p id="account-status" class="account-status" role="status"></p></div><ul class="account-benefits"><li><b>Postup v cloudu</b><span>Výzkum, tanky a rekordy na každém zařízení.</span></li><li><b>Měsíční soutěž</b><span>Nejlepší bitva měsíce může vyhrát web zdarma.</span></li><li><b>Jedno jméno</b><span>Jméno účtu se použije i jako přezdívka v multiplayeru.</span></li></ul></div></div>');
+  this.openModal('account','<div class="account-view"><span class="eyebrow">HRÁČSKÝ ÚČET</span><h2>Hraj s účtem.</h2><p class="modal-intro">Bez účtu se postup ukládá jen v tomto prohlížeči. S účtem pokračuješ na libovolném zařízení.</p><div class="account-layout"><div><div class="account-tabs" role="tablist" aria-label="Účet"><button type="button" role="tab" data-account-mode="login" aria-selected="true">Přihlásit se</button><button type="button" role="tab" data-account-mode="register" aria-selected="false">Nový účet</button></div><form id="account-login" class="account-form" data-mode="login" novalidate><label>E-mail<input name="email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="254" required></label><label class="account-register-only">Přezdívka<input name="username" autocomplete="nickname" autocapitalize="none" spellcheck="false" minlength="3" maxlength="20"></label><small class="account-register-only">Ukazuje se v žebříčku a multiplayeru. 3–20 znaků, bez diakritiky. E-mail nikdo neuvidí.</small><label>Heslo<input name="password" type="password" autocomplete="current-password" minlength="8" maxlength="128" required></label><label class="account-register-only">Heslo znovu<input name="confirm" type="password" autocomplete="new-password" minlength="8" maxlength="128"></label><p id="account-hint" class="account-hint"></p><button id="account-submit" class="primary-button" type="submit">PŘIHLÁSIT SE <span>→</span></button></form><p id="account-status" class="account-status" role="status"></p></div><ul class="account-benefits"><li><b>Postup v cloudu</b><span>Výzkum, tanky a rekordy na každém zařízení.</span></li><li><b>Měsíční soutěž</b><span>Nejlepší bitva měsíce může vyhrát web zdarma.</span></li><li><b>Jedno jméno</b><span>Přezdívka účtu se použije v žebříčku i v multiplayeru.</span></li></ul></div></div>');
   this.setMode(this.mode);
   const form=document.querySelector('#account-login');
-  form.elements.username.focus();
+  form.elements.email.focus();
   form.addEventListener('submit',async e=>{
    e.preventDefault();if(this.busy)return;
    const register=this.mode==='register',f=form.elements;
    if(this.inBattle()){this.status('Přihlas se po návratu do hangáru, aby se během bitvy nezměnil účet.');return;}
-   let username;
-   try{username=accountUsername(f.username.value);}catch(error){this.status(error.message);f.username.focus();return;}
+   let email,username='';
+   try{email=accountEmail(f.email.value);}catch(error){this.status(error.message);f.email.focus();return;}
+   if(register){try{username=accountUsername(f.username.value);}catch(error){this.status(error.message);f.username.focus();return;}}
    if(f.password.value.length<8||f.password.value.length>128){
      this.status('Heslo musí mít 8–128 znaků.');
      f.password.focus();
@@ -7090,7 +7129,12 @@ class AccountUI{
    try{
     const current=this.getProgress();
     if(!current.accountOwner)this.account.storage.setItem('hsw-guest-progress',JSON.stringify(cloudProgress(current)));
-    const profile=await this.account.login(username,f.password.value,register);
+    const profile=await this.account.login(email,f.password.value,register,username);
+    if(profile.pending){
+     this.busy=false;this.setMode('login');
+     this.status('Poslali jsme ti e-mail. Potvrď účet odkazem v něm a pak se přihlas.');
+     return;
+    }
     this.apply(profile);this.mode='login';this.busy=false;this.openProfile();
     this.status(register?'Účet vytvořen. Postup se teď ukládá do cloudu.':'Přihlášení proběhlo úspěšně.');
     this.flushScores();
@@ -7218,74 +7262,6 @@ class AccountUI{
 }
 
 return {AccountUI};
-})();
-MODULES["online-leaderboard.js"]=(()=>{
-const {cleanNick} = MODULES["leaderboard.js"];
-class OnlineLeaderboard{
- constructor(config,storage,fetcher=(url,options)=>globalThis.fetch(url,options)){
-   this.config=config;
-   this.storage=storage;
-   this.fetcher=fetcher;
-   this.session=null;
-   this.pending=null;
-   this.key='iron-front-online-session:'+config.url;
-   try{this.session=JSON.parse(storage?.getItem(this.key)||'null');}catch{}
- }
- get ready(){
-   return /^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(this.config.url)&&/^sb_publishable_/.test(this.config.publishableKey);
- }
- async request(path,body,token){
-  if(!this.ready)throw Error('Online žebříček ještě není připojen.');
-  const headers={apikey:this.config.publishableKey,'Content-Type':'application/json'};
-  if(token)headers.Authorization='Bearer '+token;
-  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
-  let response;
-  try{
-    response=await this.fetcher(this.config.url+path,{method:'POST',headers,body:JSON.stringify(body),signal:controller.signal});
-  }catch(error){
-    console.warn('Leaderboard request failed:',error?.message);
-    throw Error('Server není dostupný. Zkontroluj připojení a zkus to znovu.');
-  }finally{
-    clearTimeout(timer);
-  }
-  const data=await response.json().catch(()=>null);
-  if(!response.ok){
-    if(data?.code==='23505')throw Error('Tuto přezdívku už používá jiný hráč.');
-    if(data?.message==='score_cooldown')throw Error('Před dalším odesláním počkej 30 sekund.');
-    throw Error('Online služba požadavek odmítla. Zkus to později.');
-  }
-  return data;
- }
- async token(){
-  if(this.session?.access_token&&this.session.expires_at>Date.now()/1000+60)return this.session.access_token;
-  if(this.pending)return this.pending;
-  this.pending=(async()=>{
-   const refreshing=!!this.session?.refresh_token;
-   const session=await this.request(refreshing?'/auth/v1/token?grant_type=refresh_token':'/auth/v1/signup',refreshing?{refresh_token:this.session.refresh_token}:{});
-   if(!session?.access_token||!session?.refresh_token)throw Error('Přihlášení hráče se nezdařilo.');
-   session.expires_at=session.expires_at||Date.now()/1000+(session.expires_in||3600);
-   // Persist identity before publishing, so a reload cannot lose the owned nick.
-   try{
-     this.storage.setItem(this.key,JSON.stringify(session));
-   }catch{
-     throw Error('Pro zachování přezdívky povol ukládání dat v prohlížeči.');
-   }
-   this.session=session;return session.access_token;
-  })();try{return await this.pending;}finally{this.pending=null;}
- }
- async list(){
-   const data=await this.request('/rest/v1/rpc/iron_top_five',{});
-   return (Array.isArray(data)?data:[]).slice(0,5).map(r=>({nick:cleanNick(r.nick),score:Number(r.score)||0}));
- }
- async submit(nick,score){
-   nick=cleanNick(nick);
-   if(nick.length<3||!Number.isInteger(score)||score<0||score>50000)throw Error('Přezdívka musí mít 3–20 znaků a skóre musí být platné.');
-   const token=await this.token();
-   return await this.request('/rest/v1/rpc/iron_submit_score',{p_nick:nick,p_score:score},token);
- }
-}
-
-return {OnlineLeaderboard};
 })();
 MODULES["workshop.js"]=(()=>{
 const {normalizeDecals,PAINT_EXTENT,MAX_STROKES,MAX_PAINT_POINTS} = MODULES["appearance.js"];
@@ -11749,7 +11725,6 @@ const {matchesDevCode} = MODULES["dev-code.js"];
 const {MultiplayerUI} = MODULES["multiplayer-ui.js"];
 const {PlayerAccount,cloudProgress} = MODULES["accounts.js"];
 const {AccountUI} = MODULES["account-ui.js"];
-const {OnlineLeaderboard} = MODULES["online-leaderboard.js"];
 const {ONLINE_CONFIG} = MODULES["online-config.js"];
 const {LocalLeaderboard,cleanNick} = MODULES["leaderboard.js"];
 const {WorkshopEditor} = MODULES["workshop.js"];
@@ -13084,7 +13059,6 @@ function bmptSVG(t){
 }
 
 let onlineStorage;try{onlineStorage=localStorage;}catch{}
-const onlineScores=new OnlineLeaderboard(ONLINE_CONFIG,onlineStorage);
 let scoreStore;try{scoreStore=new LocalLeaderboard(localStorage);}catch{scoreStore=null;}
 const scoreMode=()=>game?.mode==='zombies'?'zombies':'battle';
 function scoreTable(mode){
@@ -13119,13 +13093,14 @@ async function showScores(period='month'){
  $('#hangar').hidden=true;
  $('#scores-page').hidden=false;
  $$('.nav').forEach(b=>b.classList.toggle('active',b.dataset.view==='scores'));
- const titles={month:'Tento měsíc',all:'Rekordy účtů',legacy:'Původní rekordy'};
- $('#scores-content').innerHTML='<span class="eyebrow">TANKOVÉ BITVY / TOP 5</span><h2>'+titles[period]+'</h2><div class="account-notice"><strong>Vyhraj web zdarma!</strong><p>Hráč s nejvyšším skóre mezi způsobilými účastníky na konci měsíce od nás dostane web zdarma.</p><p>Pro účast musíš hrát přihlášený a mít v nastavení účtu vyplněný Instagram, Discord nebo e-mail. Počítá se nejlepší dokončená tanková bitva daného měsíce. Zombie a tréninkový multiplayer se nezapočítávají.</p><small>Měsíc končí o půlnoci podle času v Praze. Při shodě vyhrává dříve dosažené skóre. Kontakty nejsou veřejné.</small></div><div class="account-actions"><button class="secondary-button" data-score-period="month">TENTO MĚSÍC</button><button class="secondary-button" data-score-period="all">REKORDY ÚČTŮ</button><button class="secondary-button" data-score-period="legacy">PŮVODNÍ REKORDY</button><button class="secondary-button" data-view="account">MŮJ ÚČET</button></div><p>Skóre odpovídá bodům z jedné dokončené bitvy. Výsledek počítá zařízení hráče.</p><div id="online-table" role="status">Načítám…</div>';
+ if(period!=='all')period='month';
+ const titles={month:'Tento měsíc',all:'Rekordy účtů'};
+ $('#scores-content').innerHTML='<span class="eyebrow">TANKOVÉ BITVY / TOP 5</span><h2>'+titles[period]+'</h2><div class="account-notice"><strong>Vyhraj web zdarma!</strong><p>Hráč s nejvyšším skóre mezi způsobilými účastníky na konci měsíce od nás dostane web zdarma.</p><p>Pro účast musíš hrát přihlášený a mít v nastavení účtu vyplněný Instagram, Discord nebo e-mail. Počítá se nejlepší dokončená tanková bitva daného měsíce. Zombie a tréninkový multiplayer se nezapočítávají.</p><small>Měsíc končí o půlnoci podle času v Praze. Při shodě vyhrává dříve dosažené skóre. Kontakty nejsou veřejné.</small></div><div class="account-actions"><button class="secondary-button" data-score-period="month">TENTO MĚSÍC</button><button class="secondary-button" data-score-period="all">REKORDY ÚČTŮ</button><button class="secondary-button" data-view="account">MŮJ ÚČET</button></div><p>Skóre odpovídá bodům z jedné dokončené bitvy. Výsledek počítá zařízení hráče.</p><div id="online-table" role="status">Načítám…</div>';
  $$('#scores-content [data-score-period]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scorePeriod===period)));
  $('#scores-title').focus({preventScroll:true});
  const target=$('#online-table');
  try{
-  const rows=period==='legacy'?await onlineScores.list():await account.list(period==='month');
+  const rows=await account.list(period==='month');
   if(!target.isConnected)return;
   target.innerHTML=rows.length?'<ol class="highscores">'+rows.map(r=>'<li><span translate="no">'+esc(r.nick)+'</span><strong>'+num(r.score)+'</strong>'+(period==='month'?'<small>'+ (r.eligible?'✓ Účast v soutěži':'Doplň kontakt')+'</small>':'')+'</li>').join('')+'</ol>':'Zatím tu není žádný výsledek.';
  }catch(error){if(target.isConnected)target.textContent=error.message;}
@@ -13145,22 +13120,8 @@ function showScoreEntry(result){
   };
   section.querySelector('button').onclick=upload;upload();return;
  }
- section.innerHTML='<h3>Zapsat do online TOP 5</h3><p>Veřejně se uloží přezdívka a nejlepší skóre: '+num(result.xp)+' bodů. Hráčská identita zůstává v tomto prohlížeči; po smazání jeho dat ji nelze obnovit.</p><form><label>Přezdívka <input minlength="3" maxlength="20" required autocomplete="nickname" value="'+esc(progress.nickname||'')+'"></label><button class="secondary-button" type="submit">ODESLAT SKÓRE</button></form><p class="score-status" role="status"></p>';
+ section.innerHTML='<h3>Zapsat do online TOP 5</h3><p>Do žebříčku se zapisuje jen s hráčským účtem. Vytvoř si účet e-mailem nebo se přihlas a další bitvy se ti budou započítávat.</p><button class="secondary-button" data-view="account">PŘIHLÁSIT SE / VYTVOŘIT ÚČET</button>';
  $('#modal-content').append(section);
- const button=section.querySelector('button'),input=section.querySelector('input'),
-   status=section.querySelector('.score-status');
- if(!onlineScores.ready){button.disabled=true;status.textContent='Online ukládání čeká na připojení databáze.';}
- section.querySelector('form').addEventListener('submit',async e=>{
-  e.preventDefault();button.disabled=true;input.disabled=true;status.textContent='Odesílám…';
-  try{
-    const nick=cleanNick(input.value);
-    await onlineScores.submit(nick,Math.max(0,Math.round(result.xp||0)));
-    progress.nickname=nick;
-    save();
-    status.textContent='Uloženo online. V žebříčku se zobrazí pět hráčů s nejvyššími osobními rekordy.';
-  }
-  catch(error){status.textContent=error.message;button.disabled=false;input.disabled=false;}
- });
 }
 document.addEventListener('click',e=>{
   if(e.target.closest('button[data-view="scores"]'))showScores();
@@ -13310,6 +13271,15 @@ document.addEventListener('click',event=>{
 });
 
 account=new PlayerAccount(ONLINE_CONFIG,onlineStorage);
+// Back from the email confirmation link: sign in with the session in the URL, then clean the address.
+if(/(^#|&)(access_token|error)=/.test(location.hash)){
+ const params=new URLSearchParams(location.hash.slice(1));
+ history.replaceState(null,'',location.pathname+location.search);
+ let message;
+ if(params.get('error'))message=params.get('error_code')==='otp_expired'?'Odkaz pro potvrzení už neplatí. Zkus se přihlásit, nebo se zaregistruj znovu.':'Potvrzení e-mailu se nezdařilo. Zkus to znovu.';
+ else try{if(account.adoptRedirect(params))message='E-mail je potvrzený. Jsi přihlášený.';}catch{}
+ if(message)setTimeout(()=>toast(message),600);
+}
 accountUI=new AccountUI({
  account,getProgress:()=>progress,openModal,toast,inBattle:()=>!!game,isOpen:()=>modalView==='account'&&!$('#modal').hidden,
  applyProgress:cloud=>{
