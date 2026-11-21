@@ -1261,6 +1261,8 @@ body.nuke-cinematic #view-status{top:auto;bottom:8%;font-size:12px;letter-spacin
 .account-form input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
 .account-form small{font-size:11px;line-height:1.5;color:var(--muted);margin-top:-6px}
 .account-form[data-mode=login] .account-register-only{display:none}
+.account-form[data-mode=register] .account-login-only{display:none}
+.account-form .account-login-only,.account-form .account-recovery-back{justify-self:start}
 .account-hint{margin:0;font-size:12px;line-height:1.6;color:var(--soft-text)}
 .account-form .primary-button{justify-content:space-between;margin-top:4px}
 .account-benefits{list-style:none;margin:0;padding:0;display:grid;gap:10px}
@@ -1653,6 +1655,16 @@ const CONTENT_TRANSLATIONS=[
  ['Jedno jméno','One name'],['Přezdívka účtu se použije v žebříčku i v multiplayeru.','Your account nickname is used in the leaderboard and in multiplayer.'],
  ['Přihlas se po návratu do hangáru, aby se během bitvy nezměnil účet.','Sign in after returning to the hangar so the account does not change mid-battle.'],
  ['Hesla se neshodují.','The passwords do not match.'],['Vytvářím účet…','Creating account…'],['Přihlašuji…','Signing in…'],
+ ['Zapomněl jsem heslo','Forgot password'],['Obnova hesla','Reset password'],['Nastav nové heslo','Set a new password'],
+ ['Zadej e-mail svého hráčského účtu. Pošleme ti odkaz pro obnovu hesla.','Enter your account email. We’ll send you a password reset link.'],
+ ['Zadej nové heslo ke svému hráčskému účtu.','Enter a new password for your account.'],
+ ['Poslat odkaz','Send reset link'],['Uložit nové heslo','Save new password'],['Zpět k přihlášení','Back to sign in'],
+ ['Pokud k této adrese existuje účet, přijde ti odkaz pro obnovu hesla.','If an account exists for this address, you’ll receive a password reset link.'],
+ ['Heslo je změněné. Můžeš se přihlásit novým heslem.','Your password has changed. You can sign in with the new password.'],
+ ['Odkaz pro obnovu hesla už neplatí. Vyžádej si nový.','This password reset link is no longer valid. Request a new one.'],
+ ['Nové heslo se musí lišit od původního.','Choose a password different from the old one.'],
+ ['Zvol silnější heslo.','Choose a stronger password.'],
+ ['Odkaz už neplatí. Zkus se přihlásit nebo si vyžádej nový odkaz pro obnovu hesla.','This link has expired. Try signing in or request a new reset link.'],
  ['Účet vytvořen. Postup se teď ukládá do cloudu.','Account created. Progress now saves to the cloud.'],['Přihlášení proběhlo úspěšně.','Signed in successfully.'],
  ['ZKUSIT ZNOVU','TRY AGAIN'],['Na jiném zařízení se uložil jiný postup.','Different progress was saved on another device.'],
  ['Vyber, který postup chceš zachovat. Druhý bude přepsán.','Choose which progress to keep. The other will be overwritten.'],
@@ -6725,6 +6737,8 @@ const errors={
  email_address_invalid:'Zkontroluj e-mailovou adresu.',
  validation_failed:'Zkontroluj e-mailovou adresu.',
  over_email_send_rate_limit:'Odesláno příliš mnoho e-mailů. Zkus to za chvíli.',
+ same_password:'Nové heslo se musí lišit od původního.',
+ weak_password:'Zvol silnější heslo.',
  email_not_confirmed:'Nejdřív potvrď e-mail. Klikni na odkaz, který ti přišel.'
 };
 function accountUsername(value){
@@ -6737,6 +6751,7 @@ function accountEmail(value){
  if(email.length>254||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))throw Error('Zkontroluj e-mailovou adresu.');
  return email;
 }
+function validAccountPassword(value){return typeof value==='string'&&value.length>=8&&value.length<=128;}
 function cloudProgress(value={}){
  const unlocked=[...new Set([...STARTERS,...(Array.isArray(value.unlocked)?value.unlocked:[]).filter(id=>TANKS.some(t=>t.id===id))])].sort();
  const result={unlocked,selected:unlocked.includes(value.selected)?value.selected:STARTERS[0]};
@@ -6856,7 +6871,7 @@ class PlayerAccount{
  // when email confirmation is on, no session comes back until the link is clicked.
  async login(address,password,register=false,nickname=''){
   const email=accountEmail(address);
-  if(typeof password!=='string'||password.length<8||password.length>128)throw Error('Heslo musí mít 8–128 znaků.');
+  if(!validAccountPassword(password))throw Error('Heslo musí mít 8–128 znaků.');
   let name='';
   if(register){
    name=accountUsername(nickname);
@@ -6868,8 +6883,18 @@ class PlayerAccount{
   this.epoch++;this.profile=null;this.pending=null;this.conflicted=false;this.persist(session,name?{username:name}:undefined);
   return this.load();
  }
+ async sendPasswordReset(address){
+  const email=accountEmail(address);
+  try{await this.request('/auth/v1/recover',{email});}
+  catch(error){if(error.code!=='user_not_found')throw error;}
+ }
+ async resetPassword(token,password){
+  if(!validAccountPassword(password))throw Error('Heslo musí mít 8–128 znaků.');
+  await this.request('/auth/v1/user',{password},token,'PUT');
+ }
  // The confirmation link returns to the game with the session in the URL fragment.
  adoptRedirect(params){
+  if(params.get('type')==='recovery')return false;
   const access=params.get('access_token'),refresh=params.get('refresh_token');
   let id='';
   try{id=JSON.parse(atob(access.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).sub;}catch{}
@@ -6947,10 +6972,10 @@ class PlayerAccount{
  }
 }
 
-return {accountUsername,accountEmail,cloudProgress,PlayerAccount};
+return {accountUsername,accountEmail,validAccountPassword,cloudProgress,PlayerAccount};
 })();
 MODULES["account-ui.js"]=(()=>{
-const {cloudProgress,accountUsername,accountEmail} = MODULES["accounts.js"];
+const {cloudProgress,accountUsername,accountEmail,validAccountPassword} = MODULES["accounts.js"];
 const {TANKS} = MODULES["data.js"];
 const escapeHTML=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const hasContact=p=>!!(p.instagram||p.discord||p.contact_email);
@@ -6967,7 +6992,7 @@ const MODES={
 };
 class AccountUI{
  constructor({account,getProgress,applyProgress,openModal,isOpen,toast,inBattle}){
-  Object.assign(this,{account,getProgress,applyProgress,openModal,isOpen,toast,inBattle,busy:false,submitting:false,lastError:'',timer:null,retryTimer:null,mode:'login',state:account.session?'restoring':'guest'});
+  Object.assign(this,{account,getProgress,applyProgress,openModal,isOpen,toast,inBattle,busy:false,submitting:false,lastError:'',timer:null,retryTimer:null,mode:'login',recoveryToken:null,state:account.session?'restoring':'guest'});
   document.addEventListener('click',e=>{
    if(e.target.closest('button[data-view="account"]'))this.open();
    const mode=e.target.closest('[data-account-mode]')?.dataset.accountMode;
@@ -7092,7 +7117,11 @@ class AccountUI{
   try{await this.account.flush();if(this.signedIn)this.setState('synced');this.flushScores();}
   catch(e){this.fail(e);}
  }
- open(){if(this.signedIn)this.openProfile();else this.openLogin();}
+ open(){
+  if(this.recoveryToken)this.openPasswordRecovery();
+  else if(this.signedIn)this.openProfile();
+  else this.openLogin();
+ }
  setMode(mode){
   this.mode=MODES[mode]?mode:'login';
   const form=document.querySelector('#account-login');if(!form)return;
@@ -7107,10 +7136,11 @@ class AccountUI{
   this.status('');
  }
  openLogin(){
-  this.openModal('account','<div class="account-view"><span class="eyebrow">HRÁČSKÝ ÚČET</span><h2>Hraj s účtem.</h2><p class="modal-intro">Bez účtu se postup ukládá jen v tomto prohlížeči. S účtem pokračuješ na libovolném zařízení.</p><div class="account-layout"><div><div class="account-tabs" role="tablist" aria-label="Účet"><button type="button" role="tab" data-account-mode="login" aria-selected="true">Přihlásit se</button><button type="button" role="tab" data-account-mode="register" aria-selected="false">Nový účet</button></div><form id="account-login" class="account-form" data-mode="login" novalidate><label>E-mail<input name="email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="254" required></label><label class="account-register-only">Přezdívka<input name="username" autocomplete="nickname" autocapitalize="none" spellcheck="false" minlength="3" maxlength="20"></label><small class="account-register-only">Ukazuje se v žebříčku a multiplayeru. 3–20 znaků, bez diakritiky. E-mail nikdo neuvidí.</small><label>Heslo<input name="password" type="password" autocomplete="current-password" minlength="8" maxlength="128" required></label><label class="account-register-only">Heslo znovu<input name="confirm" type="password" autocomplete="new-password" minlength="8" maxlength="128"></label><p id="account-hint" class="account-hint"></p><button id="account-submit" class="primary-button" type="submit">PŘIHLÁSIT SE <span>→</span></button></form><p id="account-status" class="account-status" role="status"></p></div><ul class="account-benefits"><li><b>Postup v cloudu</b><span>Výzkum, tanky a rekordy na každém zařízení.</span></li><li><b>Měsíční soutěž</b><span>Nejlepší bitva měsíce může vyhrát web zdarma.</span></li><li><b>Jedno jméno</b><span>Přezdívka účtu se použije v žebříčku i v multiplayeru.</span></li></ul></div></div>');
+  this.openModal('account','<div class="account-view"><span class="eyebrow">HRÁČSKÝ ÚČET</span><h2>Hraj s účtem.</h2><p class="modal-intro">Bez účtu se postup ukládá jen v tomto prohlížeči. S účtem pokračuješ na libovolném zařízení.</p><div class="account-layout"><div><div class="account-tabs" role="tablist" aria-label="Účet"><button type="button" role="tab" data-account-mode="login" aria-selected="true">Přihlásit se</button><button type="button" role="tab" data-account-mode="register" aria-selected="false">Nový účet</button></div><form id="account-login" class="account-form" data-mode="login" novalidate><label>E-mail<input name="email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="254" required></label><label class="account-register-only">Přezdívka<input name="username" autocomplete="nickname" autocapitalize="none" spellcheck="false" minlength="3" maxlength="20"></label><small class="account-register-only">Ukazuje se v žebříčku a multiplayeru. 3–20 znaků, bez diakritiky. E-mail nikdo neuvidí.</small><label>Heslo<input name="password" type="password" autocomplete="current-password" minlength="8" maxlength="128" required></label><label class="account-register-only">Heslo znovu<input name="confirm" type="password" autocomplete="new-password" minlength="8" maxlength="128"></label><p id="account-hint" class="account-hint"></p><button id="account-submit" class="primary-button" type="submit">PŘIHLÁSIT SE <span>→</span></button><button type="button" class="text-button account-login-only">Zapomněl jsem heslo</button></form><p id="account-status" class="account-status" role="status"></p></div><ul class="account-benefits"><li><b>Postup v cloudu</b><span>Výzkum, tanky a rekordy na každém zařízení.</span></li><li><b>Měsíční soutěž</b><span>Nejlepší bitva měsíce může vyhrát web zdarma.</span></li><li><b>Jedno jméno</b><span>Přezdívka účtu se použije v žebříčku i v multiplayeru.</span></li></ul></div></div>');
   this.setMode(this.mode);
   const form=document.querySelector('#account-login');
   form.elements.email.focus();
+  form.querySelector('.account-login-only').addEventListener('click',()=>this.openPasswordRecovery(form.elements.email.value));
   form.addEventListener('submit',async e=>{
    e.preventDefault();if(this.busy)return;
    const register=this.mode==='register',f=form.elements;
@@ -7118,7 +7148,7 @@ class AccountUI{
    let email,username='';
    try{email=accountEmail(f.email.value);}catch(error){this.status(error.message);f.email.focus();return;}
    if(register){try{username=accountUsername(f.username.value);}catch(error){this.status(error.message);f.username.focus();return;}}
-   if(f.password.value.length<8||f.password.value.length>128){
+   if(!validAccountPassword(f.password.value)){
      this.status('Heslo musí mít 8–128 znaků.');
      f.password.focus();
      return;
@@ -7149,6 +7179,53 @@ class AccountUI{
       f.confirm.value='';
       for(const b of document.querySelectorAll('#modal-content button'))b.disabled=false;
     }
+   }
+  });
+ }
+ openPasswordRecovery(email='',message=''){
+  const token=this.recoveryToken;
+  const fields=token
+    ?'<label>Heslo<input name="password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required></label><label>Heslo znovu<input name="confirm" type="password" autocomplete="new-password" minlength="8" maxlength="128" required></label>'
+    :'<label>E-mail<input name="email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="254" required></label>';
+  this.openModal('account',
+    '<div class="account-view"><span class="eyebrow">HRÁČSKÝ ÚČET</span><h2>'+(token?'Nastav nové heslo':'Obnova hesla')+
+    '</h2><p class="modal-intro">'+(token?'Zadej nové heslo ke svému hráčskému účtu.':'Zadej e-mail svého hráčského účtu. Pošleme ti odkaz pro obnovu hesla.')+
+    '</p><form id="account-recovery" class="account-form" novalidate>'+fields+
+    '<button class="primary-button" type="submit">'+(token?'Uložit nové heslo':'Poslat odkaz')+
+    '</button><button class="text-button account-recovery-back" type="button">Zpět k přihlášení</button></form><p id="account-status" class="account-status" role="status"></p></div>');
+  const form=document.querySelector('#account-recovery'),f=form.elements;
+  const submit=form.querySelector('[type="submit"]'),back=form.querySelector('[type="button"]');
+  if(token)f.password.focus();
+  else{f.email.value=email;f.email.focus();}
+  this.status(message);
+  back.addEventListener('click',()=>{
+   this.recoveryToken=null;this.mode='login';this.open();
+  });
+  form.addEventListener('submit',async e=>{
+   e.preventDefault();if(this.busy)return;
+   if(token&&!validAccountPassword(f.password.value)){this.status('Heslo musí mít 8–128 znaků.');f.password.focus();return;}
+   if(token&&f.password.value!==f.confirm.value){this.status('Hesla se neshodují.');f.confirm.focus();return;}
+   this.busy=true;submit.disabled=true;back.disabled=true;this.status('');
+   try{
+    if(token){
+     await this.account.resetPassword(token,f.password.value);
+     this.recoveryToken=null;
+     if(this.isOpen()&&form.isConnected){
+      this.mode='login';this.open();
+      this.status('Heslo je změněné. Můžeš se přihlásit novým heslem.');
+     }
+    }else{
+     await this.account.sendPasswordReset(f.email.value);
+     if(this.isOpen()&&form.isConnected)this.status('Pokud k této adrese existuje účet, přijde ti odkaz pro obnovu hesla.');
+    }
+   }catch(error){
+    if(token&&[401,403].includes(error.status)){
+     this.recoveryToken=null;
+     if(this.isOpen()&&form.isConnected)this.openPasswordRecovery('','Odkaz pro obnovu hesla už neplatí. Vyžádej si nový.');
+    }else if(this.isOpen()&&form.isConnected)this.status(error.message);
+   }finally{
+    if(token){f.password.value='';f.confirm.value='';}
+    this.busy=false;submit.disabled=false;back.disabled=false;
    }
   });
  }
@@ -13271,12 +13348,14 @@ document.addEventListener('click',event=>{
 });
 
 account=new PlayerAccount(ONLINE_CONFIG,onlineStorage);
-// Back from the email confirmation link: sign in with the session in the URL, then clean the address.
+let recoveryToken=null;
+// Supabase uses the same callback URL for sign-up confirmation and password recovery.
 if(/(^#|&)(access_token|error)=/.test(location.hash)){
  const params=new URLSearchParams(location.hash.slice(1));
  history.replaceState(null,'',location.pathname+location.search);
  let message;
- if(params.get('error'))message=params.get('error_code')==='otp_expired'?'Odkaz pro potvrzení už neplatí. Zkus se přihlásit, nebo se zaregistruj znovu.':'Potvrzení e-mailu se nezdařilo. Zkus to znovu.';
+ if(params.get('error'))message=params.get('error_code')==='otp_expired'?'Odkaz už neplatí. Zkus se přihlásit nebo si vyžádej nový odkaz pro obnovu hesla.':'Potvrzení e-mailu se nezdařilo. Zkus to znovu.';
+ else if(params.get('type')==='recovery')recoveryToken=params.get('access_token');
  else try{if(account.adoptRedirect(params))message='E-mail je potvrzený. Jsi přihlášený.';}catch{}
  if(message)setTimeout(()=>toast(message),600);
 }
@@ -13296,6 +13375,11 @@ accountUI=new AccountUI({
   }
  }
 });
+if(recoveryToken){
+ accountUI.recoveryToken=recoveryToken;
+ recoveryToken=null;
+ accountUI.openPasswordRecovery();
+}
 accountUI.restore();
 window.addEventListener('hashchange',syncPageRoute);
 if(location.hash==='#top5')syncPageRoute();
