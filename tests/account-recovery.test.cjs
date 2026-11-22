@@ -35,6 +35,37 @@ test('requests password recovery with the supplied address and masks missing use
   assert.equal(requests.length,3);
 });
 
+test('checks the 7-digit emailed code with Supabase and returns its recovery token',async()=>{
+  const {account,storage,requests,setResponse}=loadAccounts();
+  await assert.rejects(account.verifyResetCode('player@example.com','123456'),/7 číslic/);
+  await assert.rejects(account.verifyResetCode('player@example.com','12345678'),/7 číslic/);
+  assert.equal(requests.length,0);
+  setResponse({ok:true,status:200,json:async()=>({access_token:'recovery-token',refresh_token:'r'})});
+  assert.equal(await account.verifyResetCode(' player@example.com ','123 4567'),'recovery-token');
+  assert.equal(requests[0].url,'https://example.com/auth/v1/verify');
+  assert.deepEqual(JSON.parse(requests[0].body),{type:'recovery',email:'player@example.com',token:'1234567'});
+  assert.equal(storage.getItem(account.key),undefined,'the code does not sign the player in');
+  setResponse({ok:false,status:403,json:async()=>({error_code:'otp_expired'})});
+  await assert.rejects(account.verifyResetCode('player@example.com','7654321'),{code:'otp_expired'});
+});
+
+test('passes the game language to Supabase emails through the return address',async()=>{
+  const {account,requests}=loadAccounts();
+  account.config.emailRedirect=()=>'https://hsw.neplytegr.cz/?lang=en';
+  await account.sendPasswordReset('player@example.com');
+  await account.resendConfirmation('player@example.com');
+  const query='?redirect_to='+encodeURIComponent('https://hsw.neplytegr.cz/?lang=en');
+  assert.equal(requests[0].url,'https://example.com/auth/v1/recover'+query);
+  assert.equal(requests[1].url,'https://example.com/auth/v1/resend'+query);
+});
+
+test('resends the sign-up confirmation email',async()=>{
+  const {account,requests}=loadAccounts();
+  await account.resendConfirmation('player@example.com');
+  assert.equal(requests[0].url,'https://example.com/auth/v1/resend');
+  assert.deepEqual(JSON.parse(requests[0].body),{type:'signup',email:'player@example.com'});
+});
+
 test('uses the recovery token for changing the password without replacing the active session',async()=>{
   const {account,storage,requests}=loadAccounts();
   const claims=Buffer.from(JSON.stringify({sub:'first-player'})).toString('base64url');
