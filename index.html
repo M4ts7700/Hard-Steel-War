@@ -324,8 +324,6 @@ body.in-battle .topbar{display:none}
 .reload-track{height:2px;background:#6b78583d;margin-top:6px}
 .reload-track i{display:block;width:100%;height:100%;background:var(--gold)}
 #reload-count{font-size:18px;color:var(--gold);font-variant-numeric:tabular-nums;min-width:24px}
-.key-hints{display:flex;gap:16px;font-size:8px;color:#c7d8bb}
-.key-hints kbd{font-size:7px;background:#16291bd9;border-color:#8ca77659;margin-right:4px}
 .minimap-wrap{width:292px;padding:10px}
 .minimap-wrap canvas{width:270px;height:270px;display:block}
 .battle-objective{
@@ -380,7 +378,6 @@ body.in-battle .topbar{display:none}
   .profile{gap:18px}
   h1{font-size:58px}
   .hero-corner small{display:none}
-  .key-hints{gap:6px}
   .module-panel{width:260px}
   .minimap-wrap{width:232px}
   .minimap-wrap canvas{width:210px;height:210px}
@@ -410,7 +407,6 @@ body.in-battle .topbar{display:none}
   .module-bar-row>span{width:46px}
   .module-actions{gap:5px}
   .module-actions button{padding:7px 3px;font-size:7px}
-  .key-hints{display:none}
   .driving-hud{transform-origin:bottom}
   .minimap-wrap{width:190px}
   .minimap-wrap canvas{width:100%;height:auto}
@@ -494,7 +490,6 @@ body.in-battle .topbar{display:none}
     pointer-events:auto;background:#ba8a48c9;border:1px solid var(--gold);width:68px;height:68px;border-radius:50%;font-size:11px;
     font-weight:700;touch-action:none;
   }
-  .key-hints{display:none}
 }
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
@@ -642,7 +637,6 @@ body.in-battle #scene{cursor:none;touch-action:none;outline:none}
   .battle-bottom{grid-template-columns:260px minmax(200px,1fr) 232px}
 }
 .driving-hud{position:static;transform:none;width:auto;min-width:0;margin:0;justify-self:center}
-.key-hints{flex-wrap:wrap;justify-content:center;max-width:320px}
 .view-status{top:180px;bottom:auto}
 .tank-tag{will-change:transform;transition:none}
 .decal-editor{padding:12px 0;border-top:1px solid #56634c}
@@ -653,7 +647,6 @@ body.in-battle #scene{cursor:none;touch-action:none;outline:none}
   .module-panel{width:100%}
   .minimap-wrap{width:190px}
   .minimap-wrap canvas{width:100%;height:auto}
-  .key-hints{display:none}
   .view-status{top:160px;bottom:auto;font-size:7px;letter-spacing:0}
   .driving-hud .ammo-hud{width:150px}
   .driving-hud .speed strong{font-size:32px}
@@ -1043,26 +1036,9 @@ body.nuke-cinematic #view-status{top:auto;bottom:8%;font-size:12px;letter-spacin
 .mp-lineup-members .mp-player.is-you{box-shadow:inset 0 0 0 1px var(--accent)}
 .mp-lineup-members strong,.mp-lineup-members small{display:block;overflow-wrap:anywhere;margin-top:6px}
 .mp-lineup-members .mp-empty-slot{justify-content:center;min-height:100px}
-.mp-teams{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:18px 0 22px}
-.mp-team{border:1px solid #668d9c60;border-radius:8px;overflow:hidden;background:#12232b50}
-.mp-team-1{border-color:#aa78665c;background:#2c1f1950}
-.mp-team>header{
-  display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:#88bbd00e;gap:10px;
-  border-bottom:1px solid #668d9c45;
-}
-.mp-team-1>header{background:#d6a08b0e;border-color:#aa786645}
-.mp-team h3{margin:0;font-size:11px;letter-spacing:1.4px;color:#a7d8e8}
-.mp-team-1 h3{color:#e6b19c}
-.mp-team>header>span{font:11px monospace;color:#bcc9c3;white-space:nowrap}
-.mp-team-members{display:grid;gap:8px;padding:10px}
-.mp-team .mp-player{background:#9dc5d208;border-color:#8ab4c22c;padding:12px;min-width:0}
-.mp-team-1 .mp-player{background:#d1a18a08;border-color:#c4937b2c}
-.mp-team .mp-player.is-you{border-color:#d7bc7c88;box-shadow:inset 3px 0 #d7bc7c}
 .mp-player-label{display:flex;justify-content:space-between;gap:8px;color:#b7c6ba;font-size:8px;letter-spacing:1px;flex-wrap:wrap}
 .mp-ready{color:#bdb6a4}
 .mp-ready.ready{color:#abd0a2}
-.mp-team .mp-player strong{font-size:17px;line-height:1.2;margin:8px 0 5px}
-.mp-team .mp-player small{font-size:11px}
 .mp-empty-slot{
   border:1px dashed var(--edge);border-radius:5px;min-height:43px;display:flex;align-items:center;padding:10px 12px;font-size:11px;
   color:var(--muted);
@@ -1078,12 +1054,8 @@ body.nuke-cinematic #view-status{top:auto;bottom:8%;font-size:12px;letter-spacin
 .mp-invitation p{margin:8px 0 0;font-size:12px;color:var(--soft-text)}
 .mp-room-controls select:disabled,.mp-room-settings select:disabled{opacity:.55}
 @media(max-width:580px){
-  .mp-teams{grid-template-columns:1fr;gap:14px}
   .mp-share-actions{margin:0;width:100%}
   .mp-room-code .mp-share-actions button{flex:1;justify-content:center;min-height:44px}
-  .mp-team-members{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .mp-team .mp-player{padding:10px}
-  .mp-team .mp-player strong{font-size:15px}
   .mp-empty-slot{min-height:65px}
   .mp-room-settings{padding:14px}
   .mp-invitation>span{display:block;margin:8px 0 0}
@@ -1289,11 +1261,6 @@ body.nuke-cinematic #view-status{top:auto;bottom:8%;font-size:12px;letter-spacin
 .account-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .account-section h3{margin:0;font-size:15px}
 .account-section>p{margin:10px 0;font-size:12px;line-height:1.6;color:var(--soft-text)}
-.account-badge{
-  padding:5px 10px;border-radius:12px;border:1px solid var(--warn);color:var(--warn);font-size:10px;letter-spacing:.5px;
-  white-space:nowrap;
-}
-.account-badge.ok{border-color:var(--ok);color:var(--ok)}
 .account-contacts summary{cursor:pointer;font-size:12px;font-weight:600;color:var(--accent-text);padding:4px 0}
 .account-contacts .account-form{max-width:480px;margin:14px 0 4px}
 .account-section+.account-section{margin-top:12px}
@@ -1431,15 +1398,6 @@ html[data-theme] #custom-form fieldset,html[data-theme] .decal-editor{border-col
 html[data-theme] #custom-form legend,html[data-theme] .decal-editor summary{color:var(--accent-text)}
 html[data-theme=light] #hangar .tank-card.locked{opacity:.8}
 html[data-theme=light] #hangar .tank-card.locked svg{opacity:.55}
-html[data-theme=light] .mp-team{background:#e8f1f4;border-color:#a9c6d0}
-html[data-theme=light] .mp-team-1{background:#f7ebe5;border-color:#ddb3a3}
-html[data-theme=light] .mp-team>header{background:#ffffff80;border-color:#a9c6d080}
-html[data-theme=light] .mp-team-1>header{border-color:#ddb3a380}
-html[data-theme=light] .mp-team h3{color:#2b6a7e}
-html[data-theme=light] .mp-team-1 h3{color:#a2462f}
-html[data-theme=light] .mp-team>header>span{color:var(--soft-text)}
-html[data-theme=light] .mp-team .mp-player{background:#ffffffb3;border-color:#a9c6d080}
-html[data-theme=light] .mp-team-1 .mp-player{border-color:#ddb3a380}
 /* Swedish M90: splinter camo behind everything, olive panels with a camo strip, square edges. */
 html[data-theme=m90] body{background:linear-gradient(#0c1108a3,#0c1108a3),var(--m90-camo,none) #4f5c35}
 html[data-theme=m90] .hangar-heading,html[data-theme=m90] #hangar footer{text-shadow:0 1px 3px #000,0 0 8px #000a}
@@ -1530,7 +1488,7 @@ html[data-theme=m90] .hangar-heading h1,html[data-theme=m90] .panel-head h2,html
   #pause-button{min-width:44px;min-height:44px;z-index:2}
   .battle-score{width:min(65vw,350px);padding:8px}
   .zone-hud{margin-top:6px;gap:12px}
-  .battle-map-label,.view-status,.key-hints,.camera-mode-button,.battle-objective{display:none}
+  .battle-map-label,.view-status,.camera-mode-button,.battle-objective{display:none}
   #nuke-button{left:max(12px,env(safe-area-inset-left));top:calc(60px + env(safe-area-inset-top));min-height:44px;padding:6px;font-size:9px}
   .kill-feed{top:112px;right:12px;max-width:160px}
   .modal button,.modal select{min-height:44px}
@@ -2630,13 +2588,11 @@ function makeLines(list,{reach=0,step=10}={}){
     const width=item.width??10,source=item.points.map(p=>[p[0],p[1],p[2]??width]);
     const pts=item.smooth!==false&&source.length>2?catmull(source,item.step||step,item.closed):item.closed?[...source,source[0]]:source;
     const path={pts,width,kind:item.kind,front:item.front!==false,index:paths.length};paths.push(path);
-    let length=0;
     for(let i=0;i<pts.length-1;i++){
       const [ax,az,wa]=pts[i],[bx,bz,wb]=pts[i+1],dx=bx-ax,dz=bz-az,len2=dx*dx+dz*dz;
       if(len2<1e-6)continue;
-      const len=Math.sqrt(len2);segs.push({ax,az,dx,dz,len2,len,wa,wb,start:length,path:path.index});length+=len;widest=Math.max(widest,wa,wb);
+      const len=Math.sqrt(len2);segs.push({ax,az,dx,dz,len2,len,wa,wb,path:path.index});widest=Math.max(widest,wa,wb);
     }
-    path.length=length;
   }
   const pad=widest/2+reach;
   segs.forEach((s,i)=>{
@@ -2647,28 +2603,27 @@ function makeLines(list,{reach=0,step=10}={}){
   return {segs,paths,cells,pad};
 }
 // Nearest centreline (lineNear) or nearest edge (lineEdge: distance minus half
-// width, negative inside). Details of the winning segment land in NEAR.
-const NEAR={d:Infinity,w:0,s:0,i:-1,t:0,path:-1};
+// width, negative inside). lineNear also records the segment index and width.
+const NEAR={w:0,i:-1};
 function lineNear(lines,x,z){
-  const list=lines.cells.get(lineKey(Math.floor(x/LINE_CELL),Math.floor(z/LINE_CELL)));
-  NEAR.d=Infinity;if(!list)return Infinity;
-  let best=Infinity,bi=0,bt=0;
-  for(let k=0;k<list.length;k++){
-    const s=lines.segs[list[k]];let t=((x-s.ax)*s.dx+(z-s.az)*s.dz)/s.len2;t=t<0?0:t>1?1:t;
-    const ex=x-s.ax-s.dx*t,ez=z-s.az-s.dz*t,d2=ex*ex+ez*ez;if(d2<best){best=d2;bi=list[k];bt=t;}
-  }
-  const s=lines.segs[bi];NEAR.d=Math.sqrt(best);NEAR.i=bi;NEAR.t=bt;NEAR.w=s.wa+(s.wb-s.wa)*bt;NEAR.s=s.start+s.len*bt;NEAR.path=s.path;
-  return NEAR.d;
-}
-function lineEdge(lines,x,z){
   const list=lines.cells.get(lineKey(Math.floor(x/LINE_CELL),Math.floor(z/LINE_CELL)));
   if(!list)return Infinity;
   let best=Infinity,bi=0,bt=0;
   for(let k=0;k<list.length;k++){
     const s=lines.segs[list[k]];let t=((x-s.ax)*s.dx+(z-s.az)*s.dz)/s.len2;t=t<0?0:t>1?1:t;
-    const ex=x-s.ax-s.dx*t,ez=z-s.az-s.dz*t,e=Math.sqrt(ex*ex+ez*ez)-(s.wa+(s.wb-s.wa)*t)*.5;if(e<best){best=e;bi=list[k];bt=t;}
+    const ex=x-s.ax-s.dx*t,ez=z-s.az-s.dz*t,d2=ex*ex+ez*ez;if(d2<best){best=d2;bi=list[k];bt=t;}
   }
-  const s=lines.segs[bi];NEAR.i=bi;NEAR.t=bt;NEAR.w=s.wa+(s.wb-s.wa)*bt;NEAR.d=best+NEAR.w*.5;NEAR.s=s.start+s.len*bt;NEAR.path=s.path;
+  const s=lines.segs[bi];NEAR.i=bi;NEAR.w=s.wa+(s.wb-s.wa)*bt;
+  return Math.sqrt(best);
+}
+function lineEdge(lines,x,z){
+  const list=lines.cells.get(lineKey(Math.floor(x/LINE_CELL),Math.floor(z/LINE_CELL)));
+  if(!list)return Infinity;
+  let best=Infinity;
+  for(let k=0;k<list.length;k++){
+    const s=lines.segs[list[k]];let t=((x-s.ax)*s.dx+(z-s.az)*s.dz)/s.len2;t=t<0?0:t>1?1:t;
+    const ex=x-s.ax-s.dx*t,ez=z-s.az-s.dz*t,e=Math.sqrt(ex*ex+ez*ez)-(s.wa+(s.wb-s.wa)*t)*.5;if(e<best)best=e;
+  }
   return best;
 }
 // Where the first path of a line set crosses x (bridge and ford sites).
@@ -2829,14 +2784,14 @@ function surfaceHeight(mapId,x,z,y) {
   }
   return terrainHeight(mapId,x,z);
 }
-function terrainAt(mapId,x,z,y) {
+function terrainAt(mapId,x,z,y,bare=false) {
   const s=specFor(mapId);
   for(const b of s.bridges){
     bridgeLocal(b,x,z);if(Math.abs(BU)>b.w*.5)continue;
     const dv=Math.abs(BV);if(dv<=b.d*.5&&underDeck(s,b,y))continue;
     if(dv<=b.d*.5+b.ramp)return dv<=b.d*.5?TERRAIN.bridge:TERRAIN.approach;
   }
-  return waterAt(s,x,z)||s.surface(x,z);
+  return waterAt(s,x,z)||s.surface(x,z,bare);
 }
 // Bridges as solid structures for a tank at height y moving from (ox,oz) to
 // (x,z). On a deck the parapets hold the hull in (it may still move along or
@@ -2952,8 +2907,7 @@ function deckFunnel(mapId,ax,az,bx,bz){
 // The ground beneath roads, rails and streets, for painting the terrain: the
 // ground shader draws those networks itself from a sharp distance field.
 function bareTerrainAt(mapId,x,z){
-  const t=terrainAt(mapId,x,z);if(t.bridge||t.water||t===TERRAIN.bank||t===TERRAIN.icyBank)return t;
-  return specFor(mapId).surface(x,z,true);
+  return terrainAt(mapId,x,z,undefined,true);
 }
 // Only open water ever blocks a tank, so movement checks skip the surface types.
 function blockedAt(mapId,x,z,y){
@@ -2977,8 +2931,16 @@ function segmentGap(ax,az,bx,bz,cx,cz,dx,dz){
 // bridges ignored), so callers can skip per-sample water tests on dry ground.
 function waterNearSegment(mapId,ax,az,bx,bz,pad){
   const s=specFor(mapId);
-  for(const r of s.rivers)for(const g of r.lines.segs)
-    if(segmentGap(ax,az,bx,bz,g.ax,g.az,g.ax+g.dx,g.az+g.dz)<Math.max(g.wa,g.wb)*.5+pad)return true;
+  for(const r of s.rivers){
+    const margin=r.lines.pad+pad;
+    const left=Math.min(ax,bx)-margin,right=Math.max(ax,bx)+margin;
+    const top=Math.min(az,bz)-margin,bottom=Math.max(az,bz)+margin;
+    for(const g of r.lines.segs){
+      const ex=g.ax+g.dx,ez=g.az+g.dz;
+      if((g.ax<left&&ex<left)||(g.ax>right&&ex>right)||(g.az<top&&ez<top)||(g.az>bottom&&ez>bottom))continue;
+      if(segmentGap(ax,az,bx,bz,g.ax,g.az,ex,ez)<Math.max(g.wa,g.wb)*.5+pad)return true;
+    }
+  }
   for(const L of s.lakes)if(!L.ice&&pointSegGap(L.x,L.z,ax,az,bx,bz)<Math.max(L.rx,L.rz)+pad)return true;
   return false;
 }
@@ -3070,14 +3032,15 @@ class Placer{
     for(let ix=0;ix<=4;ix++)for(let iz=0;iz<=4;iz++){
       const px=(ix/4-.5)*(w+2),pz=(iz/4-.5)*(d+2),y=landHeight(this.s,x+px*c+pz*s,z-px*s+pz*c);
       low=Math.min(low,y);high=Math.max(high,y);
+      if(high-low>tolerance)return false;
     }
-    return high-low<=tolerance;
+    return true;
   }
   add(o){
     this.list.push(o);
     const r=Math.hypot(o.w,o.d)/2;
     for(let cx=Math.floor((o.x-r)/40);cx<=Math.floor((o.x+r)/40);cx++)for(let cz=Math.floor((o.z-r)/40);cz<=Math.floor((o.z+r)/40);cz++){
-      const k=cx*100003+cz;let cell=this.cells.get(k);if(!cell)this.cells.set(k,cell=[]);if(!cell.includes(o))cell.push(o);
+      const k=cx*100003+cz;let cell=this.cells.get(k);if(!cell)this.cells.set(k,cell=[]);cell.push(o);
     }
     return o;
   }
@@ -3466,10 +3429,10 @@ function orchard(P,cx,cz,rot,cols,rows,step=11){
     zones:[{id:'A',x:-250,z:-130},{id:'B',x:0,z:0},{id:'C',x:250,z:130}],
     relief:()=>7,streets,areas,
     surface(x,z,bare){
-      const e=lineEdge(streets,x,z);
-      if(!bare&&e<0)return TERRAIN.street;
+      const e=bare?Infinity:lineEdge(streets,x,z);
+      if(e<0)return TERRAIN.street;
       for(const a of squares)if(rectDistance(a,x,z)<0)return TERRAIN.square;
-      if(!bare&&e<3.2)return TERRAIN.sidewalk;
+      if(e<3.2)return TERRAIN.sidewalk;
       for(const a of parks)if(rectDistance(a,x,z)<0)return TERRAIN.park;
       return TERRAIN.yard;
     },
@@ -3720,7 +3683,8 @@ function assembleMap(spec,id,random){
 }
 const MAPS=['valley','desert','winter','city','works','plains'].map(id=>assembleMap(MAP_SPECS[id],id,seeded(PROP_SEEDS[id])));
 
-function getTank(id) { return TANKS.find(t => t.id === id) || TANKS[0]; }
+const tanksById=new Map(TANKS.map(t=>[t.id,t]));
+function getTank(id) { return tanksById.get(id) || TANKS[0]; }
 // Seeded knolls must not bury an objective, a spawn, a bridge or the river.
 function knollAllowed(s,k){
   const m=Math.max(k.rx,k.rz);
@@ -3926,8 +3890,8 @@ class ObstacleIndex {
      for(let k=0;k<list.length;k++){const i=list[k];if(marks[i]!==stamp){marks[i]=stamp;out.push(source[i]);}}
    }
  }
- query(x0,z0,x1=x0,z1=z0){
-   const out=[];this._begin();
+ query(x0,z0,x1=x0,z1=z0,out=[]){
+   out.length=0;this._begin();
    this._collect(Math.min(x0,x1),Math.min(z0,z1),Math.max(x0,x1),Math.max(z0,z1),out);
    return out;
  }
@@ -3983,9 +3947,12 @@ function secondaryWeaponGeometry(type) {
 /** All distances are metres. This is the single source of weapon geometry for
  * the visible model, sight, projectile spawn and impact prediction. The turret
  * is stabilized in world space while the hull follows the ground. */
+const geometryByType=new Map();
 function weaponGeometry(type) {
+  const cached=geometryByType.get(type);
+  if(cached)return cached;
   const spec = getTank(type), sherman = type.startsWith('m4'), tiger = type.startsWith('tiger');
-  let geometry = {
+  const geometry = {
     turretBaseY: (sherman ? 2.12 : tiger ? 1.95 : 1.82) + .02,
     turretOffsetZ: sherman ? .27 : tiger ? -.02 : .3,
     gunY: .55, mantletZ: sherman ? .99 : tiger ? 1.16 : 1.05,
@@ -4001,9 +3968,9 @@ function weaponGeometry(type) {
   if (type === 'm18') Object.assign(geometry, {turretBaseY:1.55,turretOffsetZ:.2,gunY:.5,mantletZ:1.02,barrelLength:3.7,speed:792,minPitch:-.175,maxPitch:.35});
   if (type === 'btr80a') Object.assign(geometry, {turretBaseY:2.0,turretOffsetZ:.3,gunY:.62,mantletZ:.5,barrelLength:2.4,speed:970,minPitch:-.087,maxPitch:1.05});
   if (type === 'maus') Object.assign(geometry, {turretBaseY:2.35,turretOffsetZ:-1.2,gunY:.85,mantletZ:1.8,barrelLength:5.5,speed:920,minPitch:-.14,maxPitch:.42,turretWidth:3.45,turretLength:3.8,turretHeight:1.65});
+  geometryByType.set(type,geometry);
   return geometry;
 }
-
 
 function hullPose(tank,mapId){
  const old=tank._terrainPose;if(old&&old.x===tank.x&&old.z===tank.z&&old.yaw===tank.angle&&old.mapId===mapId)return old;
@@ -4027,7 +3994,7 @@ function hullPose(tank,mapId){
 }
 function weaponFrame(tank,mapId,options={}){
  const secondary=options.secondary||tank.type==='maus'&&options.barrelIndex===1?secondaryWeaponGeometry(tank.type):null;
- const geometry={...weaponGeometry(tank.type),...(secondary||{})},yaw=options.yaw??tank.turretAngle??tank.angle,
+ const primary=weaponGeometry(tank.type),geometry=secondary?{...primary,...secondary}:primary,yaw=options.yaw??tank.turretAngle??tank.angle,
    pitch=options.pitch??tank.gunPitch??0;
  const pose=hullPose(tank,mapId),localYaw=yaw-(tank.angle||0),s=Math.sin(localYaw),c=Math.cos(localYaw);
  const side=secondary?secondary.offsetX:tank.type==='bmpt'?((options.barrelIndex??tank._barrelIndex??0)===0?-.22:.22):0;
@@ -4038,10 +4005,10 @@ function weaponFrame(tank,mapId,options={}){
  const shift=pose.transform({x:s*forward+c*side,y:geometry.gunY+vertical*Math.cos(pitch),z:c*forward-s*side});
  const pivot={x:root.x+shift.x,y:root.y+shift.y,z:root.z+shift.z};
  const muzzle={x:pivot.x+direction.x*geometry.barrelLength,y:pivot.y+direction.y*geometry.barrelLength,z:pivot.z+direction.z*geometry.barrelLength};
- return {...geometry,pose,root,pivot,muzzle,direction,sight:{...muzzle},yaw,pitch,side};
+ return {...geometry,pose,root,pivot,muzzle,direction,yaw,pitch,side};
 }
-function solveWeaponAim(tank,mapId,target){
- const geometry=weaponGeometry(tank.type),frame=weaponFrame(tank,mapId),pose=frame.pose;
+function solveWeaponAim(tank,mapId,target,frame=weaponFrame(tank,mapId)){
+ const pose=frame.pose,geometry=frame;
  const dx=target.x-frame.root.x,dz=target.z-frame.root.z,rootRange=Math.max(1,Math.hypot(dx,dz));
  const worldYaw=Math.atan2(dx,dz),local=pose.inverse({x:dx,y:target.y-frame.root.y-geometry.gunY,z:dz});
  let yaw=(tank.angle||0)+Math.atan2(local.x,local.z),rawPitch=0;
@@ -4073,7 +4040,8 @@ function solveWeaponAim(tank,mapId,target){
   let lo=-1.15,hi=1.15;
   for(let i=0;i<28;i++){const mid=(lo+hi)/2;if(heightAt(mid)<target.y)lo=mid;else hi=mid;}
   rawPitch=(lo+hi)/2;
-  const actual=weaponFrame(tank,mapId,{yaw,pitch:rawPitch}).direction,delta=worldYaw-Math.atan2(actual.x,actual.z);
+  const cosPitch=Math.cos(rawPitch);
+  const actual=pose.transform({x:sn*cosPitch,y:Math.sin(rawPitch),z:cs*cosPitch}),delta=worldYaw-Math.atan2(actual.x,actual.z);
   yaw+=Math.atan2(Math.sin(delta),Math.cos(delta));
  }
  const pitch=clamp(rawPitch,geometry.minPitch,geometry.maxPitch);
@@ -4087,7 +4055,7 @@ const {TacticalDirector} = MODULES["tactics.js"];
 const {ObstacleIndex,Lattice} = MODULES["spatial.js"];
 // Tanks with deep-wading gear (Maus, both Tiger I variants); the rest drown.
 const WADERS=new Set(['maus','tigerh1','tigere']),DROWN_TIME=5;
-const { TANKS, getTank, getMap, createBattleMap, removeBridgeDeck, terrainHeight, terrainAt, surfaceHeight, bridgeAllows, parapetCrossed, deckFunnel, underDeckExit, waterLevel, blockedAt, waterNearSegment } = MODULES["data.js"];
+const { TANKS, getTank, getMap, createBattleMap, removeBridgeDeck, terrainHeight, terrainAt, surfaceHeight, bridgeAllows, parapetCrossed, deckFunnel, underDeckExit, blockedAt, waterNearSegment } = MODULES["data.js"];
 const { weaponFrame, weaponGeometry, secondaryWeaponGeometry, solveWeaponAim, GRAVITY } = MODULES["ballistics.js"];
 const TAU = Math.PI * 2;
 const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
@@ -4173,7 +4141,7 @@ const DRONE_SPEED=80,DRONE_BLAST=18;
 const TREE_RAM_SPEED=.02,treeStrength=o=>Math.round(6+o.h*.5);
 
 class Game {
-  constructor({mode='battle',tankId='pz4f2',mapId='valley',difficulty='normal',onEvent=()=>{},randomTerrain=true,seed=Math.floor(Math.random()*4294967296)}={}) {
+  constructor({mode='battle',tankId='pz4f2',mapId='valley',difficulty='normal',onEvent=()=>{},randomTerrain=true,navigate=true,seed=Math.floor(Math.random()*4294967296)}={}) {
     this.map=randomTerrain?createBattleMap(mapId,seed):getMap(mapId);
     this.map={...this.map,obstacles:[...this.map.obstacles]};
     this.sahurs=[];
@@ -4199,16 +4167,17 @@ class Game {
     this.killStreak=0;this.nuke={required:BATTLE_SETTINGS.nukeRequired,ready:false,state:'locked',timer:0,team:0,launcher:null};
     this.zones=(this.mode==='deathmatch'?[]:this.map.zones).map(z=>({...z,owner:-1,progress:0,contested:false,radius:22}));
     this.shells=[];this.smokeClouds=[];this._serial=0;this._seed=(seed>>>0)||1;
-    this._input={};this._repairHeld=false;this._smokeHeld=false;
+    this._repairHeld=false;this._smokeHeld=false;
     this._rules=DIFFICULTY[this.difficulty];
     this.sightDistance=Math.min(this._rules.vision,this.map.size*Math.SQRT2);
     // Ray and path tests sample heights every few metres; they read 2 m lattices
     // of exact heights instead. Bridge decks only enter the surface lattice.
     const half=this.map.size*.5+40;
     this._obstacleBase=new Map();
-    this._groundGrid=new Lattice(half,2,(x,z)=>this._groundExact(x,z));
+    this._clearanceObstacles=[];
+    this._groundGrid=new Lattice(half,2,(x,z)=>terrainHeight(this.map.id,x,z));
     this._surfaceGrid=new Lattice(half,2,(x,z)=>surfaceHeight(this.map.id,x,z));
-    this._nav=this._buildNav();
+    this._nav=navigate?this._buildNav():null;
     const selected=getTank(tankId),
       friendly=TANKS.filter(t=>t.id!=='bmpt'&&t.nation===selected.nation&&t.rank<=Math.max(2,selected.rank));
     const enemies=TANKS.filter(t=>t.id!=='bmpt'&&t.nation!==selected.nation&&t.rank<=Math.max(2,selected.rank+1));
@@ -4219,7 +4188,6 @@ class Game {
       const t={id:isPlayer?'player':`${team===0?'ally':'enemy'}-${i}`,type,team,isPlayer,_slot:i};
       this._spawn(t,true);this.tanks.push(t);if(isPlayer)this.player=t;
     }
-    this.weather=this.map.biome==='desert'?'Prach':this.map.biome==='winter'?'Sněžení':'Jasno';
   }
 
   _rand() {let x=this._seed;x^=x<<13;x^=x>>>17;x^=x<<5;this._seed=x>>>0;return this._seed/4294967296;}
@@ -4238,7 +4206,7 @@ class Game {
     Object.assign(t,{x,z,y:surfaceHeight(this.map.id,x,z),angle:t.team===0?0:Math.PI,turretAngle:t.team===0?0:Math.PI,speed:0,yawVelocity:0,
       alive:true,fall:0,drone:null,flight:null,reload:0,secondaryReload:0,mgCooldown:0,mgHeat:0,mgOverheated:false,modules:{engine:100,tracks:100,turret:100,breech:100,ammo:100,crew:100},repair:0,fire:0,respawnIn:0,
       smoke:0,smokes:5,smokeCooldown:0,missiles:t.type==='bmpt'?4:0,missileReload:0,_barrelIndex:0,health:100,maxSpeed:(t.developer?350:spec.speed)/3.6,width:spec.width??(spec.role==='Těžký tank'||t.type==='bmpt'?4.0:3.45),length:spec.length??(spec.role==='Těžký tank'||t.type==='bmpt'?7.2:6.5),
-      _aimX:x,_aimZ:z+sign*100,_aimY:null,sightRange:0,_playerDamage:0,_lastPlayerHit:-Infinity,gunPitch:0,_think:this._rand()*.3,_targetId:null,_goal:null,_path:[],_pathAge:99,_reaction:this._rules.reaction,
+      _aimX:x,_aimZ:z+sign*100,_aimY:null,sightRange:0,_playerDamage:0,gunPitch:0,_think:this._rand()*.3,_targetId:null,_goal:null,_path:[],_pathAge:99,_reaction:this._rules.reaction,
       _approachKey:null,_approach:null,_approachDone:false,_observed:null,_flankDone:null,_crossing:null,_crossed:null,_order:null,_tactic:null,_sightChecks:new Map(),
       _slopeStall:0,_escapeSlope:null,_avoidSlope:null,_stuck:0,_reverse:0,_lastX:x,_lastZ:z,_lastPlayerHit:-999,_fireSource:null,_repairTotal:0,_captureClock:0,lastHit:null,lastKiller:null});
     if(!initial&&t.isPlayer)this._message('Nový tank připraven. Zpátky do boje!',t);
@@ -4246,7 +4214,6 @@ class Game {
 
   update(dt,input={}) {
     if(this.finished||!Number.isFinite(dt)||dt<=0)return;
-    this._input=input;
     if(input.repair&&!this._repairHeld)this.repairPlayer();
     if(input.smoke&&!this._smokeHeld)this.smokePlayer();
     this._repairHeld=!!input.repair;this._smokeHeld=!!input.smoke;
@@ -4354,14 +4321,14 @@ class Game {
   // Shared by the firing physics and the gun marker: cursor height is honored,
   // while bots and legacy aim inputs retain automatic center-mass elevation.
   gunSolution(t=this.player) {
-    const frame=weaponFrame(t,this.map.id);
     const manual=(t.isPlayer||t.isHuman)&&Number.isFinite(t._aimY);
     let targetY=manual?t._aimY:surfaceHeight(this.map.id,t._aimX,t._aimZ)+1.3;
     if(!manual){
       const aimed=this.tanks.find(o=>o.alive&&o!==t&&Math.hypot(o.x-t._aimX,o.z-t._aimZ)<6);
       if(aimed)targetY=surfaceHeight(this.map.id,aimed.x,aimed.z)+1.35;
     }
-    const solution=solveWeaponAim(t,this.map.id,{x:t._aimX,y:targetY,z:t._aimZ});
+    const frame=weaponFrame(t,this.map.id);
+    const solution=solveWeaponAim(t,this.map.id,{x:t._aimX,y:targetY,z:t._aimZ},frame);
     return {...solution,desiredYaw:solution.yaw,muzzle:frame.speed,barrel:frame.barrelLength+frame.mantletZ,originY:frame.pivot.y,pitch:t.gunPitch,frame};
   }
 
@@ -4461,7 +4428,7 @@ class Game {
     removeBridgeDeck(this.map,b);
     this.brokenBridges.push(i);
     this._surfaceGrid.reset();
-    this._nav=this._buildNav();
+    if(this._nav)this._nav=this._buildNav();
     for(const t of this.tanks)t._pathAge=99;
     return true;
   }
@@ -4527,12 +4494,16 @@ class Game {
     }
     if(!removed.size)return;
     this.map.obstacles=this.map.obstacles.filter(o=>!removed.has(o));
-    if(rebuildNav){this._nav=this._buildNav();for(const t of this.tanks)t._pathAge=99;}
+    if(rebuildNav&&this._nav){
+      for(const o of removed)this._openNavCells(o);
+      for(const t of this.tanks)t._pathAge=99;
+    }
   }
   demolish(index){
     const object=this.initialProps[index];if(!object||this.demolished.includes(index))return false;
     if(object.type==='tree')return this.fellTree(index,this.treeFalls[index]??0);
-    this.demolished.push(index);this.map.obstacles=this.map.obstacles.filter(o=>o!==object);this._nav=this._buildNav();
+    this.demolished.push(index);this.map.obstacles=this.map.obstacles.filter(o=>o!==object);
+    this._openNavCells(object);
     for(const t of this.tanks)t._pathAge=99;
     this._event({type:'demolition',x:object.x,z:object.z});return true;
   }
@@ -4573,17 +4544,19 @@ class Game {
     this.treeFalls[index]=Math.round(norm(dir)*1000)/1000;
     this.demolished.push(index);this.map.obstacles=this.map.obstacles.filter(p=>p!==o);
     this._treeDamage?.delete(index);
-    // Only the navigation cells around the stump can open up.
-    if(this._nav){
-      const {size,step,offset,cells}=this._nav,reach=3.3+Math.hypot(o.w,o.d)*.5,
-        cell=v=>clamp(Math.round((v-offset)/step),0,size-1);
-      for(let z=cell(o.z-reach);z<=cell(o.z+reach);z++)for(let x=cell(o.x-reach);x<=cell(o.x+reach);x++){
-        const c=cells[z*size+x];if(!c.open)c.open=this._free(c.x,c.z,3.3);
-      }
-    }
+    this._openNavCells(o);
     return true;
   }
-  firePlayer() {return this.player.alive&&!this.finished?this._fire(this.player):false;}
+  _openNavCells(o){
+    if(!this._nav)return;
+    // Removing a prop can only open cells within its footprint plus the tank clearance.
+    const {size,step,offset,cells}=this._nav,reach=3.3+Math.hypot(o.w,o.d)*.5;
+    const cell=v=>clamp(Math.round((v-offset)/step),0,size-1);
+    for(let z=cell(o.z-reach);z<=cell(o.z+reach);z++)for(let x=cell(o.x-reach);x<=cell(o.x+reach);x++){
+      const c=cells[z*size+x];
+      if(!c.open)c.open=this._free(c.x,c.z,3.3);
+    }
+  }
   launchNuke(){
     if(this.finished||!this.player.alive||!this.nuke.ready||this.nuke.state!=='ready')return false;
     this._startNuke(this.player);
@@ -4682,7 +4655,7 @@ class Game {
 
   _fire(t) {
     if(this.finished||!t.alive||t.reload>.001||t.modules.breech<=0||t.modules.crew<=0)return false;
-    const spec=getTank(t.type),autocannon=spec.weapon==='autocannon',barrelIndex=t._barrelIndex;
+    const spec=getTank(t.type),barrelIndex=t._barrelIndex;
     // A stopped gun shoots along its visible axis. Motion adds only a small,
     // symmetric dispersion; it never silently changes the gun's elevation.
     const spread=Math.abs(t.speed)*.00010;
@@ -4757,9 +4730,6 @@ class Game {
     return this._obstacleIndex;
   }
   _obstacles(x0,z0,x1=x0,z1=z0){return this._index().query(x0,z0,x1,z1);}
-  // Exact ground height as shells and sight lines meet it. Shells pass through
-  // water to the bed, so a wading tank cannot hide beneath the surface.
-  _groundExact(x,z){return terrainHeight(this.map.id,x,z);}
   // Static obstacles whose bounding circle comes within pad of segment a-b.
   _obstaclesAlong(a,b,pad=0){
     const out=[];
@@ -5164,10 +5134,11 @@ class Game {
   _free(x,z,radius=2.2,wade=false,ignore=null) {
     const bound=this.map.size*.5-5;
     if(Math.abs(x)>bound-radius||Math.abs(z)>bound-radius)return false;
-    for(const o of this._obstacles(x-radius,z-radius,x+radius,z+radius))if(obstacleDistance(x,z,o)<radius&&!ignore?.has(o))return false;
-    if(wade)return true;
-    for(const [dx,dz] of [[0,0],[radius,0],[-radius,0],[0,radius],[0,-radius]])if(blockedAt(this.map.id,x+dx,z+dz))return false;
-    return true;
+    for(const o of this._index().query(x-radius,z-radius,x+radius,z+radius,this._clearanceObstacles))
+      if(obstacleDistance(x,z,o)<radius&&!ignore?.has(o))return false;
+    if(wade||this.map.waterTop===-Infinity)return true;
+    const id=this.map.id;
+    return !(blockedAt(id,x,z)||blockedAt(id,x+radius,z)||blockedAt(id,x-radius,z)||blockedAt(id,x,z+radius)||blockedAt(id,x,z-radius));
   }
   // _free(x,z,2.5) plus a climb limit at every 3 m sample. Obstacle candidates
   // are gathered once per segment, water is tested only near water, and the
@@ -5188,7 +5159,7 @@ class Game {
       for(let i=i0;i<=i1;i++){const u=steps?i/steps:0;if(obstacleDistance(mix(a.x,b.x,u),mix(a.z,b.z,u),o)<radius)return false;}
     }
     const wet=waterNearSegment(id,a.x,a.z,b.x,b.z,radius+1);
-    let previousHeight=this._surfaceGrid.at(a.x,a.z);
+    let previousHeight;
     for(let i=0;i<=steps;i++){
       const u=steps?i/steps:0,x=mix(a.x,b.x,u),z=mix(a.z,b.z,u);
       if(wet&&(blockedAt(id,x,z)||blockedAt(id,x+radius,z)||blockedAt(id,x-radius,z)||blockedAt(id,x,z+radius)||blockedAt(id,x,z-radius)))return false;
@@ -5228,10 +5199,12 @@ class Game {
       }
       return best;
     };
-    const from=nearest(start),to=nearest(goal),g=new Float64Array(cells.length);g.fill(Infinity);g[from]=0;
-    const previous=new Int32Array(cells.length);
-    previous.fill(-1);
-    const closed=new Uint8Array(cells.length),heap=new MinHeap();
+    const from=nearest(start),to=nearest(goal);
+    const {g,previous,closed}=this._nav.search??={
+      g:new Float64Array(cells.length),previous:new Int32Array(cells.length),closed:new Uint8Array(cells.length)
+    };
+    g.fill(Infinity);g[from]=0;closed.fill(0);
+    const heap=new MinHeap();
     heap.push({id:from,f:distance(cells[from],cells[to])/step});
     let found=false;
     while(heap.a.length){
@@ -5347,13 +5320,23 @@ function parseWorkshopOBJ(source){
  }
  return null;
 }
+const validatedModelSources=new WeakMap();
 function normalizeWorkshopModel(value){
- if(!value||!parseWorkshopOBJ(value.source))return null;
+ if(typeof value?.source!=='string')return null;
+ if(validatedModelSources.get(value)!==value.source){
+   if(!parseWorkshopOBJ(value.source))return null;
+   validatedModelSources.set(value,value.source);
+ }
+ return workshopModel(value);
+}
+function workshopModel(value){
  const finite=(v,f)=>Number.isFinite(v)?v:f;
- return {source:value.source,name:typeof value.name==='string'?value.name.slice(0,80):'OBJ',
+ const model={source:value.source,name:typeof value.name==='string'?value.name.slice(0,80):'OBJ',
   mount:mount(value.mount),x:finite(value.x,.7),y:finite(value.y,0),z:finite(value.z,-.65),
   size:Number.isFinite(value.size)&&value.size>0?value.size:.85,
   rotation:finite(value.rotation,0),pitch:finite(value.pitch,0),roll:finite(value.roll,0),color:color(value.color,'#77836a')};
+ validatedModelSources.set(model,model.source);
+ return model;
 }
 async function importWorkshopModel(file){
  if(!/\.obj$/i.test(file.name))throw Error('Vyber soubor OBJ.');
@@ -5363,7 +5346,7 @@ async function importWorkshopModel(file){
  const {positions,indices}=geometry,lines=[];
  for(let i=0;i<positions.length;i+=3)lines.push(`v ${positions[i]} ${positions[i+1]} ${positions[i+2]}`);
  for(let i=0;i<indices.length;i+=3)lines.push(`f ${indices[i]+1} ${indices[i+1]+1} ${indices[i+2]+1}`);
- return normalizeWorkshopModel({source:lines.join('\n'),name:file.name});
+ return workshopModel({source:lines.join('\n'),name:file.name});
 }
 function workshopItems(appearance){
  return [...SKINS.filter(s=>s.id===appearance.pattern),...ACCESSORIES.filter(a=>appearance[a.id])];
@@ -5377,7 +5360,7 @@ function normalizeCosmetics(value,appearances){
 function normalizeDecal(value){
   return typeof value==='string'&&value.length<=MAX_DECAL_LENGTH&&/^data:image\/(png|webp|jpeg);base64,[A-Za-z0-9+/]+={0,2}$/.test(value)?value:'';
 }
-function importTankImage(file){return (async()=>{
+async function importTankImage(file){
  if(!file||file.size>20*1024*1024)throw Error('Vyber obrázek do 20 MB.');
  const url=URL.createObjectURL(file),img=new Image();
  try{
@@ -5392,12 +5375,12 @@ function importTankImage(file){return (async()=>{
   }
   throw Error('Obrázek se nepodařilo zmenšit. Zkus jiný soubor.');
  }finally{URL.revokeObjectURL(url);}
-})();}
+}
 const DECAL_SURFACES=[['turret-right','Věž · pravý bok'],['turret-left','Věž · levý bok'],['turret-back','Věž · zadní strana'],['hull-right','Korba · pravý bok'],['hull-left','Korba · levý bok'],['hull-front','Korba · čelo'],['hull-back','Korba · záď'],['turret-top','Věž · střecha'],['hull-top','Korba · horní plocha']];
 function normalizeDecals(values){
  if(!Array.isArray(values))return [];
  const number=(v,f,min,max)=>Number.isFinite(Number(v))?Math.max(min,Math.min(max,Number(v))):f;
- return values.slice(0,6).filter(v=>v&&normalizeDecal(v.image)).map(v=>({image:normalizeDecal(v.image),surface:DECAL_SURFACES.some(([id])=>id===v.surface)?v.surface:'turret-right',x:number(v.x,0,-4,4),y:number(v.y,0,-4,4),size:number(v.size,.75,.15,3),rotation:number(v.rotation,0,-180,180)}));
+ return values.slice(0,6).filter(v=>v&&normalizeDecal(v.image)).map(v=>({image:v.image,surface:DECAL_SURFACES.some(([id])=>id===v.surface)?v.surface:'turret-right',x:number(v.x,0,-4,4),y:number(v.y,0,-4,4),size:number(v.size,.75,.15,3),rotation:number(v.rotation,0,-180,180)}));
 }
 function normalizeAppearance(value={},tankId='pz4f2'){
  const v=value&&typeof value==='object'?value:{},nation=getTank(tankId).nation;
@@ -5419,32 +5402,7 @@ return {CAMOUFLAGES,SKINS,ACCESSORIES,MODEL_LICENSE,PAINT_SIDES,PAINT_SURFACES,P
 })();
 MODULES["leaderboard.js"]=(()=>{
 const cleanNick=value=>String(value||'').normalize('NFKC').replace(/[<>\u0000-\u001f\u007f]/g,'').trim().slice(0,20);
-function topFive(rows,entry){
- const best=new Map();
- for(const row of [...(Array.isArray(rows)?rows:[]),...(entry?[entry]:[])]){
-  const nick=cleanNick(row?.nick),score=Number(row?.score);if(!nick||!Number.isFinite(score)||score<0)continue;
-  const key=nick.toLocaleLowerCase('cs'),old=best.get(key);
-  if(!old||score>old.score)best.set(key,{nick,score:Math.round(score)});
- }
- return [...best.values()].sort((a,b)=>b.score-a.score||a.nick.localeCompare(b.nick,'cs')).slice(0,5);
-}
-class LocalLeaderboard{
- constructor(storage){
-   this.storage=storage;
-   this.key='iron-front-scores-v1';
-   this.data={};
-   try{this.data=JSON.parse(storage.getItem(this.key)||'{}')||{};}catch{}
- }
- list(mode){return topFive(this.data[mode]);}
- submit(mode,nick,score){
-   const rows=topFive(this.list(mode),{nick,score});
-   this.storage.setItem(this.key,JSON.stringify({...this.data,[mode]:rows}));
-   this.data[mode]=rows;
-   return rows;
- }
-}
-
-return {cleanNick,topFive,LocalLeaderboard};
+return {cleanNick};
 })();
 MODULES["multiplayer-game.js"]=(()=>{
 const {Game} = MODULES["simulation.js"];
@@ -5501,7 +5459,7 @@ const emptyStats=()=>({kills:0,captures:0,damage:0,xp:0,nukePoints:0});
 class HostedBattle extends Game{
  constructor(descriptor,{onEvent=()=>{}}={}){
   const d=normalizeMatch(descriptor);
-  super({tankId:d.host.tankId,mapId:d.mapId,seed:d.seed,difficulty:d.difficulty,mode:'battle',onEvent});
+  super({tankId:d.host.tankId,mapId:d.mapId,seed:d.seed,difficulty:d.difficulty,navigate:d.bots,onEvent});
   this.mode='multiplayer';this.descriptor=d;this.networkEvents=[];this.humanStats={};
   const members=d.members||[{...d.host,team:0},{...d.guest,team:1}],hostTeam=members[0].team,slots=[0,0];
   // Physical teams are relative to the host so the existing HUD stays friendly-first.
@@ -5580,7 +5538,6 @@ class HostedBattle extends Game{
   return true;
  }
  launchNuke(){return this.player?.isHuman?this._launchHumanNuke(this.player):false;}
- setGuestInput(input){return this.setHumanInput('guest',input);}
  command(id,name){
   const t=this.tanks.find(t=>t.id===id);if(!t?.isHuman||this.finished)return false;
   if(name==='respawn'){if(t.alive||t.respawnIn>0)return false;this._spawn(t);return true;}
@@ -5641,7 +5598,7 @@ function localEvent(event,view=false){
 class ReplicaBattle extends Game{
  constructor(descriptor,{onCommand=()=>{},onEvent=()=>{},profileId}={}){
   const d=normalizeMatch(descriptor),profile=d.members?.find(m=>m.id===(profileId||d.guest.id))||d.guest;
-  super({tankId:profile.tankId,mapId:d.mapId,seed:d.seed,difficulty:d.difficulty,mode:'battle',onEvent});
+  super({tankId:profile.tankId,mapId:d.mapId,seed:d.seed,difficulty:d.difficulty,navigate:false,onEvent});
   this._replica=true;
   this.localId=memberTankId(d,profile.id);this.localTeam=d.members?(profile.team===d.members[0].team?0:1):1;
   this.mode='multiplayer';
@@ -5649,9 +5606,7 @@ class ReplicaBattle extends Game{
   this.onCommand=onCommand;
   this.snapshots=[];
   this.networkSequence=-1;
-  this._renderClock=0;
   this._authority=null;
-  this.localView=true;
  }
  receive(snapshot,now=performance.now()){
   if(!validSnapshot(snapshot,this.descriptor)||snapshot.sequence<=this.networkSequence||!snapshot.tanks.some(t=>t.id===this.localId&&t.isHuman))return false;
@@ -5883,7 +5838,7 @@ return {serverURL,PublicServerRoom};
 })();
 MODULES["public-battle.js"]=(()=>{
 const randomUUID=()=>crypto.randomUUID();
-const {HostedBattle, makeSnapshot, sanitizeInput, normalizeProfile} = MODULES["multiplayer-game.js"];
+const {HostedBattle, sanitizeInput, normalizeProfile} = MODULES["multiplayer-game.js"];
 const {getTank} = MODULES["data.js"];
 const botProfile={id:'server-bot-profile',nick:'Server bot',tankId:'pz4f2'};
 const stats=()=>({kills:0,captures:0,damage:0,xp:0,nukePoints:0});
@@ -5946,7 +5901,6 @@ class PublicBattle extends HostedBattle {
   const v=this.view(key);
   return {...this.descriptor,public:true,host:{...botProfile,tankId:v.rival.type},guest:v.self.profile};
  }
- snapshotFor(key,sequence){return this.project(key,makeSnapshot(this,sequence));}
  project(key,s){
   const v=this.view(key);s={...s,finished:s.finished&&{...s.finished}};
   s.tanks=s.tanks.map((t,i)=>({...t,id:v.id(t.id),team:v.team(t.team),lastKiller:t.lastKiller?{...t.lastKiller,id:v.id(t.lastKiller.id)}:null,...(t.isHuman?{appearance:this.tanks[i].appearance}:{})}));
@@ -6123,7 +6077,7 @@ const {CloudRoom,watchPublicLobby} = MODULES["cloud-room.js"];
 const {PublicServerRoom,serverURL} = MODULES["public-server.js"];
 const {PUBLIC_SERVER_URL} = MODULES["public-server-config.js"];
 const {getMap} = MODULES["data.js"];
-const {translate,localize} = MODULES["i18n.js"];
+const {translate} = MODULES["i18n.js"];
 class PublicServerUI{
  constructor(owner){
   this.owner=owner;this.generation=0;this.url='';this.messages=[];
@@ -6283,7 +6237,7 @@ class MultiplayerRoom{
   this.code=code?normalizeRoomCode(code):roomCode();
   this.profile={...normalizeProfile({...profile,id:profile.id||randomId()}),team:0};
   this.settings=options(settings);
-  Object.assign(this,{onLobby,onBattle,onEvent,onClose,now,pollAutomatically,maxPlayers:8,maxTeamPlayers:4,members:[],peers:new Map(),revision:0,phase:'connecting',connected:false,closed:false,hidden:false,latency:null,sequence:0,inputSequence:0,eventSequence:0,lastEventSequence:-1,lastInput:-Infinity,lastSnapshot:-Infinity,lastEvents:-Infinity,lastHello:-Infinity,lastPing:-Infinity,lastPeerAt:now(),openedAt:now(),commandCounters:{},latestInput:sanitizeInput(),pendingFire:false,pendingMG:false,pendingSecondary:false,error:''});
+  Object.assign(this,{onLobby,onBattle,onEvent,onClose,now,pollAutomatically,maxPlayers:8,maxTeamPlayers:4,members:[],peers:new Map(),revision:0,phase:'connecting',connected:false,closed:false,hidden:false,latency:null,sequence:0,inputSequence:0,eventSequence:0,lastEventSequence:-1,lastInput:-Infinity,lastSnapshot:-Infinity,lastEvents:-Infinity,lastHello:-Infinity,lastPing:-Infinity,lastPeerAt:now(),commandCounters:{},latestInput:sanitizeInput(),pendingFire:false,pendingMG:false,pendingSecondary:false,error:''});
   if(this.host)this.members=[{...this.profile,host:true,ready:true}];
   this.transport=transportFactory(config,this.code,{onMessage:m=>this.receive(m),onClose:message=>this.fail(message)});
  }
@@ -6299,7 +6253,7 @@ class MultiplayerRoom{
  }
  async connect(){
   await this.transport.connect();if(this.closed)return;
-  this.connected=true;this.phase='lobby';this.lastPeerAt=this.openedAt=this.now();this.onChat(null,true);
+  this.connected=true;this.phase='lobby';this.lastPeerAt=this.now();this.onChat(null,true);
   if(this.pollAutomatically)this.timer=setInterval(()=>this.poll(),250);
   this.poll();this.notify();return this;
  }
@@ -7922,7 +7876,6 @@ class ZombieGame extends Game{
   this.upgrades={};
   this.phase='combat';
   this.autoCooldown=0;
-  this.autoHeat=0;
   this.nextWave();
  }
  upgradeCost(id){
@@ -7943,7 +7896,10 @@ class ZombieGame extends Game{
   if(this.finished||(this.wave>0&&this.phase!=='shop'))return false;
   this.wave++;this.phase='combat';this.zombies=[];this.shells=[];
   const count=Math.min(72,8+this.wave*4),p=this.player;
-  const cells=this._nav.cells.filter(c=>c.open&&Math.hypot(c.x-p.x,c.z-p.z)>45&&Math.hypot(c.x-p.x,c.z-p.z)<115);
+  const cells=this._nav.cells.filter(c=>{
+    const distance=(c.x-p.x)**2+(c.z-p.z)**2;
+    return c.open&&distance>45**2&&distance<115**2;
+  });
   for(let i=0;i<count;i++){
    let cell=cells[Math.floor(this._rand()*cells.length)]||{x:p.x,z:p.z+45},path=[];
    for(let retry=0;retry<12;retry++){
@@ -8002,15 +7958,14 @@ class ZombieGame extends Game{
    }
   }
   if(!p.flight&&!p.fall)this._autoGun(dt);this._updateShells(dt);
-  p.health=p.modules.crew;this.tickets=[p.health*10,this.zombies.filter(z=>z.alive).length*10];
+  p.health=p.modules.crew;
+  const alive=this.zombies.reduce((count,z)=>count+Number(z.alive),0);
+  this.tickets=[p.health*10,alive*10];
   if(p.modules.crew<=0){p.alive=false;this._endSurvival('Horda vyřadila posádku.');return;}
-  if(this.zombies.every(z=>!z.alive)){
+  if(alive===0){
    this.clearedWaves=this.wave;this.phase='shop';const bonus=100+this.wave*35;this.credits+=bonus;
    this._message(`VLNA ${this.wave} DOKONČENA · +${bonus} ŠROTU`);
   }
- }
- _zombieVisible(a,b){
-   return !super._traceSegment({x:a.x,y:surfaceHeight(this.map.id,a.x,a.z)+1.4,z:a.z},{x:b.x,y:surfaceHeight(this.map.id,b.x,b.z)+1.4,z:b.z},'player',false);
  }
  _autoGun(dt){
   this.autoCooldown=Math.max(0,this.autoCooldown-dt);if(!this.upgrades.auto||this.autoCooldown>0)return;
@@ -8084,6 +8039,7 @@ const UP = new THREE.Vector3(0, 1, 0);
 const DUMMY = new THREE.Object3D();
 const TEX = new Map();
 const GEO = new Map();
+const sharedGeometries = new WeakSet();
 function terrainGeometry(map,segments=300){
   const size=(map.size||1000)+80,half=size/2;
   const axis=extra=>{
@@ -8113,7 +8069,11 @@ function muzzleEffectProfile(weapon,scoped=false,own=false){
 const color = value => new THREE.Color(value);
 function random(seed) { return () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }; }
 function hash(x, z) { return ((Math.sin(x * 127.1 + z * 311.7) * 43758.5453) % 1 + 1) % 1; }
-function geometry(key, make) { if (!GEO.has(key)) GEO.set(key, make()); return GEO.get(key); }
+function geometry(key,make){
+  let value=GEO.get(key);
+  if(!value){value=make();GEO.set(key,value);sharedGeometries.add(value);}
+  return value;
+}
 const BOX = () => geometry('box', () => new THREE.BoxGeometry(1, 1, 1));
 const CYL = () => geometry('cyl', () => new THREE.CylinderGeometry(1, 1, 1, 16));
 const BALL = () => geometry('ball', () => new THREE.SphereGeometry(1, 32, 20));
@@ -8210,35 +8170,54 @@ function badge(g, texture, x, y, z, w, h, ry = 0) {
 // Merge static meshes by material, keeping the independently rotating turret separate.
 function mergeStatic(group) {
   group.updateMatrixWorld(true);
-  const inverse = group.matrixWorld.clone().invert(), batches = new Map(), originals = [];
-  group.traverse(m => {
-    if (!m.isMesh || m.isInstancedMesh || Array.isArray(m.material)) return;
-    let list = batches.get(m.material); if (!list) { list = []; batches.set(m.material, list); }
-    const g = m.geometry.index ? m.geometry.toNonIndexed() : m.geometry.clone();
-    g.applyMatrix4(new THREE.Matrix4().multiplyMatrices(inverse, m.matrixWorld)); list.push(g); originals.push(m);
+  const inverse=group.matrixWorld.clone().invert(),batches=new Map(),originals=new Set();
+  group.traverse(mesh=>{
+    if(!mesh.isMesh||mesh.isInstancedMesh||Array.isArray(mesh.material))return;
+    let batch=batches.get(mesh.material);
+    if(!batch)batches.set(mesh.material,batch=[]);
+    batch.push(mesh);
   });
-  for (const mesh of originals) mesh.parent.remove(mesh);
-  const cachedGeometries = new Set(GEO.values());
-  for (const original of new Set(originals.map(m => m.geometry))) if (!cachedGeometries.has(original)) original.dispose();
-  for (const [material, list] of batches) {
-    const n = list.reduce((v, g) => v + g.attributes.position.count, 0), positions = new Float32Array(n * 3),
-      normals = new Float32Array(n * 3), uvs = new Float32Array(n * 2);
-    let o = 0;
-    for (const g of list) {
-      const count = g.attributes.position.count;
-      positions.set(g.attributes.position.array, o * 3);
-      if (g.attributes.normal) normals.set(g.attributes.normal.array, o * 3);
-      if (g.attributes.uv) uvs.set(g.attributes.uv.array, o * 2);
-      o += count;
-      g.dispose();
+  const transform=new THREE.Matrix4(),normalMatrix=new THREE.Matrix3(),vertex=new THREE.Vector3();
+  for(const [material,meshes] of batches){
+    let vertices=0,corners=0,indexed=false;
+    for(const {geometry} of meshes){
+      const count=geometry.attributes.position.count;
+      vertices+=count;
+      corners+=geometry.index?.count??count;
+      if(geometry.index)indexed=true;
     }
-    const g = new THREE.BufferGeometry();
-    g.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    g.setAttribute('normal', new THREE.BufferAttribute(normals, 3));
-    g.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
-    g.computeBoundingSphere();
-    const mesh = new THREE.Mesh(g, material); mesh.castShadow = true; mesh.receiveShadow = true; group.add(mesh);
+    const positions=new Float32Array(vertices*3),normals=new Float32Array(vertices*3),uvs=new Float32Array(vertices*2);
+    const indices=indexed?(vertices<65535?new Uint16Array(corners):new Uint32Array(corners)):null;
+    let base=0,corner=0;
+    for(const mesh of meshes){
+      const geometry=mesh.geometry,{position,normal,uv}=geometry.attributes;
+      transform.multiplyMatrices(inverse,mesh.matrixWorld);
+      normalMatrix.getNormalMatrix(transform);
+      for(let i=0;i<position.count;i++){
+        const offset=base+i;
+        vertex.fromBufferAttribute(position,i).applyMatrix4(transform).toArray(positions,offset*3);
+        if(normal)vertex.fromBufferAttribute(normal,i).applyNormalMatrix(normalMatrix).toArray(normals,offset*3);
+        if(uv){uvs[offset*2]=uv.getX(i);uvs[offset*2+1]=uv.getY(i);}
+      }
+      if(indices){
+        const index=geometry.index;
+        if(index)for(let i=0;i<index.count;i++)indices[corner++]=base+index.getX(i);
+        else for(let i=0;i<position.count;i++)indices[corner++]=base+i;
+      }
+      base+=position.count;
+      originals.add(geometry);
+      mesh.removeFromParent();
+    }
+    const geometry=new THREE.BufferGeometry();
+    geometry.setAttribute('position',new THREE.BufferAttribute(positions,3));
+    geometry.setAttribute('normal',new THREE.BufferAttribute(normals,3));
+    geometry.setAttribute('uv',new THREE.BufferAttribute(uvs,2));
+    if(indices)geometry.setIndex(new THREE.BufferAttribute(indices,1));
+    geometry.computeBoundingSphere();
+    const mesh=new THREE.Mesh(geometry,material);
+    mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh);
   }
+  for(const geometry of originals)if(!sharedGeometries.has(geometry))geometry.dispose();
 }
 
 // Distant tree for the instanced backdrop: a unit-tall column (y -.5 .. .5,
@@ -8318,7 +8297,7 @@ function addArmorDetails(hull,turret,paint,steel,dirt,width,length,h,nation){
     for(const z of [-length*.31-.35,-length*.31+.35])cyl(hull,steel,x,h+.22,z,.265,.05,'z');
   }
   else{
-    const roll=cyl(hull,dirt,0,h+.2,-length*.39,.24,width*.48,'x');
+    cyl(hull,dirt,0,h+.2,-length*.39,.24,width*.48,'x');
     for(const x of [-.5,.5])box(hull,steel,x,h+.44,-length*.39,.045,.03,.4);
   }
 }
@@ -8334,7 +8313,7 @@ function addCustomDecal(model,decal,index=0){
    vertical=side==='top'?new THREE.Vector3(0,0,-1):new THREE.Vector3(0,1,0),
    center=new THREE.Vector3(0,part==='turret'?.57:(side==='front'||side==='back'?1.15:1.7),0);
  center.addScaledVector(horizontal,decal.x).addScaledVector(vertical,decal.y);
- const geo=new THREE.PlaneGeometry(decal.size,decal.size,8,8),vertices=geo.attributes.position,uv=geo.attributes.uv;
+ const geo=new THREE.PlaneGeometry(decal.size,decal.size,8,8),vertices=geo.attributes.position;
  const ray=new THREE.Raycaster(),worldDirection=direction.clone().transformDirection(parent.matrixWorld),
    outward=direction.clone().negate(),angle=decal.rotation*Math.PI/180;
  const valid=[];
@@ -8683,7 +8662,6 @@ function makeTankBase(id) {
 
   turret.position.set(0, gunGeometry.turretBaseY, gunGeometry.turretOffsetZ);
   cyl(turret, steel, 0, .07, 0, upperW * .46, .15);
-  const turretY = sherman ? .64 : tiger ? .58 : is ? .64 : .51;
   if (tiger2) {
     addMesh(turret, slopedHull(2.85, 3.35, .08, 1.25, 2.2, 2.65), paint, 0, 0, -.12);
     box(turret, paint, 0, .57, -1.45, 2.12, .87, .54);
@@ -9552,7 +9530,6 @@ class NukeBlast{
 class Renderer {
   constructor(canvas, { onError, quality='auto' } = {}) {
     this.canvas = canvas;
-    this.onError = onError;
     this.quality = 'auto';
     this.renderTier = 0;
     this.resetFrameBudget();
@@ -9579,6 +9556,8 @@ class Renderer {
     this.localRay = new THREE.Ray();
     this.hitBox = new THREE.Box3();
     this.hitTransform = new THREE.Matrix4();
+    this.inverseHitTransform = new THREE.Matrix4();
+    this.chaseRay = new THREE.Ray();
     this.hitRotation = new THREE.Quaternion();
     this.hitPosition = new THREE.Vector3();
     this.unitScale = new THREE.Vector3(1, 1, 1);
@@ -9592,7 +9571,6 @@ class Renderer {
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(43, 1, .06, 2100);
-    this.aimCamera = this.camera.clone();
     this.world = new THREE.Group(); this.dynamic = new THREE.Group(); this.scene.add(this.world, this.dynamic);
     this.hemi = new THREE.HemisphereLight('#c6dfed', '#423f30', 2.2); this.scene.add(this.hemi);
     this.sun = new THREE.DirectionalLight('#fff0cc', 3.4);
@@ -9638,11 +9616,11 @@ class Renderer {
   }
 
   disposeRenderTrees(...roots) {
-    const materials = new Set(), geometries = new Set(), textures = new Set(), cachedTextures = new Set(TEX.values()), cachedGeometries = new Set(GEO.values());
+    const materials = new Set(), geometries = new Set(), textures = new Set(), cachedTextures = new Set(TEX.values());
     for (const root of roots) {
       root.traverse(o => {
         if (o.isInstancedMesh) o.dispose();
-        if (o.geometry && !cachedGeometries.has(o.geometry)) geometries.add(o.geometry);
+        if (o.geometry && !sharedGeometries.has(o.geometry)) geometries.add(o.geometry);
         if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => materials.add(m));
       });
       root.clear();
@@ -9660,7 +9638,8 @@ class Renderer {
     this.disposeRenderTrees(this.world,this.dynamic);
     this.droneModels=new Map();
     this.sahurModels=new Map();
-    this.drawnDemolitions=new Set();
+    this.drawnDemolitions=0;
+    this.drawnBridges=0;
     this.fallingTrees=[];
     this.collapses=[];
     this.pendingChunks=new Map();
@@ -9682,8 +9661,8 @@ class Renderer {
     this.flash.intensity = 0;
   }
 
-  setHangar(tankId,appearance=this.appearances?.[tankId]) {
-    this.clearWorld(); this.mode = 'hangar'; this.game = null; this.clock = 0; this.hangarYaw = -.32;
+  resetHangarScene(mode) {
+    this.clearWorld(); this.mode = mode; this.game = null; this.map = null; this.clock = 0; this.hangarYaw = -.32;
     this.scene.background = color('#111b1e'); this.scene.fog = new THREE.FogExp2('#111b1e', .018);
     this.hemi.color.set('#c7d8dd'); this.hemi.groundColor.set('#32342b'); this.hemi.intensity = 2.1;
     this.sun.color.set('#f1d6a1');
@@ -9694,6 +9673,10 @@ class Renderer {
     this.sun.shadow.camera.updateProjectionMatrix();
     this.fill.color.set('#9ed0de'); this.fill.intensity = 1.5; this.fill.position.set(8, 8, -12);
     this.renderer.toneMappingExposure = 1.14;
+  }
+
+  setHangar(tankId,appearance=this.appearances?.[tankId]) {
+    this.resetHangarScene('hangar');
     const floorMat = mat('#3b4642', { map: groundTexture(), roughness: .96, metalness: .13 });
     box(this.world, floorMat, 0, -.16, 0, 120, .3, 120);
     const concrete = mat('#3c4541', { roughness: .98 }), metal = mat('#39433e', { roughness: .7, metalness: .65 }),
@@ -9724,10 +9707,9 @@ class Renderer {
   setLobby(members,slots) {
     const signature=JSON.stringify([slots,members.map(p=>[p.id,p.tankId,p.appearance,p.team])]);
     if(this.mode==='lobby'&&signature===this.lobbySignature){this.resize();return;}
-    this.setHangar(members[0].tankId);
-    this.disposeRenderTrees(this.world);this.hangarTank=null;
+    this.resetHangarScene('lobby');
     box(this.world,mat('#303e3c',{roughness:.9}),0,-.2,0,140,.3,120);
-    this.mode='lobby';this.lobbySignature=signature;this.lobbySlots=slots;
+    this.lobbySignature=signature;this.lobbySlots=slots;
     this.lobbyCamera=new THREE.OrthographicCamera(-18,18,9,-9,.1,180);
     this.lobbyCamera.position.set(0,16,26);this.lobbyCamera.lookAt(0,1,0);
     this.scene.fog.density=.008;
@@ -9861,7 +9843,7 @@ class Renderer {
     this.sun.shadow.camera.updateProjectionMatrix();
     this.renderer.toneMappingExposure = theme.exposure;
     // The land runs out to the horizon, so the view distance reaches past it.
-    for (const c of [this.camera, this.aimCamera]) { c.far = 6000; c.updateProjectionMatrix(); }
+    this.camera.far = 6000; this.camera.updateProjectionMatrix();
     this.sky = skyDome(skyTexture(map.theme || 'valley', theme, this.detailed() ? 4096 : 2048));
     this.world.add(this.sky);
     this.buildTerrain(map); this.buildBridges(map); this.buildProps(map); this.buildZones(game.zones);
@@ -9979,10 +9961,11 @@ class Renderer {
     const field = (paths, channel, grow = 0) => {
       for (const path of paths) {
         const w = path.width / 2 + grow;
+        trace(path.pts);
         for (let e = -R; e < w; e += step) {
           const v = Math.round(clamp(.5 + (e + step / 2) / (2 * R), 0, 1) * 255);
           ctx.strokeStyle = channel === 0 ? `rgb(${v},0,0)` : channel === 1 ? `rgb(0,${v},0)` : `rgb(0,0,${v})`;
-          ctx.lineWidth = 2 * (w - e); trace(path.pts); ctx.stroke();
+          ctx.lineWidth = 2 * (w - e); ctx.stroke();
         }
       }
     };
@@ -10413,7 +10396,7 @@ class Renderer {
       }
       case 'mill': {
         footing(); facade(P.plaster, w, h * .65, d); gable(P.tile, w, d, h * .65, w * .45, false);
-        const wheel = cyl(g, P.darkWood, w / 2 + .9, h * .32, 0, h * .36, 1.1, 'x');
+        cyl(g, P.darkWood, w / 2 + .9, h * .32, 0, h * .36, 1.1, 'x');
         for (let i = 0; i < 4; i++) { const s = box(g, P.wood, w / 2 + 1.5, h * .32, 0, .2, h * .7, .3); s.rotation.x = i * Math.PI / 4; }
         break;
       }
@@ -10680,7 +10663,7 @@ class Renderer {
     for (const tank of game.tanks) {
       let model = this.tankModels.get(tank.id);
       if (!model || model.type !== tank.type) {
-        if (model) this.dynamic.remove(model.group);
+        if (model){model.group.removeFromParent();this.disposeRenderTrees(model.group);}
         model = makeTank(tank.type,tank.isPlayer?this.appearances?.[tank.type]:tank.isHuman?tank.appearance:undefined);
         model.type = tank.type;
         this.tankModels.set(tank.id, model);
@@ -10732,7 +10715,8 @@ class Renderer {
       if (tank.alive && Math.abs(tank.speed || 0) > 4 && Math.random() < dt * 3 && this.effects.length < 90) this.spawnPuff(tank.x - Math.sin(a) * 2.5, y + .4, tank.z - Math.cos(a) * 2.5, this.map.biome === 'winter' ? '#c6d3d1' : '#a89b76', .65, 1.6, .2);
     }
     for (const [id, model] of this.tankModels) if (!game.tanks.some(t => t.id === id)) {
-      this.dynamic.remove(model.group);
+      model.group.removeFromParent();
+      this.disposeRenderTrees(model.group);
       this.tankModels.delete(id);
     }
   }
@@ -10760,11 +10744,11 @@ class Renderer {
   // into the next aim request and make an untouched sight climb by itself.
   updateView(dt, game, { scope = false, zoom = false } = {}) {
     if (this.mode !== 'battle' || !game?.player) return;
-    this.game = game; this.aimCamera ||= this.camera.clone();
+    this.game = game;
     if(game.nuke?.state==='detonated'&&this.nukeOrbit){
       // A fixed, slow cinematic orbit the player cannot steer: low and close at
       // the flash, then craning up and back as the cloud climbs.
-      const o=this.nukeOrbit,age=this.nukeBlast?.age??Math.max(0,game.time-o.started),view=this.aimCamera;
+      const o=this.nukeOrbit,age=this.nukeBlast?.age??Math.max(0,game.time-o.started),view=this.camera;
       const angle=o.yaw+age*.055,radius=600+age*9,rise=1-Math.exp(-age/5.5);
       view.position.set(o.x+Math.sin(angle)*radius,o.y+55+age*7,o.z+Math.cos(angle)*radius);
       view.position.y=Math.max(view.position.y,this.heightAt(view.position.x,view.position.z)+45);
@@ -10786,10 +10770,10 @@ class Renderer {
       view.clearViewOffset();
       view.updateProjectionMatrix();
       view.updateMatrixWorld();
-      this.viewScope=false;this.camera.copy(view);this.camera.updateMatrixWorld();return;
+      this.viewScope=false;return;
     }
     if(game.player.flight||game.player.drone){
-      const f=game.player.drone||game.player.flight,v=this.aimCamera,c=Math.cos(this.cameraPitch);
+      const f=game.player.drone||game.player.flight,v=this.camera,c=Math.cos(this.cameraPitch);
       v.position.set(f.x,f.y,f.z);
       v.lookAt(f.x-Math.sin(this.cameraYaw)*c,f.y-Math.sin(this.cameraPitch),f.z-Math.cos(this.cameraYaw)*c);
       v.fov=65;
@@ -10797,15 +10781,13 @@ class Renderer {
       v.clearViewOffset();
       v.updateProjectionMatrix();
       v.updateMatrixWorld();
-      this.camera.copy(v);
-      this.camera.updateMatrixWorld();
       this.viewScope=false;
       return;
     }
     const p = game.player, scoped = !!scope && p.alive, y = this.tankY(p);
     if (scoped !== this.viewScope && !this.pendingViewAim) this.pendingViewAim = this.aimFromCenter();
     this.viewScope = scoped;
-    const view = this.aimCamera;
+    const view = this.camera;
     const smooth = dt >= 1 ? 1 : 1 - Math.exp(-Math.max(0, Math.min(dt, .1)) * 14);
     this.target.set(p.x, y + (p.type === 'bmpt' ? 2.65 : 2.4), p.z);
     this.smoothedTarget.lerp(this.target, smooth);
@@ -10840,7 +10822,6 @@ class Renderer {
     view.clearViewOffset();
     view.updateProjectionMatrix();
     view.updateMatrixWorld();
-    this.updateOpticalCamera(game);
     this.sun.target.position.set(p.x, y, p.z);
     const sun = this.sunOffset;
     this.sun.position.set(p.x + (sun ? sun.x : -65), y + (sun ? sun.y : 100), p.z + (sun ? sun.z : 45));
@@ -10870,11 +10851,13 @@ class Renderer {
     }
     // Bring the chase camera in front of nearby buildings instead of looking
     // through them. Trees do not steal the view when driving through foliage.
-    const direction = out.clone().sub(anchor), distance = direction.length();
-    const cameraRay = new THREE.Ray(anchor.clone(), direction.normalize());
+    const cameraRay=this.chaseRay;
+    cameraRay.origin.copy(anchor);
+    const direction=cameraRay.direction.copy(out).sub(anchor),distance=direction.length();
+    direction.normalize();
     let clearDistance = distance;
     const reach = distance + 30;
-    for (const obstacle of this.map?.obstacles || []) {
+    for (const obstacle of this.game._obstacles(anchor.x-reach,anchor.z-reach,anchor.x+reach,anchor.z+reach)) {
       if (obstacle.type === 'tree' || Math.abs(obstacle.x - anchor.x) > reach || Math.abs(obstacle.z - anchor.z) > reach) continue;
       const hit = this.intersectBounds(cameraRay, obstacle.x, this.heightAt(obstacle.x, obstacle.z), obstacle.z, obstacle.rotation || 0, obstacle.w, obstacle.h, obstacle.d);
       if (hit) clearDistance = Math.min(clearDistance, Math.max(2, hit.distanceTo(anchor) - .7));
@@ -10919,13 +10902,6 @@ class Renderer {
     return scoped ? [-.6, .85] : [-1.25, .85];
   }
 
-  updateOpticalCamera(game) {
-    this.camera.copy(this.aimCamera);
-    this.camera.updateMatrixWorld();
-  }
-
-  updateCamera(dt, game, scope) { this.updateView(dt, game, { scope }); }
-
   setFreeLook(active) {
     active = !!active;
     if (active === this.freeLook || this.mode !== 'battle') return;
@@ -10941,7 +10917,6 @@ class Renderer {
       this.syncTanks(gameOrNull, dt, options.xray);
       if(gameOrNull.mode==='zombies')this.renderZombies(gameOrNull);
       if (!options.viewUpdated) this.updateView(dt, gameOrNull, options);
-      else this.updateOpticalCamera(gameOrNull);
       const playerModel = this.tankModels.get(gameOrNull.player.id);
       if (playerModel) playerModel.group.visible = !gameOrNull.player.flight&&!this.viewScope && (gameOrNull.player.alive || gameOrNull.player.respawnIn > 0);
       for (const zone of gameOrNull.zones) {
@@ -10958,14 +10933,13 @@ class Renderer {
         visual.beacon.material.opacity=active?.12+.06*Math.sin(this.clock*4):.065;
         visual.flag.rotation.y = Math.sin(this.clock * 1.9 + zone.x) * .15;
       }
-      this.drawnDemolitions??=new Set();
       // Felled props are grouped by chunk, so a tank ploughing through a wood
       // rebuilds each chunk once. The nuclear blast wave touches dozens of chunks
       // a frame: chunks are then rebuilt within a small time budget, oldest
       // first, and each prop's fall or collapse starts as its chunk is redrawn.
-      const pending=this.pendingChunks??=new Map();
-      for(const i of gameOrNull.demolished||[])if(!this.drawnDemolitions.has(i)){
-        this.drawnDemolitions.add(i);
+      const pending=this.pendingChunks;
+      while(this.drawnDemolitions<gameOrNull.demolished.length){
+        const i=gameOrNull.demolished[this.drawnDemolitions++];
         const o=gameOrNull.initialProps[i],key=Math.floor(o.x/180)+','+Math.floor(o.z/180);
         if(!pending.has(key))pending.set(key,[]);
         pending.get(key).push(i);
@@ -10992,7 +10966,8 @@ class Renderer {
         }
       }
       this.updateFallingTrees(dt);this.updateCollapses(dt);
-      for(const i of gameOrNull.brokenBridges||[]){
+      while(this.drawnBridges<gameOrNull.brokenBridges.length){
+        const i=gameOrNull.brokenBridges[this.drawnBridges++];
         const b=gameOrNull.initialBridges[i],mesh=this.world.getObjectByName('deck:'+b.id);
         if(mesh)mesh.visible=false;
       }
@@ -11031,18 +11006,12 @@ class Renderer {
     this.renderer.render(this.scene, this.mode==='lobby'?this.lobbyCamera:this.camera);
   }
 
-  aimFromScreen(clientX, clientY) {
-    if (this.freeLook && this.savedAim) return { ...this.savedAim };
-    const rect = this.canvas.getBoundingClientRect();
-    return this.castAim(((clientX - rect.left) / Math.max(1, rect.width)) * 2 - 1, -((clientY - rect.top) / Math.max(1, rect.height)) * 2 + 1);
-  }
-
   aimFromCenter() { return this.freeLook && this.savedAim ? { ...this.savedAim } : this.castAim(0, 0); }
 
   intersectBounds(ray, x, y, z, angle, width, height, length, bottom = 0) {
     this.hitPosition.set(x, y, z); this.hitRotation.setFromAxisAngle(UP, angle);
     this.hitTransform.compose(this.hitPosition, this.hitRotation, this.unitScale);
-    this.localRay.copy(ray).applyMatrix4(this.hitTransform.clone().invert());
+    this.localRay.copy(ray).applyMatrix4(this.inverseHitTransform.copy(this.hitTransform).invert());
     this.hitBox.min.set(-width / 2, bottom, -length / 2); this.hitBox.max.set(width / 2, height, length / 2);
     const hit = this.localRay.intersectBox(this.hitBox, this.aimHit);
     return hit ? hit.applyMatrix4(this.hitTransform) : null;
@@ -11107,12 +11076,6 @@ class Renderer {
     return { x: this.width / 2 + v.x / -v.z * focal, y: this.height / 2 - v.y / -v.z * focal, marks };
   }
 
-  getAimMarker(aim) {
-    if (!aim) return {x: 0, y: 0, visible: false};
-    const point = new THREE.Vector3(aim.x, aim.y, aim.z).project(this.camera);
-    return {x: (point.x * .5 + .5) * this.width, y: (-point.y * .5 + .5) * this.height, visible: point.z > -1 && point.z < 1 && Math.abs(point.x) < .98 && Math.abs(point.y) < .98};
-  }
-
   // The second marker is the first impact of the actual ballistic trajectory,
   // including intervening hills and cover, not a guessed point at cursor range.
   getGunMarker(game, aim = this.aimFromCenter()) {
@@ -11175,12 +11138,16 @@ class Renderer {
       if(!this.autoDefense){
         const mount=new THREE.Group();
         box(mount,mat('#414b39'),0,0,0,.45,.24,.5);
-        const barrel=cyl(mount,mat('#30362b'),0,.15,.45,.045,.95,'z');
+        cyl(mount,mat('#30362b'),0,.15,.45,.045,.95,'z');
         this.dynamic.add(mount);
         this.autoDefense=mount;
       }
-      const p=game.player,
-        target=game.zombies.filter(z=>z.alive).sort((a,b)=>Math.hypot(a.x-p.x,a.z-p.z)-Math.hypot(b.x-p.x,b.z-p.z))[0];
+      const p=game.player;
+      let target=null,nearest=Infinity;
+      for(const z of game.zombies){
+        const distance=(z.x-p.x)**2+(z.z-p.z)**2;
+        if(z.alive&&distance<nearest){target=z;nearest=distance;}
+      }
       this.autoDefense.position.set(p.x,p.y+3.25,p.z);
       if(target)this.autoDefense.rotation.y=Math.atan2(target.x-p.x,target.z-p.z);
       this.autoDefense.visible=!this.viewScope;
@@ -11377,9 +11344,9 @@ class Renderer {
     }
   }
   removeCollapse(i) {
-    const c = this.collapses[i], cached = new Set(GEO.values());
+    const c = this.collapses[i];
     c.pivot.removeFromParent();
-    c.pivot.traverse(m => { if (m.geometry && !cached.has(m.geometry)) m.geometry.dispose(); });
+    c.pivot.traverse(m => { if (m.geometry && !sharedGeometries.has(m.geometry)) m.geometry.dispose(); });
     this.collapses.splice(i, 1);
   }
   removeFallingTree(i) {
@@ -11571,7 +11538,6 @@ class AudioEngine {
         compressor.release.value = 0.22;
         master.connect(compressor);
         compressor.connect(ctx.destination);
-        this.compressor = compressor;
         this.noiseBuffer = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * 2), ctx.sampleRate);
         const samples = this.noiseBuffer.getChannelData(0);
         let previous = 0;
@@ -12112,14 +12078,13 @@ applyTheme(getTheme());
 const {getLanguage,getLanguagePreference,setLanguage,mountLocalization,translate} = MODULES["i18n.js"];
 const {matchesDevCode} = MODULES["dev-code.js"];
 const {MultiplayerUI} = MODULES["multiplayer-ui.js"];
-const {PlayerAccount,cloudProgress} = MODULES["accounts.js"];
+const {PlayerAccount} = MODULES["accounts.js"];
 const {AccountUI} = MODULES["account-ui.js"];
 const {ONLINE_CONFIG} = MODULES["online-config.js"];
-const {LocalLeaderboard,cleanNick} = MODULES["leaderboard.js"];
 const {WorkshopEditor} = MODULES["workshop.js"];
-const {NATIONS,TANKS,MAPS,getTank,getMap,createBattleMap,terrainAt,terrainHeight,surfaceHeight} = MODULES["data.js"];
+const {NATIONS,TANKS,MAPS,getTank,getMap,createBattleMap,terrainAt,terrainHeight} = MODULES["data.js"];
 const {Game} = MODULES["simulation.js"];
-const {CAMOUFLAGES,SKINS,ACCESSORIES,MODEL_LICENSE,normalizeAppearance,normalizeAppearances,
+const {CAMOUFLAGES,SKINS,ACCESSORIES,normalizeAppearance,normalizeAppearances,
  importTankImage,importWorkshopModel,workshopItems,normalizeCosmetics,DECAL_SURFACES} = MODULES["appearance.js"];
 const {ZombieGame,ZOMBIE_UPGRADES} = MODULES["zombies.js"];
 const {Renderer} = MODULES["renderer.js"];
@@ -12215,25 +12180,39 @@ function tankSVG(t){
 }
 
 
-const mapTextureCache=new Map(),mapThumbnails=new Map();
+const mapTextureCache=new WeakMap(),mapThumbnails=new Map();
 function mapThumbnail(map){
  if(!mapThumbnails.has(map.id))mapThumbnails.set(map.id,mapTexture(map).toDataURL());
  return mapThumbnails.get(map.id);
 }
 function mapTexture(map){
- if(mapTextureCache.has(map.id))return mapTextureCache.get(map.id);
+ const cached=mapTextureCache.get(map);
+ if(cached?.id===map.id)return cached.canvas;
  const displayMap=map.kind==='hills'&&!map.baseId?createBattleMap(map.id,202621):map;
  const c=document.createElement('canvas');
- c.width=c.height=180;
- const ctx=c.getContext('2d'),img=ctx.createImageData(180,180),step=map.size/180;
- for(let py=0;py<180;py++)for(let px=0;px<180;px++){
-   const x=(px/180-.5)*map.size,z=(py/180-.5)*map.size,h=terrainHeight(displayMap.id,x,z),
-     ground=terrainAt(displayMap.id,x,z);
-   const slopeX=(terrainHeight(displayMap.id,x+step,z)-h)/step,slopeZ=(terrainHeight(displayMap.id,x,z+step)-h)/step;
+ const size=180,step=map.size/size,stride=size+1;
+ c.width=c.height=size;
+ const ctx=c.getContext('2d'),img=ctx.createImageData(size,size);
+ // Adjacent pixels share the same height samples for slope shading.
+ const heights=new Float64Array(stride*stride);
+ const coord=i=>(i/size-.5)*map.size;
+ for(let z=0;z<=size;z++)for(let x=0;x<=size;x++)
+   heights[z*stride+x]=terrainHeight(displayMap.id,coord(x),coord(z));
+ const colors=new Map();
+ for(let py=0;py<size;py++)for(let px=0;px<size;px++){
+   const k=py*stride+px,h=heights[k],ground=terrainAt(displayMap.id,coord(px),coord(py));
+   const slopeX=(heights[k+1]-h)/step,slopeZ=(heights[k+stride]-h)/step;
    let shade=Math.max(.4,Math.min(1.35,.85-slopeX*.3-slopeZ*.6));
    if(Math.abs(h/10-Math.round(h/10))<.055)shade*=.8;
-   const hex=ground.color.replace('#',''),i=(py*180+px)*4;
-   for(let j=0;j<3;j++)img.data[i+j]=Math.min(255,parseInt(hex.slice(j*2,j*2+2),16)*shade);
+   let rgb=colors.get(ground);
+   if(rgb===undefined){
+     rgb=parseInt(ground.color.slice(1),16);
+     colors.set(ground,rgb);
+   }
+   const i=(py*size+px)*4;
+   img.data[i]=(rgb>>16)*shade;
+   img.data[i+1]=((rgb>>8)&255)*shade;
+   img.data[i+2]=(rgb&255)*shade;
    img.data[i+3]=255;
  }
  ctx.putImageData(img,0,0);
@@ -12250,7 +12229,7 @@ function mapTexture(map){
    ctx.fillRect(x-w/2,z-d/2,w,d);
    ctx.strokeRect(x-w/2,z-d/2,w,d);
  }
- mapTextureCache.set(map.id,c);return c;
+ mapTextureCache.set(map,{id:map.id,canvas:c});return c;
 }
 // Adds an obstacle footprint (rotated rectangle or circle) to the current path.
 function obstaclePath(ctx,o,cx,cz,scale){
@@ -12622,7 +12601,7 @@ function backToHangar(research=false){
   $('#network-hud').hidden=true;
   releaseControls();
   scope=false;
-  game=null;
+  game=null;zoneHud.game=null;
   paused=false;
   modalView='';
   $('#modal').hidden=true;
@@ -12690,6 +12669,9 @@ function onGameEvent(e){
   }
 }
 const moduleNames={crew:'Posádka',engine:'Motor',tracks:'Pásy',turret:'Věž',breech:'Závěr',ammo:'Munice'};
+const modulePanel=$('#module-bars');
+modulePanel.innerHTML=Object.values(moduleNames).map(name=>`<div class="module-bar-row"><span>${name}</span><div><i></i></div></div>`).join('');
+const moduleBars=Object.keys(moduleNames).map((key,i)=>[key,{element:modulePanel.children[i].querySelector('i')}]);
 // Reload fills for smoke, the Maus 75 mm and BMPT missiles, run every frame.
 // Each button keeps its end time locally so the fill stays smooth even when
 // cooldowns only arrive in coarse network snapshots. A cooldown that jumps up
@@ -12697,7 +12679,7 @@ const moduleNames={crew:'Posádka',engine:'Motor',tracks:'Pásy',turret:'Věž',
 const reloadFills=new Map();
 function updateReloadFill(btn,cd,now){
   if(!btn)return;
-  if(cd<=0){reloadFills.delete(btn);btn.classList.remove('reloading');return;}
+  if(cd<=0){if(reloadFills.delete(btn))btn.classList.remove('reloading');return;}
   const target=now+cd*1000;let fill=reloadFills.get(btn);
   if(!fill||cd>fill.last+.25)reloadFills.set(btn,fill={end:target,total:cd*1000,last:cd});
   else if(Math.abs(target-fill.end)>350)fill.end=target;
@@ -12745,7 +12727,13 @@ function updateHUD(){
   $('#cruise-status').hidden=!cruise.direction;
   $('#cruise-status').textContent=translate(cruise.direction>0?'TEMPOMAT VPŘED · W/S ZRUŠÍ':'TEMPOMAT VZAD · W/S ZRUŠÍ');
   $('#speed-value').textContent=Math.round((p.drone?p.drone.speed||0:p.speed)*3.6);
-  $('#module-bars').innerHTML=Object.entries(moduleNames).map(([key,name])=>`<div class="module-bar-row"><span>${name}</span><div><i style="width:${Math.max(0,p.modules[key])}%;background:${p.modules[key]>50?'#93b87d':p.modules[key]>0?'#e2ad60':'#df715d'}"></i></div></div>`).join('');
+  for(const [key,bar] of moduleBars){
+    const health=p.modules[key];
+    if(bar.health===health)continue;
+    bar.health=health;
+    bar.element.style.width=Math.max(0,health)+'%';
+    bar.element.style.background=health>50?'#93b87d':health>0?'#e2ad60':'#df715d';
+  }
   [['.engine-block','engine'],['.turret-block','turret'],['.gun-block','breech'],['.ammo-block','ammo'],['.track','tracks']].forEach(([selector,k])=>$$(selector).forEach(el=>{
     el.classList.toggle('module-damaged',p.modules[k]<55);
     el.classList.toggle('module-destroyed',p.modules[k]<=0);
@@ -12820,23 +12808,33 @@ function renderZoneHud(){
     banner.style.setProperty('--c',progress>=0?ZONE_BLUE:ZONE_RED);
   }else banner.className='';
 }
-function drawMinimap(){
-  const s=mini.width,scale=s/game.map.size;
-  mc.drawImage(mapTexture(game.map),0,0,s,s);
-  const cv=(x)=>(x+game.map.size/2)*scale;
-  mc.strokeStyle='#c2d4ac14';
-  mc.lineWidth=1;
+const minimapBackgrounds=new WeakMap();
+function minimapBackground(map,size){
+  const cached=minimapBackgrounds.get(map);
+  if(cached?.id===map.id&&cached.obstacles===map.obstacles&&cached.canvas.width===size)return cached.canvas;
+  const canvas=document.createElement('canvas');
+  canvas.width=canvas.height=size;
+  const ctx=canvas.getContext('2d'),scale=size/map.size,cv=x=>(x+map.size/2)*scale;
+  ctx.drawImage(mapTexture(map),0,0,size,size);
+  ctx.strokeStyle='#c2d4ac14';
+  ctx.lineWidth=1;
   for(let i=0;i<=6;i++){
-    mc.beginPath();
-    mc.moveTo(i*s/6,0);
-    mc.lineTo(i*s/6,s);
-    mc.moveTo(0,i*s/6);
-    mc.lineTo(s,i*s/6);
-    mc.stroke();
+    ctx.beginPath();
+    ctx.moveTo(i*size/6,0);
+    ctx.lineTo(i*size/6,size);
+    ctx.moveTo(0,i*size/6);
+    ctx.lineTo(size,i*size/6);
+    ctx.stroke();
   }
-  mc.fillStyle='#131e1599';mc.beginPath();
-  for(const o of game.map.obstacles)if(o.type!=='tree')obstaclePath(mc,o,cv(o.x),cv(o.z),scale);
-  mc.fill();
+  ctx.fillStyle='#131e1599';ctx.beginPath();
+  for(const o of map.obstacles)if(o.type!=='tree')obstaclePath(ctx,o,cv(o.x),cv(o.z),scale);
+  ctx.fill();
+  minimapBackgrounds.set(map,{id:map.id,obstacles:map.obstacles,canvas});
+  return canvas;
+}
+function drawMinimap(){
+  const s=mini.width,scale=s/game.map.size,cv=x=>(x+game.map.size/2)*scale;
+  mc.drawImage(minimapBackground(game.map,s),0,0);
   for(const z of game.zones){
     mc.beginPath();
     mc.arc(cv(z.x),cv(z.z),11,0,Math.PI*2);
@@ -12949,7 +12947,8 @@ function drawTags(){
    node.style.top='0';
    node.style.transform='translate('+q.x+'px,'+(q.y-9)+'px) translateX(-50%)';
    if(t.isHuman)node.setAttribute('translate','no');else node.removeAttribute('translate');
-   node.textContent=(t.isHuman?'★ ':t.team===0?'◆ ':'◇ ')+(t.isHuman?t.nick:getTank(t.type).name)+' · '+Math.round(Math.hypot(t.x-p.x,t.z-p.z))+' m'+(t.team===0&&t._tactic?' · '+({cover:'KRYT',flank:'OBCHVAT',push:'POSTUP',support:'PODPORA','cover-buddy':'KRYJE DVOJICI',defend:'OBRANA',attack:'ÚTOK'}[t._tactic]||''):'');
+   const label=(t.isHuman?'★ ':t.team===0?'◆ ':'◇ ')+(t.isHuman?t.nick:getTank(t.type).name)+' · '+Math.round(Math.hypot(t.x-p.x,t.z-p.z))+' m'+(t.team===0&&t._tactic?' · '+({cover:'KRYT',flank:'OBCHVAT',push:'POSTUP',support:'PODPORA','cover-buddy':'KRYJE DVOJICI',defend:'OBRANA',attack:'ÚTOK'}[t._tactic]||''):'');
+   if(node.hswLabel!==label){node.hswLabel=label;node.textContent=label;}
  }
  for(const [id,node] of tagNodes)if(!live.has(id)){node.remove();tagNodes.delete(id);}
 }
@@ -13448,13 +13447,6 @@ function bmptSVG(t){
 }
 
 let onlineStorage;try{onlineStorage=localStorage;}catch{}
-let scoreStore;try{scoreStore=new LocalLeaderboard(localStorage);}catch{scoreStore=null;}
-const scoreMode=()=>game?.mode==='zombies'?'zombies':'battle';
-function scoreTable(mode){
-  const rows=scoreStore?.list(mode)||[];
-  return rows.length?'<ol class="highscores">'+rows.map(r=>'<li><span translate="no">'+esc(r.nick)+'</span><strong>'+num(r.score)+'</strong></li>').join('')+'</ol>':'<p>Zatím žádný uložený výsledek.</p>';
-}
-
 function leaveScoresPage(updateURL=true){
  const page=$('#scores-page');
  if(page.hidden)return;

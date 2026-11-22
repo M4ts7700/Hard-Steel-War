@@ -78,11 +78,12 @@ function networkFirst(event, key) {
   // Keep the worker alive until the fresh copy is saved, even if the saved copy answered first.
   event.waitUntil(network.then(() => saving).catch(() => {}));
 
-  return caches.open(CACHE)
-    .then(cache => cache.match(key))
-    .then(saved => {
-      if (!saved) return network;
-      const timeout = new Promise(resolve => setTimeout(resolve, NETWORK_TIMEOUT_MS, saved));
-      return Promise.race([network.catch(() => saved), timeout]);
-    });
+  let timer;
+  const timeout = new Promise(resolve => { timer = setTimeout(resolve, NETWORK_TIMEOUT_MS); });
+  return Promise.race([network.catch(() => undefined), timeout]).then(async response => {
+    clearTimeout(timer);
+    if (response) return response;
+    const cache = await caches.open(CACHE);
+    return (await cache.match(key)) || network;
+  });
 }

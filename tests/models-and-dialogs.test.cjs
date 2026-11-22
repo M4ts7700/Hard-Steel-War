@@ -37,7 +37,10 @@ test('tank models build with finite geometry and distinct variant shapes',()=>{
     r.camera=new THREE.PerspectiveCamera(34,1600/340,.1,180);
     r.scene=new THREE.Scene();r.scene.fog=new THREE.FogExp2('#111b1e',.01);
     r.world=new THREE.Group();r.dynamic=new THREE.Group();r.resize=()=>{};
-    r.setHangar=()=>{r.world.clear();r.dynamic.clear();};
+    r.clearWorld=()=>{r.world.clear();r.dynamic.clear();};
+    r.hemi=new THREE.HemisphereLight();
+    r.sun=new THREE.DirectionalLight();r.fill=new THREE.DirectionalLight();
+    r.renderer={};
     const members=MODULES['data.js'].TANKS.slice(0,8).map((t,i)=>({id:String(i),tankId:t.id,team:i%2}));
     r.setLobby(members,8);
     const tanks=r.dynamic.children.filter(c=>c.isGroup),first=tanks[0];
