@@ -1296,6 +1296,38 @@ body.nuke-cinematic #view-status{top:auto;bottom:8%;font-size:12px;letter-spacin
 .account-badge.ok{border-color:var(--ok);color:var(--ok)}
 .account-contacts summary{cursor:pointer;font-size:12px;font-weight:600;color:var(--accent-text);padding:4px 0}
 .account-contacts .account-form{max-width:480px;margin:14px 0 4px}
+.account-section+.account-section{margin-top:12px}
+.account-fields{margin-top:8px}
+.account-field{padding:14px 0;border-top:1px solid var(--edge)}
+.account-field:first-child{border-top:0;padding-top:6px}
+.account-field:last-child{padding-bottom:0}
+.account-field-view{display:flex;align-items:center;gap:14px}
+.account-field-view>div{flex:1;min-width:0}
+.account-field-label{display:block;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.account-field-value{display:block;margin-top:4px;font-size:14px;color:var(--text);overflow-wrap:anywhere}
+.account-field-note{display:block;margin-top:4px;font-size:11px;line-height:1.5;color:var(--warn);overflow-wrap:anywhere}
+.account-field-done{display:block;margin-top:4px;font-size:12px;line-height:1.5;color:var(--ok)}
+.account-field-done:empty,.account-inline-status:empty{display:none}
+.account-edit{padding:9px 16px;flex-shrink:0}
+.account-field.editing .account-field-view{opacity:.75}
+.account-field-form{max-width:480px;margin:12px 0 0}
+.account-form-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch}
+.account-form .account-form-actions .primary-button{margin-top:0;padding:13px 22px}
+.account-inline-status{margin:0;font-size:12px;line-height:1.5;color:var(--warn)}
+.account-inline-status.ok{color:var(--ok)}
+.account-form .account-check{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text);cursor:pointer}
+.account-form .account-check input{width:18px;height:18px;padding:0;margin:0;flex-shrink:0;accent-color:var(--accent);cursor:pointer}
+.account-form .account-check-hint{margin:-8px 0 0 28px;overflow-wrap:anywhere}
+/* Nickname: a pencil next to the name in the header opens the change form under it. */
+.account-name-view{display:flex;align-items:center;gap:10px;margin:0 0 6px;padding-right:40px}
+#modal-content .account-name-view h2{margin:0;padding:0;min-width:0}
+.account-name-edit{
+  display:grid;place-items:center;flex-shrink:0;width:30px;height:30px;border:1px solid var(--button-line);border-radius:6px;
+  color:var(--soft-text);
+}
+.account-name-edit svg{width:15px;height:15px}
+.account-name-edit:hover{border-color:var(--accent);color:var(--accent-text)}
+.account-name .account-field-form{margin:4px 0 10px}
 .account-notice.warn{border-left-color:var(--bad);background:#e0786914;margin:0 0 18px}
 .account-notice.warn p{margin:6px 0 14px;font-size:12px;line-height:1.6;color:var(--soft-text)}
 .account-footer{
@@ -1684,6 +1716,20 @@ const CONTENT_TRANSLATIONS=[
  ['Skóre uloženo k účtu.','Score saved to your account.'],['Skóre čeká na odeslání.','Score is waiting to be submitted.'],
  ['Skóre uložené k účtu. Pro měsíční soutěž si vyplň kontakt v nastavení účtu.','Score saved to your account. Add a contact in your account settings to enter the monthly competition.'],
  ['Počkej na načtení účtu.','Wait for your account to load.'],
+ // Account window → profile and sign-in settings.
+ ['Přihlašovací údaje','Sign-in details'],['Kontaktní údaje','Contact info'],['Změnit přezdívku','Change nickname'],['Kontakty nejsou veřejné.','Your contact details are private.'],['Přihlašovací e-mail','Sign-in email'],['Čeká na potvrzení:','Awaiting confirmation:'],
+ ['Změnit','Change'],['Uložit','Save'],['Zrušit','Cancel'],['Nová přezdívka','New nickname'],
+ ['Ukazuje se v žebříčku a multiplayeru. 3–20 znaků, bez diakritiky.','Shown in the leaderboard and multiplayer. 3–20 ASCII letters, digits or underscores.'],
+ ['Nový e-mail','New email'],['Současné heslo','Current password'],['Nové heslo','New password'],['Nové heslo znovu','Repeat new password'],['8–128 znaků.','8–128 characters.'],
+ ['Na novou adresu pošleme potvrzovací odkaz. Do potvrzení se přihlašuješ dosavadním e-mailem.','We’ll send a confirmation link to the new address. Until you confirm it, sign in with your current email.'],
+ ['Přezdívka změněna.','Nickname changed.'],['Toto už je tvoje přezdívka.','This is already your nickname.'],
+ ['Poslali jsme potvrzovací odkaz na novou adresu. Změna se projeví po jeho otevření.','We sent a confirmation link to the new address. The change takes effect once you open it.'],
+ ['Přihlašovací e-mail změněn.','Sign-in email changed.'],['Heslo změněno.','Password changed.'],
+ ['Zadej současné heslo.','Enter your current password.'],['Současné heslo není správné.','Your current password is incorrect.'],
+ ['Tento e-mail už k přihlášení používáš.','You already sign in with this email.'],['Tento e-mail už používá jiný účet.','Another account already uses this email.'],
+ ['Použít přihlašovací e-mail jako kontaktní','Use sign-in email as contact email'],
+ ['Přihlašovací e-mail je změněný.','Your sign-in email has changed.'],
+ ['Potvrzeno. Ještě otevři odkaz, který přišel na druhou adresu.','Confirmed. Now open the link sent to your other address.'],
  // Settings → theme.
  ['Motiv','Theme'],['Barvy nabídek, hangáru a oken','Colors of menus, the hangar and windows'],['Výchozí','Default'],['Světlý','Light'],['Švédské M90','Swedish M90'],
  ['Použij /wifi název sítě nebo /wifi off.','Use /wifi network name or /wifi off.'],['Síť nastavena pro tuto relaci.','Network set for this session.'],['DEV MAUS · aktivován','DEV MAUS · activated'],['Tady nelze vývojářský tank nasadit.','Developer tank unavailable here.'],
@@ -6739,6 +6785,7 @@ const errors={
  user_already_exists:'Účet s tímto e-mailem už existuje. Přihlas se.',
  email_exists:'Účet s tímto e-mailem už existuje. Přihlas se.',
  username_taken:'Tuto přezdívku už má jiný hráč.',
+ invalid_username:'Přezdívka musí mít 3–20 znaků: písmena bez diakritiky, číslice nebo podtržítko.',
  email_address_invalid:'Zkontroluj e-mailovou adresu.',
  validation_failed:'Zkontroluj e-mailovou adresu.',
  over_email_send_rate_limit:'Odesláno příliš mnoho e-mailů. Zkus to za chvíli.',
@@ -6977,9 +7024,65 @@ class PlayerAccount{
   this.storage.setItem(this.pendingKey,JSON.stringify(this.pending));
   await this.flush();return this.profile;
  }
- async contacts(instagram,discord){
-  const data=await this.rpc('hsw_save_contacts',{p_instagram:instagram,p_discord:discord,p_email:this.profile?.contact_email??null});
+ // With useLogin the server copies the login email into the contest contact and keeps it in step after email changes.
+ async contacts(instagram,discord,useLogin=true,email=''){
+  const address=String(email||'').trim();
+  if(!useLogin&&address)accountEmail(address);
+  const data=await this.rpc('hsw_save_contacts',{p_instagram:instagram,p_discord:discord,p_email:useLogin?null:address,p_use_login:!!useLogin});
   Object.assign(this.profile,data);return data;
+ }
+ async changeUsername(nickname){
+  const name=accountUsername(nickname),epoch=this.epoch;
+  const saved=await this.rpc('hsw_change_username',{p_username:name});
+  if(epoch!==this.epoch)throw Error('Relace byla změněna.');
+  if(this.profile)this.profile.username=saved;
+  this.remember({username:saved});
+  return saved;
+ }
+ // Email and password changes first check the current password by signing in again.
+ // The fresh session also satisfies Supabase's "recent sign-in" rule for these changes.
+ async reauthenticate(password){
+  const email=this.profile?.email;
+  if(!this.session||!email)throw Object.assign(Error(EXPIRED),{code:'session_expired'});
+  if(!password)throw Object.assign(Error('Zadej současné heslo.'),{code:'wrong_password'});
+  const epoch=this.epoch,user=this.session.user.id,old=this.session.access_token;
+  let session;
+  try{session=await this.request('/auth/v1/token?grant_type=password',{email,password});}
+  catch(e){
+   if(e.code==='invalid_credentials')throw Object.assign(Error('Současné heslo není správné.'),{code:'wrong_password'});
+   throw e;
+  }
+  if(epoch!==this.epoch||session?.user?.id!==user)throw Error('Relace byla změněna.');
+  this.persist(session);
+  // The new sign-in replaces the old session on this device; end the old one on the server.
+  this.request('/auth/v1/logout?scope=local',undefined,old).catch(()=>{});
+  return this.session.access_token;
+ }
+ async changePassword(current,next){
+  if(!validAccountPassword(next))throw Error('Heslo musí mít 8–128 znaků.');
+  if(current===next)throw Object.assign(Error(errors.same_password),{code:'same_password'});
+  const token=await this.reauthenticate(current);
+  await this.request('/auth/v1/user',{password:next},token,'PUT');
+ }
+ // With email confirmation on, Supabase keeps the old address until the link in the email is opened.
+ async changeEmail(address,password){
+  const email=accountEmail(address);
+  if(email.toLowerCase()===String(this.profile?.email||'').toLowerCase())throw Error('Tento e-mail už k přihlášení používáš.');
+  const token=await this.reauthenticate(password);
+  let user;
+  try{user=await this.request('/auth/v1/user'+this.emailRedirect(),{email},token,'PUT');}
+  catch(e){
+   if(['email_exists','user_already_exists'].includes(e.code))throw Object.assign(Error('Tento e-mail už používá jiný účet.'),{code:e.code});
+   throw e;
+  }
+  const changed=String(user?.email||'').toLowerCase()===email.toLowerCase();
+  if(this.profile){
+   if(changed){
+    this.profile.email=user.email;this.profile.new_email=null;
+    if(this.profile.contact_uses_login!==false)this.profile.contact_email=user.email;
+   }else this.profile.new_email=user?.new_email||email;
+  }
+  return {pending:!changed,email};
  }
  async submit(score,run){
   const epoch=this.epoch;
@@ -7010,6 +7113,7 @@ const hasContact=p=>!!(p.instagram||p.discord||p.contact_email);
 const number=n=>Math.round(Number(n)||0).toLocaleString(document.documentElement.lang==='en'?'en-US':'cs-CZ');
 const currentMonth=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Prague',year:'numeric',month:'2-digit'}).format(new Date());
 const PERSON_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4.5 20.5c1.2-4 4-6 7.5-6s6.3 2 7.5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const EDIT_ICON='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg>';
 // One state drives the top-bar chip and the account window:
 // guest · restoring · synced · saving · offline · conflict · error
 const CHIP_STATUS={restoring:'Načítám…',synced:'Uloženo v cloudu',saving:'Ukládám…',offline:'Offline',conflict:'Vyřeš konflikt',error:'Neuloženo'};
@@ -7296,30 +7400,138 @@ class AccountUI{
  }
  openProfile(){
   const p=this.account.profile,progress=this.getProgress(),name=this.account.username,contact=!!p&&hasContact(p);
-  let html='<div class="account-view"><span class="eyebrow">HRÁČSKÝ ÚČET</span><div class="account-hero"><span class="account-avatar large" aria-hidden="true">'+escapeHTML((name[0]||'?').toUpperCase())+'</span><div><h2 translate="no">'+escapeHTML(name||'…')+'</h2><p id="account-sync" class="account-sync"></p></div><button class="secondary-button" data-account="retry" hidden>ZKUSIT ZNOVU</button></div>';
+  let html='<div class="account-view"><span class="eyebrow">HRÁČSKÝ ÚČET</span><div class="account-hero"><span class="account-avatar large" aria-hidden="true">'+escapeHTML((name[0]||'?').toUpperCase())+'</span><div class="account-name" data-field="username"><div class="account-name-view"><h2 translate="no">'+escapeHTML(name||'…')+'</h2>'+
+   (p?'<button type="button" class="account-name-edit" data-edit="username" aria-label="Změnit přezdívku" title="Změnit přezdívku">'+EDIT_ICON+'</button>':'')+'</div><span class="account-field-done" role="status"></span>'+
+   (p?'<form class="account-form account-field-form" novalidate hidden><label>Nová přezdívka<input name="username" autocomplete="nickname" autocapitalize="none" spellcheck="false" minlength="3" maxlength="20" value="'+escapeHTML(name)+'" required></label><small>Ukazuje se v žebříčku a multiplayeru. 3–20 znaků, bez diakritiky.</small><p class="account-inline-status" role="status"></p><div class="account-form-actions"><button class="primary-button" type="submit">ULOŽIT</button><button class="secondary-button" type="button" data-cancel>ZRUŠIT</button></div></form>':'')+
+   '<p id="account-sync" class="account-sync"></p></div><button class="secondary-button" data-account="retry" hidden>ZKUSIT ZNOVU</button></div>';
   html+='<div id="account-conflict" class="account-notice warn" hidden><strong>Na jiném zařízení se uložil jiný postup.</strong><p>Vyber, který postup chceš zachovat. Druhý bude přepsán.</p><div class="account-actions"><button class="secondary-button" data-account="remote">POUŽÍT POSTUP Z CLOUDU</button><button class="secondary-button" data-account="local">ZACHOVAT TOTO ZAŘÍZENÍ</button></div></div>';
   if(p){
    html+='<div class="account-stats"><div><strong>'+number(p.best_score)+'</strong><small>OSOBNÍ REKORD</small></div><div><strong>'+progress.unlocked.length+' / '+TANKS.length+'</strong><small>VYZKOUMÁNO</small></div><div><strong>'+number(progress.xp)+'</strong><small>VÝZKUMNÝCH BODŮ</small></div></div>';
-   html+='<section class="account-section"><div class="account-section-head"><h3>Měsíční soutěž</h3><span class="account-badge'+(contact?' ok':'')+'">'+(contact?'✓ Účast v soutěži':'Doplň kontakt')+'</span></div><p>Hráč s nejvyšším skóre mezi způsobilými účastníky na konci měsíce od nás dostane web zdarma.</p><details class="account-contacts"'+(contact?'':' open')+'><summary>'+(contact?'Upravit kontakty':'Vyplnit kontakt')+'</summary><form id="account-contacts" class="account-form"><label>Instagram · uživatelské jméno<input name="instagram" maxlength="100" value="'+escapeHTML(p.instagram)+'" autocomplete="off"></label><label>Discord · uživatelské jméno<input name="discord" maxlength="100" value="'+escapeHTML(p.discord)+'" autocomplete="off"></label><label>Kontaktní e-mail<input type="email" value="'+escapeHTML(p.contact_email)+'" readonly></label><small>Provozovatel hry může použít kontakty včetně e-mailu účtu k oslovení výherce. V žebříčku se nezobrazují.</small><button class="primary-button" type="submit">ULOŽIT KONTAKTY</button></form></details></section>';
+   const login=p.email||'',hasLogin=!!login,useLogin=p.contact_uses_login!==false;
+   const pending=p.new_email&&p.new_email.toLowerCase()!==login.toLowerCase()?'Čeká na potvrzení: <b translate="no">'+escapeHTML(p.new_email)+'</b>':'';
+   html+='<section class="account-section"><div class="account-section-head"><h3>Přihlašovací údaje</h3></div><div class="account-fields">'+
+    this.fieldRow('email','Přihlašovací e-mail',escapeHTML(login||'—'),pending,hasLogin,
+     '<label>Nový e-mail<input name="email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="254" required></label><label>Současné heslo<input name="password" type="password" autocomplete="current-password" maxlength="128" required></label><small>Na novou adresu pošleme potvrzovací odkaz. Do potvrzení se přihlašuješ dosavadním e-mailem.</small>')+
+    this.fieldRow('password','Heslo','••••••••','',hasLogin,
+     '<input name="login" type="email" autocomplete="username" value="'+escapeHTML(login)+'" hidden><label>Současné heslo<input name="current" type="password" autocomplete="current-password" maxlength="128" required></label><label>Nové heslo<input name="password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required></label><label>Nové heslo znovu<input name="confirm" type="password" autocomplete="new-password" minlength="8" maxlength="128" required></label><small>8–128 znaků.</small>')+
+    '</div></section>';
+   html+='<section class="account-section"><div class="account-section-head"><h3>Kontaktní údaje</h3></div><details class="account-contacts"'+(contact?'':' open')+'><summary>'+(contact?'Upravit kontakty':'Vyplnit kontakt')+'</summary><form id="account-contacts" class="account-form" novalidate><label>Instagram · uživatelské jméno<input name="instagram" maxlength="100" value="'+escapeHTML(p.instagram)+'" autocomplete="off"></label><label>Discord · uživatelské jméno<input name="discord" maxlength="100" value="'+escapeHTML(p.discord)+'" autocomplete="off"></label>'+
+    '<label class="account-check"><input name="useLogin" type="checkbox"'+(useLogin?' checked':'')+'><span>Použít přihlašovací e-mail jako kontaktní</span></label><small class="account-check-hint" translate="no"'+(useLogin&&login?'':' hidden')+'>'+escapeHTML(login)+'</small>'+
+    '<label class="account-contact-email"'+(useLogin?' hidden':'')+'>Kontaktní e-mail<input name="email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="254" value="'+(useLogin?'':escapeHTML(p.contact_email))+'"></label>'+
+    '<small>Kontakty nejsou veřejné.</small><p class="account-inline-status" role="status"></p><button class="primary-button" type="submit">ULOŽIT KONTAKTY</button></form></details></section>';
   }
   html+='<p id="account-status" class="account-status" role="status"></p><div class="account-footer">'+(p?'<button class="secondary-button" data-account="sync">ULOŽIT TEĎ</button>':'<span></span>')+'<button class="text-button account-logout" data-account="logout">ODHLÁSIT SE</button></div><p class="account-fineprint">Účet ukládá tanky, výzkum a rekordy. Vzhledy a kosmetická odemčení přenes zálohou v nastavení.</p></div>';
   this.openModal('account',html);
   this.render();
-  document.querySelector('#account-contacts')?.addEventListener('submit',async e=>{
+  this.bindFields();
+  const contacts=document.querySelector('#account-contacts');
+  if(!contacts)return;
+  const c=contacts.elements;
+  c.useLogin.addEventListener('change',()=>{
+   const use=c.useLogin.checked;
+   contacts.querySelector('.account-contact-email').hidden=use;
+   contacts.querySelector('.account-check-hint').hidden=!use||!p.email;
+   if(!use)c.email.focus();
+  });
+  contacts.addEventListener('submit',async e=>{
    e.preventDefault();
    if(this.busy)return;
+   const say=text=>{contacts.querySelector('.account-inline-status').textContent=text;},use=c.useLogin.checked;
+   if(!use&&c.email.value.trim()){
+    try{accountEmail(c.email.value);}catch(error){say(error.message);c.email.focus();return;}
+   }
    this.busy=true;
-   const form=e.currentTarget,button=form.querySelector('button');
-   button.disabled=true;
+   const button=contacts.querySelector('button');
+   button.disabled=true;say('');
    try{
-     await this.account.contacts(form.elements.instagram.value,form.elements.discord.value);
+     await this.account.contacts(c.instagram.value,c.discord.value,use,c.email.value);
      this.busy=false;
      this.openProfile();
-     this.status('Kontakty uloženy.');
+     const saved=document.querySelector('#account-contacts .account-inline-status');
+     if(saved){saved.closest('details').open=true;saved.textContent='Kontakty uloženy.';saved.classList.add('ok');}
    }
-   catch(error){this.status(error.message);}
+   catch(error){if(error.code==='session_expired')this.fail(error);else say(error.message);}
    finally{button.disabled=false;this.busy=false;}
   });
+ }
+ // One row per sign-in detail. "Change" opens a small form in place of the row; only one is open at a time.
+ fieldRow(id,label,value,note,editable,form){
+  return '<div class="account-field" data-field="'+id+'"><div class="account-field-view"><div><span class="account-field-label">'+label+'</span><span class="account-field-value"'+(id==='password'?' aria-hidden="true"':' translate="no"')+'>'+value+'</span>'+(note?'<span class="account-field-note">'+note+'</span>':'')+'<span class="account-field-done" role="status"></span></div><button type="button" class="secondary-button account-edit" data-edit="'+id+'" aria-label="Změnit: '+label+'"'+(editable?'':' disabled')+'>ZMĚNIT</button></div>'+
+   '<form class="account-form account-field-form" novalidate hidden>'+form+'<p class="account-inline-status" role="status"></p><div class="account-form-actions"><button class="primary-button" type="submit">ULOŽIT</button><button class="secondary-button" type="button" data-cancel>ZRUŠIT</button></div></form></div>';
+ }
+ bindFields(){
+  // The sign-in rows and the nickname in the header share the same edit behaviour.
+  const rows=[...document.querySelectorAll('.account-view [data-field]')].filter(row=>row.querySelector('form'));
+  const edit=(row,on)=>{
+   const form=row.querySelector('form');
+   row.classList.toggle('editing',on);
+   form.hidden=!on;row.querySelector('[data-edit]').hidden=on;
+   if(!on){form.reset();form.querySelector('.account-inline-status').textContent='';}
+  };
+  for(const row of rows){
+   const form=row.querySelector('form');
+   row.querySelector('[data-edit]').addEventListener('click',()=>{
+    for(const other of rows)if(other!==row)edit(other,false);
+    row.querySelector('.account-field-done').textContent='';
+    edit(row,true);
+    const first=form.querySelector('input:not([hidden])');
+    first.focus();if(row.dataset.field==='username')first.select();
+   });
+   form.querySelector('[data-cancel]').addEventListener('click',()=>{if(!this.busy){edit(row,false);row.querySelector('[data-edit]').focus();}});
+   form.addEventListener('keydown',e=>{if(e.key==='Escape'&&!this.busy){e.preventDefault();e.stopPropagation();edit(row,false);row.querySelector('[data-edit]').focus();}});
+   form.addEventListener('submit',e=>{e.preventDefault();this.saveField(row.dataset.field,form);});
+  }
+ }
+ async saveField(id,form){
+  if(this.busy)return;
+  const f=form.elements,say=text=>{const node=form.querySelector('.account-inline-status');if(node)node.textContent=text;};
+  const check=(test,field)=>{try{test();return true;}catch(error){say(error.message);field.focus();return false;}};
+  if(id==='username'){
+   if(this.inBattle()){say('Nejdřív se vrať do hangáru.');return;}
+   if(!check(()=>accountUsername(f.username.value),f.username))return;
+   if(accountUsername(f.username.value)===this.account.username){say('Toto už je tvoje přezdívka.');f.username.focus();return;}
+  }
+  if(id==='email'){
+   if(!check(()=>accountEmail(f.email.value),f.email))return;
+   if(!f.password.value){say('Zadej současné heslo.');f.password.focus();return;}
+  }
+  if(id==='password'){
+   if(!f.current.value){say('Zadej současné heslo.');f.current.focus();return;}
+   if(!validAccountPassword(f.password.value)){say('Heslo musí mít 8–128 znaků.');f.password.focus();return;}
+   if(f.password.value!==f.confirm.value){say('Hesla se neshodují.');f.confirm.focus();return;}
+  }
+  const buttons=[...form.querySelectorAll('button')];
+  const lock=on=>{this.busy=on;for(const b of buttons)b.disabled=on;};
+  lock(true);say('Ukládám…');
+  try{
+   let message;
+   if(id==='username'){
+    const saved=await this.account.changeUsername(f.username.value);
+    this.applyProgress({...this.getProgress(),nickname:saved,multiplayerNick:saved});
+    message='Přezdívka změněna.';
+   }
+   if(id==='email'){
+    const result=await this.account.changeEmail(f.email.value,f.password.value);
+    message=result.pending?'Poslali jsme potvrzovací odkaz na novou adresu. Změna se projeví po jeho otevření.':'Přihlašovací e-mail změněn.';
+   }
+   if(id==='password'){
+    await this.account.changePassword(f.current.value,f.password.value);
+    message='Heslo změněno.';
+   }
+   lock(false);
+   this.render();this.openProfile();
+   const done=document.querySelector('.account-view [data-field="'+id+'"] .account-field-done');
+   if(done)done.textContent=message;
+  }catch(error){
+   lock(false);
+   if(error.code==='session_expired'){this.fail(error);return;}
+   if(!form.isConnected)return;
+   say(error.message);
+   const field=error.code==='wrong_password'?(f.current||f.password)
+     :['same_password','weak_password'].includes(error.code)?f.password
+     :id==='username'?f.username:id==='email'?f.email:null;
+   if(field){if(field.type==='password')field.value='';field.focus();}
+  }
  }
  settingsRow(){
   const name=this.signedIn?this.account.username:'';
@@ -13416,7 +13628,9 @@ document.addEventListener('click',event=>{
 account=new PlayerAccount({...ONLINE_CONFIG,emailRedirect:()=>'https://hsw.neplytegr.cz/?lang='+getLanguage()},onlineStorage);
 let recoveryToken=null;
 // Supabase uses the same callback URL for sign-up confirmation and password recovery.
-if(/(^#|&)(access_token|error)=/.test(location.hash)){
+// A login email change returns here too (type=email_change). With secure email change on, the first of the
+// two links only carries a message and the second one signs the player in with the new address.
+if(/(^#|&)(access_token|error|message)=/.test(location.hash)){
  const params=new URLSearchParams(location.hash.slice(1));
  const search=new URLSearchParams(location.search);search.delete('lang');
  const query=search.toString();
@@ -13424,7 +13638,8 @@ if(/(^#|&)(access_token|error)=/.test(location.hash)){
  let message;
  if(params.get('error'))message=params.get('error_code')==='otp_expired'?'Odkaz už neplatí. Zkus se přihlásit, nebo si nech poslat kód pro obnovu hesla.':'Potvrzení e-mailu se nezdařilo. Zkus to znovu.';
  else if(params.get('type')==='recovery')recoveryToken=params.get('access_token');
- else try{if(account.adoptRedirect(params))message='E-mail je potvrzený. Jsi přihlášený.';}catch{}
+ else if(!params.get('access_token'))message='Potvrzeno. Ještě otevři odkaz, který přišel na druhou adresu.';
+ else try{if(account.adoptRedirect(params))message=params.get('type')==='email_change'?'Přihlašovací e-mail je změněný.':'E-mail je potvrzený. Jsi přihlášený.';}catch{}
  if(message)setTimeout(()=>toast(message),600);
 }
 accountUI=new AccountUI({
