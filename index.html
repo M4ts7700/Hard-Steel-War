@@ -4397,7 +4397,9 @@ class Game {
     const targetYaw=steer*turn;
     t.yawVelocity=(t.yawVelocity||0)+clamp(targetYaw-(t.yawVelocity||0),-(agile?10:3.8)*dt,(agile?10:3.8)*dt);
     if(!tracks||!engine)t.yawVelocity=0;
-    t.angle=norm(t.angle+t.yawVelocity*dt);
+    const turnDelta=t.yawVelocity*dt;
+    t.angle=norm(t.angle+turnDelta);
+    if(t.modules.turret<=0)t.turretAngle=norm(t.turretAngle+turnDelta);
     if(Math.abs(t.speed)<.005){t.speed=0;return;}
     const bound=this.map.size*.5-8;
     const ox=t.x,oz=t.z,nx=clamp(ox+Math.sin(t.angle)*t.speed*dt,-bound,bound),
@@ -5698,6 +5700,7 @@ class ReplicaBattle extends Game{
        o.yawVelocity=old.yawVelocity;
      }
    }
+   if(t.modules.turret<=0)o.turretAngle=angle(o.angle,o.angle+t.turretAngle-t.angle,1);
    o._terrainPose=null;return o;
   });
   this.player=this.tanks.find(t=>t.isPlayer);this.player.sightRange??=0;
@@ -5739,6 +5742,7 @@ class ReplicaBattle extends Game{
    const command=sanitizeInput(input);p._aimX=command.aimX;p._aimY=command.aimY;p._aimZ=command.aimZ;
    const reversing=p.speed<-.35||(command.throttle<0&&Math.abs(p.speed)<.35);
    this._move(p,dt,command.throttle,command.steer*(reversing?-1:1));
+   const predictedAngle=p.angle;
    const age=clamp((now-newest.at)/1000+rtt/2000,0,.15),tx=s.x+Math.sin(s.angle)*s.speed*age,
      tz=s.z+Math.cos(s.angle)*s.speed*age,error=Math.hypot(tx-p.x,tz-p.z);
    const blend=1-Math.exp(-dt*7);
@@ -5751,6 +5755,7 @@ class ReplicaBattle extends Game{
      if(error>.12){p.x=mix(p.x,tx,blend);p.z=mix(p.z,tz,blend);}
      p.angle=angle(p.angle,s.angle+s.yawVelocity*age,blend);
    }
+   if(p.modules.turret<=0)p.turretAngle=angle(p.angle,p.angle+p.turretAngle-predictedAngle,1);
    p.y=surfaceHeight(this.map.id,p.x,p.z,p.y);p._terrainPose=null;
   }
  }
@@ -6592,8 +6597,9 @@ const {normalizeRoomCode} = MODULES["realtime.js"];
 function roomInviteCode(address){
  try{return normalizeRoomCode(new URL(address).searchParams.get('room'));}catch{return '';}
 }
-function roomInviteLink(address,code){
- const url=new URL(address);
+function roomInviteLink(address,code,publicAddress=address){
+ let url=new URL(address);
+ if(!['https:','http:'].includes(url.protocol))url=new URL(publicAddress);
  if(!['https:','http:'].includes(url.protocol))return '';
  url.username='';url.password='';url.hash='';
  url.searchParams.set('room',normalizeRoomCode(code));
@@ -6611,6 +6617,7 @@ const {cleanNick} = MODULES["leaderboard.js"];
 const {translate,localize} = MODULES["i18n.js"];
 const {roomInviteCode,roomInviteLink} = MODULES["room-links.js"];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const inviteLink=code=>roomInviteLink(location.href,code,document.querySelector('link[rel="canonical"]')?.href);
 const tankOptions=(progress,selected)=>TANKS.filter(t=>progress.unlocked.includes(t.id)||t.id===selected).map(t=>`<option value="${t.id}" ${t.id===selected?'selected':''}>${esc(t.name+' '+t.variant)}</option>`).join('');
 const mapOptions=selected=>MAPS.map(m=>`<option value="${m.id}" ${m.id===selected?'selected':''}>${esc(m.name)} · ${m.size} m</option>`).join('');
 class MultiplayerUI{
@@ -6648,18 +6655,46 @@ class MultiplayerUI{
  }
  async copyInvite(link){
   const room=this.room;if(!room)return;
-  const value=link?roomInviteLink(location.href,room.code):room.code;
+  const value=link?inviteLink(room.code):room.code;
   if(!value){this.toast('Odkaz lze sdílet z webové adresy hry. Ze staženého souboru pošli kód místnosti.');return;}
+  const copied=link?'Odkaz na místnost zkopírován.':'Kód místnosti zkopírován.';
   try{
-    if(!navigator.clipboard)throw Error();
+   if(navigator.clipboard?.writeText){
     await navigator.clipboard.writeText(value);
-    this.toast(link?'Odkaz na místnost zkopírován.':'Kód místnosti zkopírován.');
+    this.toast(copied);
+    return;
+   }
+  }catch{}
+  if(this.room!==room)return;
+  const modal=document.querySelector('#modal-content');
+  if(!modal)return;
+  const focused=document.activeElement,buffer=document.createElement('textarea');
+  buffer.value=value;
+  buffer.readOnly=true;
+  buffer.style.cssText='position:fixed;top:0;left:0;opacity:0;font-size:16px;pointer-events:none';
+  modal.append(buffer);
+  let success=false;
+  try{
+   buffer.focus({preventScroll:true});
+   buffer.select();
+   success=document.execCommand('copy');
+  }catch{}finally{
+   buffer.remove();
+   focused?.focus({preventScroll:true});
   }
-  catch{
-   const field=document.querySelector(link?'#mp-share-link':'.mp-room-code strong');
-   if(link&&field){field.closest('details').open=true;field.focus();field.select();}
-   this.toast(link?'Zkopíruj označený odkaz na místnost.':'Zkopíruj zobrazený kód místnosti.');
+  if(success){this.toast(copied);return;}
+  const field=modal.querySelector(link?'#mp-share-link':'.mp-room-code strong');
+  if(link&&field){
+   field.closest('details').open=true;
+   field.focus();
+   field.select();
+  }else if(field){
+   const range=document.createRange(),selection=document.getSelection();
+   range.selectNodeContents(field);
+   selection?.removeAllRanges();
+   selection?.addRange(range);
   }
+  this.toast(link?'Zkopíruj označený odkaz na místnost.':'Zkopíruj zobrazený kód místnosti.');
  }
  editRoom(target){
   if(!['mp-room-tank','mp-room-team','mp-room-map','mp-room-bots'].includes(target.id))return;
@@ -6731,7 +6766,7 @@ class MultiplayerUI{
   const slots=Math.max(4,members.length);
   const bothTeams=teamSize(0)>0&&teamSize(1)>0;
   const status=room.phase==='starting'?'Načítám společné bojiště…':!connected?'Čekám na odpověď hostitele…':members.length<2?'Pozvi další hráče odkazem nebo kódem místnosti.':!room.settings.bots&&!bothTeams?'Rozdělte se do obou týmů.':room.host?(room.canStart?'Všichni jsou připraveni. Můžeš spustit bitvu.':'Čekám, až ostatní hráči potvrdí připravenost.'):(room.ready?'Jsi připraven. Čekám na spuštění hostitelem.':'Potvrď připravenost a hostitel spustí bitvu.');
-  const link=roomInviteLink(location.href,room.code);
+  const link=inviteLink(room.code);
   this.openModal('multiplayer',`<span class="eyebrow">ONLINE / MÍSTNOST · ${members.length} / 8</span><h2>${room.host?'Tvoje místnost je připravená.':connected?'Jsi ve stejné místnosti.':'Hledám místnost…'}</h2>
    <div class="mp-room-code"><span>KÓD MÍSTNOSTI</span><strong translate="no">${esc(room.code)}</strong><div class="mp-share-actions"><button class="secondary-button" data-mp="copy">KOPÍROVAT KÓD</button><button class="primary-button" data-mp="copy-link" ${link?'':'disabled'}>KOPÍROVAT ODKAZ</button></div></div>
    ${link?`<details class="mp-share-details"><summary>Odkaz pro připojení</summary><input id="mp-share-link" aria-label="Odkaz pro připojení" value="${esc(link)}" readonly translate="no"></details>`:'<p class="mp-note">Odkaz lze sdílet z webové adresy hry. Ze staženého souboru pošli kód místnosti.</p>'}
