@@ -143,3 +143,32 @@ test('a queued score refused by the 30-second limit is sent again once the limit
   assert.deepEqual(sent,['a','b','b']);
   assert.equal(values.get(ui.scoresKey),'[]');
 });
+
+test('deleting the account checks the password, asks the server with the fresh session and signs out here',async()=>{
+  const {account,storage,requests,setResponse}=loadAccounts();
+  account.persist({access_token:'old',refresh_token:'old-refresh',expires_in:3600,user:{id:'player-1'}});
+  account.profile={email:'player@example.com'};
+  storage.setItem('hsw-account-pending:player-1','{"progress":{},"revision":1}');
+  setResponse({ok:false,status:400,json:async()=>({error_code:'invalid_credentials'})});
+  await assert.rejects(account.deleteAccount('wrong-password'),{code:'wrong_password'});
+  assert.ok(account.session,'a wrong password keeps the player signed in');
+  assert.ok(!requests.some(r=>r.url.endsWith('/rpc/hsw_delete_account')));
+  setResponse({ok:true,status:200,json:async()=>({access_token:'fresh',refresh_token:'fresh-refresh',expires_in:3600,user:{id:'player-1'}})});
+  await account.deleteAccount('right-password');
+  const call=requests.find(r=>r.url==='https://example.com/rest/v1/rpc/hsw_delete_account');
+  assert.equal(call.headers.Authorization,'Bearer fresh');
+  assert.equal(account.session,null);
+  assert.equal(storage.getItem(account.key),undefined);
+  assert.equal(storage.getItem('hsw-account-pending:player-1'),undefined);
+});
+
+test('an account waiting for deletion is signed out and points the player to support',async()=>{
+  const {account,storage,setResponse}=loadAccounts();
+  account.persist({access_token:'token',refresh_token:'refresh',expires_in:3600,user:{id:'player-1'}});
+  setResponse({ok:false,status:400,json:async()=>({code:'P0001',message:'account_deleted'})});
+  await assert.rejects(account.load(),{code:'account_deleted',message:/info@neplytegr\.cz/});
+  assert.equal(account.session,null);
+  assert.equal(storage.getItem(account.key),undefined);
+  setResponse({ok:false,status:400,json:async()=>({code:400,error_code:'user_banned',msg:'User is banned'})});
+  await assert.rejects(account.login('player@example.com','example-password'),{code:'user_banned',message:/info@neplytegr\.cz/});
+});

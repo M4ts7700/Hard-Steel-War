@@ -193,6 +193,7 @@ footer b{font-weight:400;color:var(--gold);margin:0 7px}
 .guide-grid h3{font-size:15px;font-weight:600;color:var(--text)}
 .guide-grid p,.guide-grid li{font-size:12px;line-height:1.8;color:var(--soft-text)}
 .guide-grid ul{padding-left:18px}
+.cookie-policy a,.policy-link{color:var(--accent-text);text-decoration:underline}
 .controls-list{display:grid;grid-template-columns:130px 1fr;gap:13px;font-size:12px;color:var(--soft-text)}
 kbd{
   font-family:inherit;font-size:9px;color:#d0d9c4;border:1px solid #58674d;background:#303e2a;border-radius:2px;padding:3px 6px;
@@ -796,9 +797,6 @@ body{background:#131a18}
 }
 #hangar .offline-note{font-size:8px;margin:0;text-align:center;letter-spacing:0}
 #hangar .hangar-content{padding:20px 0 0}
-#hangar-ad{margin:40px auto 24px;max-width:970px;min-height:90px}
-#hangar-ad>ins{display:block}
-#hangar-ad:has(>ins[data-ad-status="unfilled"]){display:none}
 #hangar .garage-grid{grid-template-columns:minmax(0,1fr) 235px;gap:20px}
 #hangar .tank-cards,#hangar .tank-cards.five,#hangar .tank-cards.six,#hangar .tank-cards.three{
   grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;
@@ -1261,8 +1259,10 @@ body.nuke-cinematic #view-status{top:auto;bottom:8%;font-size:12px;letter-spacin
 .account-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .account-section h3{margin:0;font-size:15px}
 .account-section>p{margin:10px 0;font-size:12px;line-height:1.6;color:var(--soft-text)}
-.account-contacts summary{cursor:pointer;font-size:12px;font-weight:600;color:var(--accent-text);padding:4px 0}
-.account-contacts .account-form{max-width:480px;margin:14px 0 4px}
+.account-contacts summary,.account-delete summary{cursor:pointer;font-size:12px;font-weight:600;color:var(--accent-text);padding:4px 0}
+.account-contacts .account-form,.account-delete .account-form{max-width:480px;margin:14px 0 4px}
+.account-delete summary,.account-delete button{color:var(--bad)}
+.account-delete button{border-color:var(--bad)}
 .account-section+.account-section{margin-top:12px}
 .account-fields{margin-top:8px}
 .account-field{padding:14px 0;border-top:1px solid var(--edge)}
@@ -1514,7 +1514,6 @@ if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))addEventLis
 // Apply the saved colour theme before the first paint (themes.js handles changes later).
 try{const theme=localStorage.getItem('hsw-theme');if(theme==='light'||theme==='m90')document.documentElement.dataset.theme=theme;}catch{}
 </script>
-<meta name="google-adsense-account" content="ca-pub-6505285417111480">
 </head>
 <body>
 <div id="app">
@@ -1527,10 +1526,7 @@ try{const theme=localStorage.getItem('hsw-theme');if(theme==='light'||theme==='m
 <section id="vehicles-panel" class="loadout-panel" aria-labelledby="vehicles-title"><div class="panel-head"><div><span class="eyebrow">01 / VOZIDLO</span><h2 id="vehicles-title">Vyber národ a stroj</h2></div><button class="research-button" data-view="research"><span>Výzkumný strom ↗</span><small id="research-xp">✦ 0 VB</small><b id="research-ready" hidden></b></button></div><div id="nation-tabs" class="nation-picker" role="group" aria-label="Národ"></div><div class="garage-grid"><div id="tank-cards" class="tank-cards"></div><aside class="spec-panel"><div class="spec-heading"><span>TECHNICKÝ PROFIL</span><span id="spec-role">STŘEDNÍ</span></div><div id="tank-specs"></div><p id="tank-description"></p></aside></div></section>
 <section id="maps-panel" class="loadout-panel" aria-labelledby="maps-title"><div class="panel-head"><div><span class="eyebrow">02 / BOJIŠTĚ</span><h2 id="maps-title">Zvol bojiště</h2></div></div><div class="map-filters" role="group" aria-label="Typ mapy"><button data-map-filter="all" aria-pressed="true">Všechny</button><button data-map-filter="urban" aria-pressed="false">Město / CQC</button><button data-map-filter="hills" aria-pressed="false">Kopce</button><button data-map-filter="flat" aria-pressed="false">Rovina</button></div><div id="map-cards" class="map-cards"></div></section>
 </div>
-<section class="game-about" aria-labelledby="about-title"><div><span class="eyebrow">TANKOVÁ HRA ZDARMA</span><h2 id="about-title">Co je Hard Steel War?</h2></div><div><p>Hard Steel War je bezplatná 3D tanková hra, kterou hraješ přímo v prohlížeči bez stahování. Vel tankům Německa, USA a SSSR, zkoumej nové stroje a upravuj jejich vzhled vlastními 3D modely.</p><p>Bojuj proti botům, vyzkoušej online multiplayer s přáteli nebo přežij vlny zombie. V režimu Nadvláda obsazuj zóny, v týmovém deathmatchi nič soupeřovy tanky. Hra podporuje češtinu i angličtinu a po prvním načtení nabízí i hraní proti botům offline.</p><small>Pro přehled návštěvnosti odesíláme do Supabase anonymní záznam návštěvy bez jména, e-mailu a reklamních cookies. Respektujeme nastavení Do Not Track.</small></div></section><footer><span>HARD STEEL WAR <b> / </b> EXPERIMENTÁLNÍ TANKOVÝ POLYGON</span><span class="text-button">OFFLINE EDICE · VŠE V TOMTO SOUBORU</span><button class="text-button" data-view="guide">Ovládání a mechaniky ↗</button></footer></div>
-<div id="hangar-ad" hidden>
-  <ins class="adsbygoogle" data-ad-client="ca-pub-6505285417111480" data-ad-slot="4215837248" data-ad-format="auto" data-full-width-responsive="true"></ins>
-</div>
+<section class="game-about" aria-labelledby="about-title"><div><span class="eyebrow">TANKOVÁ HRA ZDARMA</span><h2 id="about-title">Co je Hard Steel War?</h2></div><div><p>Hard Steel War je bezplatná 3D tanková hra, kterou hraješ přímo v prohlížeči bez stahování. Vel tankům Německa, USA a SSSR, zkoumej nové stroje a upravuj jejich vzhled vlastními 3D modely.</p><p>Bojuj proti botům, vyzkoušej online multiplayer s přáteli nebo přežij vlny zombie. V režimu Nadvláda obsazuj zóny, v týmovém deathmatchi nič soupeřovy tanky. Hra podporuje češtinu i angličtinu a po prvním načtení nabízí i hraní proti botům offline.</p><small>Pro přehled návštěvnosti odesíláme do Supabase anonymní záznam návštěvy bez jména, e-mailu a cookies. Respektujeme Do Not Track i Global Privacy Control.</small></div></section><footer><span>HARD STEEL WAR <b> / </b> EXPERIMENTÁLNÍ TANKOVÝ POLYGON</span><span class="text-button">OFFLINE EDICE · VŠE V TOMTO SOUBORU</span><button class="text-button" data-view="guide">Ovládání a mechaniky ↗</button><button class="text-button" data-view="cookies">Cookies a soukromí ↗</button></footer></div>
 </main>
 <section id="battle" hidden><div id="battle-scene"></div><div class="battle-top"><button id="pause-button" class="hud-button">Ⅱ</button><div class="battle-score"><div class="score-row"><span class="team-blue">SPOJENCI <b id="friendly-score">2000</b></span><span id="battle-time">12:00</span><span class="team-red"><b id="enemy-score">2000</b> NEPŘÍTEL</span></div><div class="ticket-bars"><i id="friendly-bar"></i><i id="enemy-bar"></i></div><div id="zone-hud" class="zone-hud"></div></div><span class="battle-map-label" id="battle-map-label"></span></div><div id="network-hud" hidden></div><section id="server-chat" hidden><button id="server-chat-toggle" type="button">CHAT · ENTER</button><div id="server-chat-body" hidden><div id="server-chat-log" role="log" aria-label="Chat" aria-live="polite"></div><form id="server-chat-form"><input id="server-chat-input" aria-label="Zpráva" placeholder="Napiš zprávu…" maxlength="180" autocomplete="off"><button type="submit">ODESLAT</button></form></div></section><aside id="team-roster" hidden></aside><div id="name-tags"></div><div id="zombie-hud" hidden></div><div id="scope-overlay" class="scope-overlay" hidden><canvas id="scope-canvas" aria-hidden="true"></canvas></div><div id="view-status" class="view-status"></div><button id="camera-mode-button" class="camera-mode-button">1. OSOBA</button><div id="gun-marker" hidden></div><div id="reticle"><span></span></div><div id="hit-notice" aria-live="polite"></div><div id="kill-confirmation" class="kill-confirmation" hidden><span>✦</span><strong>CÍL ZNIČEN</strong><small></small></div><div id="kill-feed" class="kill-feed"></div><div class="battle-objective" id="battle-objective">OBSAĎ A UDRŽ ZÓNY</div><div id="damage-flash"></div><div id="nuke-flash"></div><button id="nuke-button" disabled>☢ BODY 0 / 10</button><div class="battle-bottom"><div class="module-panel"><div class="hud-caption"><span id="battle-tank-name"></span><span id="crew-label">POSÁDKA</span></div><div class="module-layout"><div id="tank-diagram" class="tank-diagram"><div class="track left"></div><div class="hull"><div class="engine-block"></div><div class="turret-block"><div class="gun-block"></div></div><div class="ammo-block"></div></div><div class="track right"></div></div><div id="module-bars"></div></div><div class="module-actions"><button id="repair-button">[F] Opravit</button><button id="smoke-button">[G] Kouř <span>3</span></button></div><button id="secondary-button" class="missile-action" hidden>[R] 75 mm · PŘIPRAVENO</button><button id="missile-button" class="missile-action" hidden>[2] RAKETA 4/4</button></div><div class="driving-hud"><small id="cruise-status" hidden></small><div class="speed"><strong id="speed-value">0</strong><span>km/h</span></div><div class="ammo-hud"><div class="shell-icon"></div><div><strong id="ammo-name">APHE</strong><small id="reload-label">PŘIPRAVENO</small><div class="reload-track"><i id="reload-bar"></i></div></div><span id="reload-count"></span></div><div class="mg-hud"><span id="mg-status">KULOMET</span><div><i id="mg-heat"></i></div></div></div><div class="minimap-wrap"><canvas id="minimap" width="300" height="300" aria-label="Taktická mapa bojiště"></canvas></div></div><div id="respawn-panel" hidden><span class="eyebrow">STROJ VYŘAZEN</span><h2>Bitva ještě nekončí.</h2><p id="death-killer" translate="no"></p><p id="respawn-text">Připravuje se záložní tank…</p><button id="respawn-button" class="primary-button">ZPĚT DO BOJE →</button></div><div class="touch-controls"><div id="touch-stick" role="group" aria-label="Joystick"><span>POHYB</span><i></i></div><div class="touch-pad"><button data-key="KeyW">▲</button><button data-key="KeyA">◀</button><button data-key="KeyS">▼</button><button data-key="KeyD">▶</button></div><div class="touch-aim-actions"><button id="touch-scope">ZAMĚŘOVAČ</button><button id="touch-mg">KULOMET</button><button id="touch-fire">PALBA</button></div></div></section>
 <main id="scores-page" class="scores-page" hidden aria-labelledby="scores-title"><button class="secondary-button" data-view="hangar">← Hangár</button><h1 id="scores-title" tabindex="-1">TOP 5</h1><div id="scores-content"></div></main>
@@ -1538,32 +1534,6 @@ try{const theme=localStorage.getItem('hsw-theme');if(theme==='light'||theme==='m
 <section id="workshop" aria-labelledby="custom-title" hidden><div id="custom-preview"></div><aside><span class="eyebrow">DÍLNA / VLASTNÍ VZHLED</span><h2 id="custom-title" tabindex="-1"></h2><p>Pravým tlačítkem si tank prohlédni ze všech stran. Štětec a nálepky použij přímo na 3D náhledu.</p><div id="custom-form"></div><button id="custom-reset" class="text-button">Obnovit původní vzhled</button><div class="custom-actions"><small id="custom-price" role="status"></small><button id="custom-save" class="primary-button">ULOŽIT VZHLED</button><button id="custom-cancel" class="secondary-button">ZRUŠIT</button></div><small>Úpravy vzhledu nemění bojové vlastnosti. Odemčené položky a vlastní vzhledy přeneseš zálohou v nastavení.</small></aside></section><div id="toast" role="status"></div>
 </div>
 <script src="visit-tracker.js"></script>
-<script>
-(() => {
-  if (location.origin !== 'https://hsw.neplytegr.cz') return;
-  const container = document.getElementById('hangar-ad');
-  const { adClient } = container.firstElementChild.dataset;
-  const script = document.createElement('script');
-  script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adClient}`;
-  script.async = true;
-  script.crossOrigin = 'anonymous';
-  script.onload = () => {
-    container.hidden = false;
-    const observer = new IntersectionObserver(entries => {
-      if (!entries.some(entry => entry.isIntersecting) || !container.offsetWidth) return;
-      observer.disconnect();
-      try {
-        (window.adsbygoogle ||= []).push({});
-      } catch (error) {
-        container.hidden = true;
-        console.warn('AdSense banner could not load:', error);
-      }
-    });
-    observer.observe(container);
-  };
-  document.head.append(script);
-})();
-</script>
 <script src="vendor/three.js"></script>
 <script>
 const MODULES={};
@@ -2309,7 +2279,36 @@ GRAFIKA NENÍ DOSTUPNÁ	GRAPHICS UNAVAILABLE
 Pro tuhle bitvu potřebujeme WebGL 2.	This battle needs WebGL 2.
 Otevři hru v aktuálním Chromu, Edge nebo Firefoxu a zapni hardwarovou akceleraci. Pokud používáš vestavěný náhled, zkus hru otevřít v samostatném prohlížeči.	Open the game in a current Chrome, Edge or Firefox browser with hardware acceleration enabled. If using an embedded preview, try a standalone browser.
 `.trim().split('\n').map(line=>line.split('\t'));
-pairs.push(...[["Vlastní 3D modely","Custom 3D models"],["Import zdarma, bez limitu počtu modelů a polygonů. Polohu, velikost a otočení zadej libovolně. Výkon a místo pro uložení závisí na tvém zařízení.","Free imports, with no model or polygon count limits. Enter any position, size and rotation. Performance and storage depend on your device."],["OBJ musí obsahovat platné vrcholy a alespoň jednu nenulovou plochu.","OBJ must contain valid vertices and at least one non-degenerate face."],["Náklon X (°)","X tilt (°)"],["Otočení Y (°)","Y rotation (°)"],["Náklon Z (°)","Z tilt (°)"],["Hraj po svém.","Play your way."],["Vzhled, výkon i ovládání na jednom místě.","Appearance, performance and controls in one place."],["Prostředí","Appearance"],["Zvuk a ovládání","Sound and controls"],["Obraz a výkon","Graphics and performance"],["Účet a postup","Account and progress"],["Změny se ukládají automaticky.","Changes save automatically."],["Hotovo","Done"],["TANKOVÁ HRA ZDARMA","FREE TANK GAME"],["Co je Hard Steel War?","What is Hard Steel War?"],["Hard Steel War je bezplatná 3D tanková hra, kterou hraješ přímo v prohlížeči bez stahování. Vel tankům Německa, USA a SSSR, zkoumej nové stroje a upravuj jejich vzhled vlastními 3D modely.","Hard Steel War is a free 3D tank game you play in your browser without downloads. Command German, American and Soviet tanks, research new vehicles and customize them with your own 3D models."],["Bojuj proti botům, vyzkoušej online multiplayer s přáteli nebo přežij vlny zombie. V režimu Nadvláda obsazuj zóny, v týmovém deathmatchi nič soupeřovy tanky. Hra podporuje češtinu i angličtinu a po prvním načtení nabízí i hraní proti botům offline.","Battle bots, try online multiplayer with friends or survive waves of zombies. Capture zones in Domination or destroy enemy tanks in Team Deathmatch. Play in Czech or English, with offline bot battles available after the first load."],["Pro přehled návštěvnosti odesíláme do Supabase anonymní záznam návštěvy bez jména, e-mailu a reklamních cookies. Respektujeme nastavení Do Not Track.","For traffic statistics, we send an anonymous visit record to Supabase without names, emails or advertising cookies. We respect Do Not Track."]]);
+pairs.push(...[["Vlastní 3D modely","Custom 3D models"],["Import zdarma, bez limitu počtu modelů a polygonů. Polohu, velikost a otočení zadej libovolně. Výkon a místo pro uložení závisí na tvém zařízení.","Free imports, with no model or polygon count limits. Enter any position, size and rotation. Performance and storage depend on your device."],["OBJ musí obsahovat platné vrcholy a alespoň jednu nenulovou plochu.","OBJ must contain valid vertices and at least one non-degenerate face."],["Náklon X (°)","X tilt (°)"],["Otočení Y (°)","Y rotation (°)"],["Náklon Z (°)","Z tilt (°)"],["Hraj po svém.","Play your way."],["Vzhled, výkon i ovládání na jednom místě.","Appearance, performance and controls in one place."],["Prostředí","Appearance"],["Zvuk a ovládání","Sound and controls"],["Obraz a výkon","Graphics and performance"],["Účet a postup","Account and progress"],["Změny se ukládají automaticky.","Changes save automatically."],["Hotovo","Done"],["TANKOVÁ HRA ZDARMA","FREE TANK GAME"],["Co je Hard Steel War?","What is Hard Steel War?"],["Hard Steel War je bezplatná 3D tanková hra, kterou hraješ přímo v prohlížeči bez stahování. Vel tankům Německa, USA a SSSR, zkoumej nové stroje a upravuj jejich vzhled vlastními 3D modely.","Hard Steel War is a free 3D tank game you play in your browser without downloads. Command German, American and Soviet tanks, research new vehicles and customize them with your own 3D models."],["Bojuj proti botům, vyzkoušej online multiplayer s přáteli nebo přežij vlny zombie. V režimu Nadvláda obsazuj zóny, v týmovém deathmatchi nič soupeřovy tanky. Hra podporuje češtinu i angličtinu a po prvním načtení nabízí i hraní proti botům offline.","Battle bots, try online multiplayer with friends or survive waves of zombies. Capture zones in Domination or destroy enemy tanks in Team Deathmatch. Play in Czech or English, with offline bot battles available after the first load."],["Pro přehled návštěvnosti odesíláme do Supabase anonymní záznam návštěvy bez jména, e-mailu a cookies. Respektujeme Do Not Track i Global Privacy Control.","For traffic statistics, we send an anonymous visit record to Supabase without names, emails or cookies. We respect Do Not Track and Global Privacy Control."],
+["Cookies a soukromí ↗","Cookies and privacy ↗"],["COOKIES A SOUKROMÍ","COOKIES AND PRIVACY"],["Jak zacházíme s tvými údaji","How we handle your data"],
+["Co hra zpracovává, proč a jak dlouho. Hra nepoužívá žádné cookies.","What the game processes, why and for how long. The game uses no cookies."],
+["Kdo za hrou stojí","Who runs the game"],["Správcem osobních údajů je provozovatel hry Hard Steel War. Se vším, co se týká tvých údajů, piš na:","The controller of your personal data is the operator of Hard Steel War. For anything about your data, write to:"],
+["Hráčský účet a žebříčky","Player account and leaderboards"],
+["Účet je dobrovolný. Ukládáme přihlašovací e-mail, přezdívku, heslo (jen jako otisk, který neumíme převést zpět), herní postup a skóre s datem. Slouží k přihlášení, ukládání postupu do cloudu a žebříčkům TOP 5, kde je veřejně vidět přezdívka a skóre.","An account is optional. We store your sign-in email, nickname, password (only as a hash we cannot turn back), game progress and scores with their dates. They are used for sign-in, cloud saves and the TOP 5 leaderboards, where your nickname and score are public."],
+["Právní základ: plnění smlouvy, tedy služby, o kterou žádáš. Údaje držíme, dokud účet nesmažeš; smazaný účet je 7 dní zablokovaný a pak ho smažeme natrvalo. Nepotvrzenou registraci mažeme po jednom dni.","Legal basis: performance of a contract, i.e. the service you ask for. We keep the data until you delete the account; a deleted account stays blocked for 7 days and is then erased for good. Unconfirmed sign-ups are deleted after one day."],
+["Instagram, Discord nebo kontaktní e-mail (výchozí je přihlašovací e-mail) použijeme jen k oslovení výherce. Nejsou veřejné a změnit je můžeš v nastavení účtu. Právní základ: plnění smlouvy, tedy účast v soutěži.","We use your Instagram, Discord or contact email (by default your sign-in email) only to contact the winner. They are not public and you can change them in account settings. Legal basis: performance of a contract, i.e. taking part in the contest."],
+["Online hra","Online play"],
+["Při online hře se tvoje přezdívka, pohyb tanku a zprávy v chatu posílají ostatním hráčům v místnosti, a to přes Supabase Realtime nebo přes vlastní herní server, ke kterému se připojíš. My je neukládáme; vlastní servery provozují jejich správci podle svých pravidel.","In online play, your nickname, tank movement and chat messages are sent to the other players in the room, either through Supabase Realtime or through the custom game server you join. We do not store them; custom servers are run by their operators under their own rules."],
+["Hosting a zabezpečení","Hosting and security"],
+["Web běží na GitHub Pages. GitHub jako každý server vidí tvou IP adresu a uchovává ji v záznamech kvůli bezpečnosti. Účty, skóre a statistika leží u Supabase v datacentru ve Frankfurtu (EU); Supabase při přihlášení zaznamenává IP adresu kvůli ochraně účtu. Právní základ: oprávněný zájem na bezpečném provozu.","The site runs on GitHub Pages. Like any server, GitHub sees your IP address and keeps it in its logs for security. Accounts, scores and statistics are stored with Supabase in a Frankfurt (EU) data centre; Supabase logs the IP address at sign-in to protect your account. Legal basis: legitimate interest in running the service securely."],
+["Přenosy mimo EU (GitHub) se řídí rámcem EU-US Data Privacy Framework nebo standardními smluvními doložkami.","Transfers outside the EU (GitHub) are covered by the EU-US Data Privacy Framework or standard contractual clauses."],
+["Právní základ: oprávněný zájem na přehledu návštěvnosti.","Legal basis: legitimate interest in knowing how many people visit."],
+["Tvoje práva","Your rights"],
+["Máš právo na přístup ke svým údajům, jejich opravu, výmaz, omezení zpracování a přenesení a právo vznést námitku proti zpracování z oprávněného zájmu. Napiš na info@neplytegr.cz, nejlépe z e-mailu svého účtu; odpovíme do měsíce. Stížnost můžeš podat u Úřadu pro ochranu osobních údajů (uoou.gov.cz).","You have the right to access, correct, erase, restrict and port your data, and to object to processing based on legitimate interest. Write to info@neplytegr.cz, ideally from your account email; we reply within a month. You can complain to the Czech Office for Personal Data Protection (uoou.gov.cz)."],
+["Hráčský účet včetně postupu, skóre a kontaktů smažeš v nastavení účtu (Smazat účet). Hned se zablokuje a po 7 dnech natrvalo zmizí; do té doby ho obnovíme nebo smažeme hned, když napíšeš na info@neplytegr.cz.","You can delete your player account, including its progress, scores and contacts, in your account settings (Delete account). It is blocked at once and erased for good after 7 days; until then we can restore it or delete it right away if you write to info@neplytegr.cz."],
+["Smazat účet","Delete account"],
+["Účet se hned zablokuje a po 7 dnech se natrvalo smaže i s postupem, skóre a kontakty. Do té doby ho obnovíme nebo smažeme hned, když napíšeš na info@neplytegr.cz.","Your account is blocked at once and erased for good after 7 days, together with its progress, scores and contacts. Until then we can restore it or delete it right away if you write to info@neplytegr.cz."],
+["Mažu účet…","Deleting account…"],
+["Účet je zablokovaný a za 7 dní se smaže. Obnovit ho můžeš přes info@neplytegr.cz.","Your account is blocked and will be deleted in 7 days. To restore it, write to info@neplytegr.cz."],
+["Účet čeká na smazání. Do 7 dnů od žádosti ho obnovíš přes info@neplytegr.cz.","This account is waiting to be deleted. To restore it within 7 days of the request, write to info@neplytegr.cz."],
+["Zásady ochrany soukromí ↗","Privacy policy ↗"],
+["Úložiště v prohlížeči","Browser storage"],
+["Do localStorage hra ukládá postup, nastavení a přihlášení k účtu, do sessionStorage náhodné ID návštěvy na nejvýš 30 minut. Service worker drží offline kopii hry. Vše slouží jen k chodu hry, a proto k tomu není potřeba souhlas.","The game keeps your progress, settings and account sign-in in localStorage, and a random visit ID in sessionStorage for at most 30 minutes. A service worker keeps an offline copy of the game. All of it only keeps the game running, so it needs no consent."],
+["Anonymní statistika návštěv","Anonymous visit statistics"],
+["Na hsw.neplytegr.cz pošleme do Supabase jeden záznam za návštěvu: náhodné ID, typ zdroje (např. přímo, vyhledávač, sociální síť), zda jde o mobil, nebo počítač, a zda je prohlížeč v češtině. Bez cookies, jména, e-mailu, celé adresy odkazu a otisku prohlížeče. IP adresu do záznamu neukládáme. Při zapnutém Do Not Track nebo Global Privacy Control nic neposíláme.","On hsw.neplytegr.cz we send Supabase one record per visit: a random ID, the source type (e.g. direct, search engine, social network), whether it is a phone or a computer, and whether the browser uses Czech. No cookies, names, emails, full referrer address or browser fingerprint. We do not store the IP address in the record. With Do Not Track or Global Privacy Control on, nothing is sent."],
+["Jak data smazat","How to delete the data"],
+["Úložiště tohoto webu smažeš v nastavení prohlížeče (Vymazat data webu). Přijdeš tím o postup, který nemáš zálohovaný ani uložený k účtu.","You can delete this site's storage in your browser settings (Clear site data). You will lose any progress that is not backed up or saved to an account."],
+["Aktualizováno 24. 11. 2026","Updated 24 Nov 2026"]]);
 const dictionary=new Map();
 for(const [cs,en] of [...pairs,...CONTENT_TRANSLATIONS,...MULTIPLAYER_TRANSLATIONS]){
   dictionary.set(cs,en);
@@ -6786,7 +6785,9 @@ const errors={
  same_password:'Nové heslo se musí lišit od původního.',
  weak_password:'Zvol silnější heslo.',
  otp_expired:'Kód je špatný nebo už vypršel.',
- email_not_confirmed:'Nejdřív potvrď e-mail. Klikni na odkaz, který ti přišel.'
+ email_not_confirmed:'Nejdřív potvrď e-mail. Klikni na odkaz, který ti přišel.',
+ account_deleted:'Účet čeká na smazání. Do 7 dnů od žádosti ho obnovíš přes info@neplytegr.cz.',
+ user_banned:'Účet čeká na smazání. Do 7 dnů od žádosti ho obnovíš přes info@neplytegr.cz.'
 };
 function accountUsername(value){
  const name=String(value||'').trim().toLowerCase();
@@ -6901,7 +6902,12 @@ class PlayerAccount{
  async rpc(name,body={},authenticated=true){
   if(!authenticated)return this.request('/rest/v1/rpc/'+name,body);
   try{return await this.request('/rest/v1/rpc/'+name,body,await this.token());}
-  catch(e){if(e.status!==401)throw e;return this.request('/rest/v1/rpc/'+name,body,await this.token(true));}
+  catch(e){
+   // Deleted on another device: sign out here too.
+   if(e.code==='account_deleted')this.forget();
+   if(e.status!==401)throw e;
+   return this.request('/rest/v1/rpc/'+name,body,await this.token(true));
+  }
  }
  get pendingKey(){return 'hsw-account-pending:'+this.session?.user.id;}
  async load(){
@@ -7077,6 +7083,15 @@ class PlayerAccount{
    }else this.profile.new_email=user?.new_email||email;
   }
   return {pending:!changed,email};
+ }
+ // The server blocks the account at once and deletes it for good after 7 days (see 202611240002_account_deletion.sql).
+ async deleteAccount(password){
+  const token=await this.reauthenticate(password);
+  // Already requested on another device: the result is the same.
+  try{await this.request('/rest/v1/rpc/hsw_delete_account',{},token);}
+  catch(e){if(e.code!=='account_deleted')throw e;}
+  try{this.storage.removeItem(this.pendingKey);}catch{}
+  this.forget();
  }
  async submit(score,run){
   const epoch=this.epoch;
@@ -7262,7 +7277,7 @@ class AccountUI{
   this.status('');
  }
  openLogin(){
-  this.openModal('account','<div class="account-view"><span class="eyebrow">HRÁČSKÝ ÚČET</span><h2>Hraj s účtem.</h2><p class="modal-intro">Bez účtu se postup ukládá jen v tomto prohlížeči. S účtem pokračuješ na libovolném zařízení.</p><div class="account-layout"><div><div class="account-tabs" role="tablist" aria-label="Účet"><button type="button" role="tab" data-account-mode="login" aria-selected="true">Přihlásit se</button><button type="button" role="tab" data-account-mode="register" aria-selected="false">Nový účet</button></div><form id="account-login" class="account-form" data-mode="login" novalidate><label>E-mail<input name="email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="254" required></label><label class="account-register-only">Přezdívka<input name="username" autocomplete="nickname" autocapitalize="none" spellcheck="false" minlength="3" maxlength="20"></label><small class="account-register-only">Ukazuje se v žebříčku a multiplayeru. 3–20 znaků, bez diakritiky. E-mail nikdo neuvidí.</small><label>Heslo<input name="password" type="password" autocomplete="current-password" minlength="8" maxlength="128" required></label><label class="account-register-only">Heslo znovu<input name="confirm" type="password" autocomplete="new-password" minlength="8" maxlength="128"></label><p id="account-hint" class="account-hint"></p><button id="account-submit" class="primary-button" type="submit">PŘIHLÁSIT SE <span>→</span></button><button type="button" class="secondary-button account-login-only">Zapomněl jsem heslo</button></form><p id="account-status" class="account-status" role="status"></p></div><ul class="account-benefits"><li><b>Postup v cloudu</b><span>Výzkum, tanky a rekordy na každém zařízení.</span></li><li><b>Měsíční soutěž</b><span>Nejlepší bitva měsíce může vyhrát web zdarma.</span></li><li><b>Jedno jméno</b><span>Přezdívka účtu se použije v žebříčku i v multiplayeru.</span></li></ul></div></div>');
+  this.openModal('account','<div class="account-view"><span class="eyebrow">HRÁČSKÝ ÚČET</span><h2>Hraj s účtem.</h2><p class="modal-intro">Bez účtu se postup ukládá jen v tomto prohlížeči. S účtem pokračuješ na libovolném zařízení.</p><div class="account-layout"><div><div class="account-tabs" role="tablist" aria-label="Účet"><button type="button" role="tab" data-account-mode="login" aria-selected="true">Přihlásit se</button><button type="button" role="tab" data-account-mode="register" aria-selected="false">Nový účet</button></div><form id="account-login" class="account-form" data-mode="login" novalidate><label>E-mail<input name="email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="254" required></label><label class="account-register-only">Přezdívka<input name="username" autocomplete="nickname" autocapitalize="none" spellcheck="false" minlength="3" maxlength="20"></label><small class="account-register-only">Ukazuje se v žebříčku a multiplayeru. 3–20 znaků, bez diakritiky. E-mail nikdo neuvidí.</small><label>Heslo<input name="password" type="password" autocomplete="current-password" minlength="8" maxlength="128" required></label><label class="account-register-only">Heslo znovu<input name="confirm" type="password" autocomplete="new-password" minlength="8" maxlength="128"></label><p id="account-hint" class="account-hint"></p><small class="account-register-only"><a class="policy-link" href="#cookies" target="_blank" rel="noopener">Zásady ochrany soukromí ↗</a></small><button id="account-submit" class="primary-button" type="submit">PŘIHLÁSIT SE <span>→</span></button><button type="button" class="secondary-button account-login-only">Zapomněl jsem heslo</button></form><p id="account-status" class="account-status" role="status"></p></div><ul class="account-benefits"><li><b>Postup v cloudu</b><span>Výzkum, tanky a rekordy na každém zařízení.</span></li><li><b>Měsíční soutěž</b><span>Nejlepší bitva měsíce může vyhrát web zdarma.</span></li><li><b>Jedno jméno</b><span>Přezdívka účtu se použije v žebříčku i v multiplayeru.</span></li></ul></div></div>');
   this.setMode(this.mode);
   const form=document.querySelector('#account-login');
   form.elements.email.focus();
@@ -7412,12 +7427,14 @@ class AccountUI{
    html+='<section class="account-section"><div class="account-section-head"><h3>Kontaktní údaje</h3></div><details class="account-contacts"'+(contact?'':' open')+'><summary>'+(contact?'Upravit kontakty':'Vyplnit kontakt')+'</summary><form id="account-contacts" class="account-form" novalidate><label>Instagram · uživatelské jméno<input name="instagram" maxlength="100" value="'+escapeHTML(p.instagram)+'" autocomplete="off"></label><label>Discord · uživatelské jméno<input name="discord" maxlength="100" value="'+escapeHTML(p.discord)+'" autocomplete="off"></label>'+
     '<label class="account-check"><input name="useLogin" type="checkbox"'+(useLogin?' checked':'')+'><span>Použít přihlašovací e-mail jako kontaktní</span></label><small class="account-check-hint" translate="no"'+(useLogin&&login?'':' hidden')+'>'+escapeHTML(login)+'</small>'+
     '<label class="account-contact-email"'+(useLogin?' hidden':'')+'>Kontaktní e-mail<input name="email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="254" value="'+(useLogin?'':escapeHTML(p.contact_email))+'"></label>'+
-    '<small>Kontakty nejsou veřejné.</small><p class="account-inline-status" role="status"></p><button class="primary-button" type="submit">ULOŽIT KONTAKTY</button></form></details></section>';
+    '<small>Kontakty nejsou veřejné. <a class="policy-link" href="#cookies" target="_blank" rel="noopener">Zásady ochrany soukromí ↗</a></small><p class="account-inline-status" role="status"></p><button class="primary-button" type="submit">ULOŽIT KONTAKTY</button></form></details></section>';
+   html+='<section class="account-section"><details class="account-delete"><summary>Smazat účet</summary><form id="account-delete" class="account-form" novalidate><small>Účet se hned zablokuje a po 7 dnech se natrvalo smaže i s postupem, skóre a kontakty. Do té doby ho obnovíme nebo smažeme hned, když napíšeš na info@neplytegr.cz.</small><input name="login" type="email" autocomplete="username" value="'+escapeHTML(login)+'" hidden><label>Současné heslo<input name="password" type="password" autocomplete="current-password" maxlength="128" required></label><p class="account-inline-status" role="status"></p><button class="secondary-button" type="submit">SMAZAT ÚČET</button></form></details></section>';
   }
   html+='<p id="account-status" class="account-status" role="status"></p><div class="account-footer">'+(p?'<button class="secondary-button" data-account="sync">ULOŽIT TEĎ</button>':'<span></span>')+'<button class="text-button account-logout" data-account="logout">ODHLÁSIT SE</button></div><p class="account-fineprint">Účet ukládá tanky, výzkum a rekordy. Vzhledy a kosmetická odemčení přenes zálohou v nastavení.</p></div>';
   this.openModal('account',html);
   this.render();
   this.bindFields();
+  document.querySelector('#account-delete')?.addEventListener('submit',e=>{e.preventDefault();this.deleteAccount(e.target);});
   const contacts=document.querySelector('#account-contacts');
   if(!contacts)return;
   const c=contacts.elements;
@@ -7562,13 +7579,7 @@ class AccountUI{
    }
    if(action==='logout'||action==='logout-force'){
     await this.account.logout(action==='logout-force');
-    clearTimeout(this.timer);clearTimeout(this.retryTimer);
-    this.applyProgress({...cloudProgress(this.guestProgress()),accountOwner:null,nickname:'',multiplayerNick:''});
-    this.mode='login';
-    this.setState('guest');
-    this.busy=false;
-    this.openLogin();
-    this.status('Odhlášeno. Na tomto zařízení hraješ jako host.');
+    this.leave('Odhlášeno. Na tomto zařízení hraješ jako host.');
    }
   }catch(e){
    this.fail(e);this.status(e.message);
@@ -7580,6 +7591,34 @@ class AccountUI{
    }
   }
   finally{this.busy=false;}
+ }
+ // Back to playing as a guest on this device after signing out or deleting the account.
+ leave(message){
+  clearTimeout(this.timer);clearTimeout(this.retryTimer);
+  this.applyProgress({...cloudProgress(this.guestProgress()),accountOwner:null,nickname:'',multiplayerNick:''});
+  this.mode='login';
+  this.setState('guest');
+  this.busy=false;
+  this.openLogin();
+  this.status(message);
+ }
+ async deleteAccount(form){
+  if(this.busy)return;
+  const f=form.elements,button=form.querySelector('button'),say=text=>{form.querySelector('.account-inline-status').textContent=text;};
+  if(this.inBattle()){say('Nejdřív se vrať do hangáru.');return;}
+  if(!f.password.value){say('Zadej současné heslo.');f.password.focus();return;}
+  const scores=this.scoresKey;
+  this.busy=true;button.disabled=true;say('Mažu účet…');
+  try{
+   await this.account.deleteAccount(f.password.value);
+   try{this.account.storage.removeItem(scores);}catch{}
+   this.leave('Účet je zablokovaný a za 7 dní se smaže. Obnovit ho můžeš přes info@neplytegr.cz.');
+  }catch(error){
+   if(error.code==='session_expired'||!this.signedIn){this.fail(error);return;}
+   if(!form.isConnected)return;
+   say(error.message);
+   if(error.code==='wrong_password'){f.password.value='';f.password.focus();}
+  }finally{this.busy=false;button.disabled=false;}
  }
  get scoresKey(){return 'hsw-pending-scores:'+this.account.profile?.player_id;}
  async record(score,run){
@@ -12514,6 +12553,19 @@ function showZombieShop(){
 function showGuide(){
   openModal('guide',`<span class="eyebrow">POLNÍ PŘÍRUČKA / ZÁKLADNÍ VÝCVIK</span><h2>Znát svůj tank. Ovládnout bojiště.</h2><p class="modal-intro">Původní prohlížečová hra inspirovaná tankovými simulátory. Model pancíře a modulů je zjednodušený pro krátké, taktické bitvy. Parametry strojů jsou herně vyvážené. BMPT Terminator je moderní ruský bonus na konci větve SSSR; odemkneš ho po IS-2. Ve větvích najdeš také Tiger II a M26 Pershing.</p><div class="guide-grid"><section><h3>Ovládání</h3><div class="controls-list"><span><kbd>W</kbd> / <kbd>S</kbd></span><span>Vpřed / zpátečka</span><span><kbd>E</kbd> / <kbd>Q</kbd></span><span>Tempomat vpřed / vzad. W nebo S jej zruší.</span><span><kbd>A</kbd> / <kbd>D</kbd></span><span>Plynulé řízení vlevo / vpravo; při couvání se korba stáčí jako u vozidla</span><span><kbd>MYŠ</kbd></span><span>Pohyb pohledu a zaměřování; věž zaměřovač dohání</span><span><kbd>LEVÉ TLAČÍTKO</kbd></span><span>Výstřel (lze držet)</span><span><kbd>MEZERNÍK</kbd></span><span>Kulomet; sleduj přehřátí. Silný pancíř neprostřelí.</span><span><kbd>N</kbd></span><span>Nuke za 20 bodů: každý kill +1, smrt −1. Body zůstávají mezi životy. Odpočet 10 s, potom vítězství.</span><span><kbd>PRAVÉ TLAČÍTKO</kbd></span><span>Podržet pro přiblížení</span><span><kbd>C</kbd></span><span>Podržet pro rozhlížení bez otáčení věže</span><span><kbd>KOLEČKO</kbd></span><span>Vzdálenost kamery / zvětšení zaměřovače</span><span><kbd>SHIFT</kbd></span><span>Přepnout do první osoby — optický zaměřovač střelce</span><span><kbd>PgUp / PgDn</kbd></span><span>Nástřel ±100 m; po nasazení 0 m</span><span><kbd>Y</kbd></span><span>Dálkoměr: nastaví nástřel na vzdálenost bodu pod zaměřovačem</span><span><kbd>F</kbd></span><span>Oprava modulů při zastavení. Míření a funkční zbraně zůstávají dostupné.</span><span><kbd>G</kbd></span><span>Kouřová clona — 5 na život</span><span><kbd>X</kbd></span><span>Podržet pro zobrazení modulů</span><span><kbd>R</kbd></span><span>Maus: druhý kanón 75 mm (lze držet). Po zničení: nasadit záložní tank.</span><span><kbd>R</kbd></span><span>BMPT: naváděná raketa; po odpalu ji řídíš mířením</span><span><kbd>TAB</kbd></span><span>Týmy a přezdívky v online bitvě</span><span><kbd>ESC</kbd></span><span>Pauza</span></div><p>Po nasazení je zaměřovač uprostřed obrazovky. Velký kroužek ukazuje, kam míříš. Menší kroužek ukazuje předpokládaný první dopad střely; překážka před hlavní může výstřel zastavit. V první osobě se kříž optiky pohybuje s hlavní a šedý kroužek ukazuje, kam míříš. Značky pod křížem (4, 8, 12, 16 = stovky metrů) ukazují, kam střela na danou vzdálenost dopadne. Pro neomezené otáčení klikni do bojiště; Esc uvolní myš a pozastaví hru. Citlivost nastavíš v nastavení.</p><p>Na dotykovém zařízení použij směrová tlačítka, dotyk bojiště pro míření a tlačítko PALBA. Nejlepší přehled máš na široké obrazovce.</p></section><section><h3>ZOMBIE · Přežití</h3><p>V hangáru vyber režim Zombie. Odraz vlny, střílej kulometem na mezerníku, používej výbuchy děla a přejížděj hordy. Mezi vlnami nakupuj za šrot. Auto kulomet za 1 800 šrotu míří nezávisle na tvé věži. Posádka má jeden život; upgrady a šrot platí jen do konce přežití. Nuke je dostupný v Nadvládě, týmovém deathmatchi i v multiplayeru.</p><h3>Nadvláda · 6 proti 6</h3><p>Ty a pět spojeneckých botů stejné země proti šesti tankům výhradně cizích zemí. Vjeď do kruhu A, B nebo C a drž pozici. Přítomnost nepřítele obsazování zastaví. Ovládané zóny ubírají soupeři body; vítězí tým, který vyčerpá jeho zásoby nebo vede po dvanácti minutách.</p><h3>Týmový deathmatch</h3><p>Bez obsazování. První tým s 30 killy vyhrává. Po 12 minutách rozhoduje počet killů; při shodě je remíza. Každý zničený nepřítel má stejnou hodnotu.</p><h3>Každý zásah má svou cestu</h3><p>Účinná tloušťka pancíře závisí na úhlu dopadu, straně korby i vzdálenosti. Prudký úhel může střelu odrazit. Průnik poškodí modul podle místa zásahu: pásy zastaví tank, motor omezí pohyb, věž zpomalí míření a závěr znemožní palbu. Zásah munice nebo vyřazení posádky může stroj zničit.</p><h3>Přežij další minutu</h3><p>Mapy zahrnují městské bloky, průmyslové dvory, otevřenou rovinu i krajinu s mnoha menšími kopci. Řeku přejížděj přes mosty; hluboká voda je neprůjezdná. Kryj boky a využívej terén i budovy. Kouř ztíží botům zaměřování a umožní opravu. Písek, bahno a hluboký sníh zpomalují přesun; cesty jsou rychlejší. Po zničení dostaneš další stroj za cenu týmových bodů.</p><h3>Postup zůstává u tebe</h3><p>Výzkum se ukládá automaticky v tomto prohlížeči. S hráčským účtem se ukládá i do cloudu, takže můžeš pokračovat na jiném zařízení. V nastavení lze stáhnout a později načíst zálohu postupu nebo změnit motiv. Vymazání dat webu smaže postup, který není uložený v účtu.</p></section></div>`);
 }
+// Keep in sync with what the game stores and sends. Adding cookies or third-party scripts needs a consent step first.
+function showCookies(){
+  openModal('cookies',`<span class="eyebrow">COOKIES A SOUKROMÍ</span><h2>Jak zacházíme s tvými údaji</h2><p class="modal-intro">Co hra zpracovává, proč a jak dlouho. Hra nepoužívá žádné cookies.</p><div class="guide-grid cookie-policy">
+<section><h3>Kdo za hrou stojí</h3><p>Správcem osobních údajů je provozovatel hry Hard Steel War. Se vším, co se týká tvých údajů, piš na:</p><p><a href="mailto:info@neplytegr.cz" translate="no">info@neplytegr.cz</a></p></section>
+<section><h3>Hráčský účet a žebříčky</h3><p>Účet je dobrovolný. Ukládáme přihlašovací e-mail, přezdívku, heslo (jen jako otisk, který neumíme převést zpět), herní postup a skóre s datem. Slouží k přihlášení, ukládání postupu do cloudu a žebříčkům TOP 5, kde je veřejně vidět přezdívka a skóre.</p><p>Právní základ: plnění smlouvy, tedy služby, o kterou žádáš. Údaje držíme, dokud účet nesmažeš; smazaný účet je 7 dní zablokovaný a pak ho smažeme natrvalo. Nepotvrzenou registraci mažeme po jednom dni.</p></section>
+<section><h3>Měsíční soutěž</h3><p>Instagram, Discord nebo kontaktní e-mail (výchozí je přihlašovací e-mail) použijeme jen k oslovení výherce. Nejsou veřejné a změnit je můžeš v nastavení účtu. Právní základ: plnění smlouvy, tedy účast v soutěži.</p></section>
+<section><h3>Online hra</h3><p>Při online hře se tvoje přezdívka, pohyb tanku a zprávy v chatu posílají ostatním hráčům v místnosti, a to přes Supabase Realtime nebo přes vlastní herní server, ke kterému se připojíš. My je neukládáme; vlastní servery provozují jejich správci podle svých pravidel.</p></section>
+<section><h3>Hosting a zabezpečení</h3><p>Web běží na GitHub Pages. GitHub jako každý server vidí tvou IP adresu a uchovává ji v záznamech kvůli bezpečnosti. Účty, skóre a statistika leží u Supabase v datacentru ve Frankfurtu (EU); Supabase při přihlášení zaznamenává IP adresu kvůli ochraně účtu. Právní základ: oprávněný zájem na bezpečném provozu.</p><p>Přenosy mimo EU (GitHub) se řídí rámcem EU-US Data Privacy Framework nebo standardními smluvními doložkami.</p></section>
+<section><h3>Úložiště v prohlížeči</h3><p>Do localStorage hra ukládá postup, nastavení a přihlášení k účtu, do sessionStorage náhodné ID návštěvy na nejvýš 30 minut. Service worker drží offline kopii hry. Vše slouží jen k chodu hry, a proto k tomu není potřeba souhlas.</p></section>
+<section><h3>Anonymní statistika návštěv</h3><p>Na hsw.neplytegr.cz pošleme do Supabase jeden záznam za návštěvu: náhodné ID, typ zdroje (např. přímo, vyhledávač, sociální síť), zda jde o mobil, nebo počítač, a zda je prohlížeč v češtině. Bez cookies, jména, e-mailu, celé adresy odkazu a otisku prohlížeče. IP adresu do záznamu neukládáme. Při zapnutém Do Not Track nebo Global Privacy Control nic neposíláme.</p><p>Právní základ: oprávněný zájem na přehledu návštěvnosti.</p></section>
+<section><h3>Tvoje práva</h3><p>Máš právo na přístup ke svým údajům, jejich opravu, výmaz, omezení zpracování a přenesení a právo vznést námitku proti zpracování z oprávněného zájmu. Napiš na info@neplytegr.cz, nejlépe z e-mailu svého účtu; odpovíme do měsíce. Stížnost můžeš podat u Úřadu pro ochranu osobních údajů (uoou.gov.cz).</p></section>
+<section><h3>Jak data smazat</h3><p>Hráčský účet včetně postupu, skóre a kontaktů smažeš v nastavení účtu (Smazat účet). Hned se zablokuje a po 7 dnech natrvalo zmizí; do té doby ho obnovíme nebo smažeme hned, když napíšeš na info@neplytegr.cz.</p><p>Úložiště tohoto webu smažeš v nastavení prohlížeče (Vymazat data webu). Přijdeš tím o postup, který nemáš zálohovaný ani uložený k účtu.</p><p><small>Aktualizováno 24. 11. 2026</small></p></section></div>`);
+}
 function showSettings(){
   if(game)paused=true;
   openModal('settings',`<div class="settings-header"><span class="eyebrow">NASTAVENÍ</span><h2>Hraj po svém.</h2><p>Vzhled, výkon i ovládání na jednom místě.</p></div><div class="settings-grid"><section class="settings-card"><h3><span aria-hidden="true">◐</span> Prostředí</h3><div class="settings-row"><div>Jazyk<p>Automaticky podle domény; ruční volba zůstane uložená.</p></div><select data-language-picker aria-label="Jazyk"><option value="auto" ${getLanguagePreference()==='auto'?'selected':''}>Automaticky</option><option value="cs" ${getLanguagePreference()==='cs'?'selected':''}>Čeština</option><option value="en" ${getLanguagePreference()==='en'?'selected':''}>English</option></select></div><div class="settings-row"><div><label for="theme-select">Motiv</label><p>Barvy nabídek, hangáru a oken</p></div><select id="theme-select">${[['default','Výchozí'],['light','Světlý'],['m90','Švédské M90']].map(([v,n])=>`<option value="${v}" ${getTheme()===v?'selected':''}>${n}</option>`).join('')}</select></div></section><section class="settings-card"><h3><span aria-hidden="true">♫</span> Zvuk a ovládání</h3><div class="settings-row"><div>Zvuk<p>Motor, výstřely a události bitvy</p></div><button class="settings-switch" role="switch" aria-label="Zvuk" aria-checked="${!!progress.settings.sound}" id="sound-toggle">${progress.settings.sound?'ZAPNUTO':'VYPNUTO'}</button></div><div class="settings-row"><div><label for="sensitivity-select">Citlivost myši</label><p>Stejný směr myši a pohledu; jemnější míření při přiblížení</p></div><select id="sensitivity-select">${[[.5,"Nízká"],[1,"Normální"],[1.5,"Vyšší"],[2,"Vysoká"]].map(([v,n])=>`<option value="${v}" ${Number(progress.settings.sensitivity)===v?"selected":""}>${n}</option>`).join("")}</select></div></section><section class="settings-card"><h3><span aria-hidden="true">▣</span> Obraz a výkon</h3><div class="settings-row"><div>Grafika<p>Při nízkém výkonu hra sníží rozlišení 3D obrazu. Úsporná grafika vypíná stíny.</p></div><select id="quality-select" aria-label="Grafika"><option value="auto" ${progress.settings.quality==='auto'?'selected':''}>Automatická</option><option value="high" ${progress.settings.quality==='high'?'selected':''}>Vysoká</option><option value="low" ${progress.settings.quality==='low'?'selected':''}>Úsporná</option></select></div><div class="settings-row"><div>Počítadlo FPS<p>Ukáže snímky za sekundu v levém horním rohu</p></div><button class="settings-switch" role="switch" aria-label="Počítadlo FPS" aria-checked="${!!progress.settings.fps}" id="fps-toggle">${progress.settings.fps?'ZAPNUTO':'VYPNUTO'}</button></div></section><section class="settings-card"><h3><span aria-hidden="true">↗</span> Účet a postup</h3>${accountUI?.settingsRow()||''}<div class="settings-row"><div>Lokální postup<p>${progress.battles} bitev · ${progress.kills} zničených cílů · ${progress.unlocked.length}/${TANKS.length} strojů</p></div><button class="secondary-button" id="export-save">Zálohovat</button></div><div class="settings-row"><div>Obnovit zálohu<p>Nahradí aktuální výzkum uloženým postupem</p></div><label class="secondary-button" style="cursor:pointer">Načíst soubor<input id="import-save" type="file" accept="application/json,.json" hidden></label></div></section></div><div class="settings-footer"><span>Změny se ukládají automaticky.</span><div class="modal-actions"><button class="primary-button" data-action="close">Hotovo</button></div></div>`);
@@ -12982,6 +13034,7 @@ document.addEventListener('click',e=>{
    if(b.dataset.view==='hangar'){leaveScoresPage();closeModal();}
    if(b.dataset.view==='research')showResearch();
    if(b.dataset.view==='guide')showGuide();
+   if(b.dataset.view==='cookies')showCookies();
    if(b.dataset.view==='multiplayer'&&!game)multiplayerUI?.open();
  }
  if(b.dataset.nation){
@@ -13472,6 +13525,8 @@ function leaveScoresPage(updateURL=true){
 function syncPageRoute(){
  if(game)return;
  if(location.hash==='#top5')showScores();
+ // Linkable privacy policy URL (the sign-up and contact forms open it in a new tab).
+ else if(location.hash==='#cookies')showCookies();
  else {
   leaveScoresPage(false);
   if(modalView)closeModal();
@@ -13703,7 +13758,7 @@ if(recoveryToken){
 }
 accountUI.restore();
 window.addEventListener('hashchange',syncPageRoute);
-if(location.hash==='#top5')syncPageRoute();
+if(location.hash==='#top5'||location.hash==='#cookies')syncPageRoute();
 
 return {};
 })();
