@@ -12,7 +12,7 @@ function loadAccounts(){
   const MODULES={'data.js':{TANKS:[]}};
   vm.runInNewContext(html.slice(start,end),{MODULES,AbortController,setTimeout,clearTimeout,atob});
   const values=new Map();
-  const storage={getItem:key=>values.get(key),setItem:(key,value)=>values.set(key,value)};
+  const storage={getItem:key=>values.get(key),setItem:(key,value)=>values.set(key,value),removeItem:key=>values.delete(key)};
   const requests=[];
   let response={ok:true,status:200,json:async()=>({})};
   const fetcher=async(url,options)=>{requests.push({url,...options});return response;};
@@ -83,4 +83,63 @@ test('uses the recovery token for changing the password without replacing the ac
   assert.equal(requests[0].headers.Authorization,'Bearer recovery-token');
   assert.deepEqual(JSON.parse(requests[0].body),{password:'new-example-password'});
   assert.equal(storage.getItem(account.key),savedSession);
+});
+
+function signIn(account){
+  const claims=Buffer.from(JSON.stringify({sub:'first-player'})).toString('base64url');
+  account.adoptRedirect(new URLSearchParams({type:'signup',access_token:'header.'+claims+'.signature',refresh_token:'refresh'}));
+}
+
+test('a save queued on an older cloud revision is a conflict and never overwrites the cloud',async()=>{
+  const {account,storage,requests,setResponse}=loadAccounts();
+  signIn(account);
+  const pending=JSON.stringify({progress:{xp:100},revision:4});
+  storage.setItem(account.pendingKey,pending);
+  setResponse({ok:true,status:200,json:async()=>({username:'player',player_id:'p1',revision:5,progress:{xp:900}})});
+  await assert.rejects(account.load(),{code:'cloud_conflict'});
+  await assert.rejects(account.flush(),{code:'cloud_conflict'});
+  assert.deepEqual(requests.map(r=>r.url),['https://example.com/rest/v1/rpc/hsw_account']);
+  assert.equal(storage.getItem(account.pendingKey),pending);
+});
+
+test('a save queued on the current cloud revision is uploaded with that revision',async()=>{
+  const {account,storage,requests,setResponse}=loadAccounts();
+  signIn(account);
+  storage.setItem(account.pendingKey,JSON.stringify({progress:{xp:100},revision:5}));
+  const replies=[{username:'player',player_id:'p1',revision:5,progress:{xp:900}},6];
+  setResponse({ok:true,status:200,json:async()=>replies.shift()});
+  await account.load();
+  assert.equal(requests[1].url,'https://example.com/rest/v1/rpc/hsw_save_progress');
+  const body=JSON.parse(requests[1].body);
+  assert.equal(body.p_revision,5);
+  assert.equal(body.p_progress.xp,100);
+  assert.equal(account.profile.revision,6);
+  assert.equal(storage.getItem(account.pendingKey),undefined);
+});
+
+test('a queued score refused by the 30-second limit is sent again once the limit is over',async()=>{
+  const start=html.indexOf('MODULES["account-ui.js"]=');
+  const MODULES={'accounts.js':{},'data.js':{TANKS:[]},'leaderboard.js':{escapeHTML:String}};
+  const timers=[];
+  vm.runInNewContext(html.slice(start,html.indexOf('\nMODULES[',start+1)),{MODULES,Intl,
+    setTimeout:(fn,ms)=>timers.push({fn,ms}),clearTimeout:()=>{}});
+  const values=new Map(),sent=[];
+  const month=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Prague',year:'numeric',month:'2-digit'}).format(new Date());
+  const ui=Object.create(MODULES['account-ui.js'].AccountUI.prototype);
+  Object.assign(ui,{toast:()=>{},status:()=>{},account:{
+    profile:{player_id:'p1'},
+    storage:{getItem:key=>values.get(key),setItem:(key,value)=>values.set(key,value)},
+    async submit(score,run){
+      sent.push(run);
+      if(sent.length===2)throw Object.assign(Error('Wait 30 s.'),{code:'score_cooldown'});
+      return score;
+    }
+  }});
+  values.set(ui.scoresKey,JSON.stringify([{score:100,run:'a',month},{score:200,run:'b',month}]));
+  assert.equal(await ui.flushScores(),false);
+  assert.equal(timers.length,1);
+  assert.ok(timers[0].ms>=30000);
+  assert.equal(await timers[0].fn(),true);
+  assert.deepEqual(sent,['a','b','b']);
+  assert.equal(values.get(ui.scoresKey),'[]');
 });

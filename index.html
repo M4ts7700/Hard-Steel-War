@@ -3708,7 +3708,6 @@ function createBattleMap(id,seed){
   return map;
 }
 function getMap(id) { return variants.get(id)?.map || MAPS.find(m => m.id === id) || MAPS.find(m => m.id === String(id).split(':')[0]) || MAPS[0]; }
-// A dedicated process can run indefinitely; release completed seeded worlds.
 let damagedSerial=0;
 function removeBridgeDeck(map,bridge){
  let spec=specFor(map.id);
@@ -3720,7 +3719,12 @@ function removeBridgeDeck(map,bridge){
  }
  spec.missingDecks.add(bridge.id);map.bridges=map.bridges.filter(b=>b!==bridge);
 }
-function releaseBattleMap(id) { if(typeof id==='string'&&id.includes(':'))variants.delete(id); }
+// Drops a finished battle's seeded map and its damaged copies; getMap falls back and they are rebuilt on demand.
+function releaseBattleMap(id) {
+  if(typeof id!=='string'||!id.includes(':'))return;
+  const world=id.split(':').slice(0,2).join(':');
+  for(const key of variants.keys())if(key===world||key.startsWith(world+':'))variants.delete(key);
+}
 
 return {NATIONS,TANKS,TERRAIN,BRIDGE_FILL,terrainHeight,surfaceHeight,terrainAt,bareTerrainAt,bridgeAllows,parapetCrossed,deckFunnel,underDeckExit,blockedAt,waterNearSegment,waterLevel,waterBetween,MAPS,getTank,createBattleMap,getMap,removeBridgeDeck,releaseBattleMap};
 })();
@@ -5402,7 +5406,9 @@ return {CAMOUFLAGES,SKINS,ACCESSORIES,MODEL_LICENSE,PAINT_SIDES,PAINT_SURFACES,P
 })();
 MODULES["leaderboard.js"]=(()=>{
 const cleanNick=value=>String(value||'').normalize('NFKC').replace(/[<>\u0000-\u001f\u007f]/g,'').trim().slice(0,20);
-return {cleanNick};
+// The one HTML escape for player text; null and undefined become ''.
+const escapeHTML=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+return {cleanNick,escapeHTML};
 })();
 MODULES["multiplayer-game.js"]=(()=>{
 const {Game} = MODULES["simulation.js"];
@@ -6066,8 +6072,8 @@ class CloudRoom extends PublicServerRoom{
 return {watchPublicLobby,CloudRoom};
 })();
 MODULES["public-server-config.js"]=(()=>{
-// Set this to the HTTPS origin of the deployed Node server, then rebuild the HTML.
-// The web page can stay on Endora. No secret keys belong in this file.
+// HTTPS origin of a dedicated game server (PublicServerRoom protocol). Empty: the public
+// match runs over Supabase Realtime (CloudRoom). No secret keys belong in this file.
 const PUBLIC_SERVER_URL='';
 
 return {PUBLIC_SERVER_URL};
@@ -6567,10 +6573,9 @@ const {PublicServerUI} = MODULES["public-server-ui.js"];
 const {MultiplayerRoom} = MODULES["multiplayer.js"];
 const {ONLINE_CONFIG} = MODULES["online-config.js"];
 const {MAPS,TANKS,getTank,getMap} = MODULES["data.js"];
-const {cleanNick} = MODULES["leaderboard.js"];
+const {cleanNick,escapeHTML:esc} = MODULES["leaderboard.js"];
 const {translate,localize} = MODULES["i18n.js"];
 const {roomInviteCode,roomInviteLink} = MODULES["room-links.js"];
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const inviteLink=code=>roomInviteLink(location.href,code,document.querySelector('link[rel="canonical"]')?.href);
 const tankOptions=(progress,selected)=>TANKS.filter(t=>progress.unlocked.includes(t.id)||t.id===selected).map(t=>`<option value="${t.id}" ${t.id===selected?'selected':''}>${esc(t.name+' '+t.variant)}</option>`).join('');
 const mapOptions=selected=>MAPS.map(m=>`<option value="${m.id}" ${m.id===selected?'selected':''}>${esc(m.name)} · ${m.size} m</option>`).join('');
@@ -7097,7 +7102,7 @@ return {accountUsername,accountEmail,validAccountPassword,accountResetCode,cloud
 MODULES["account-ui.js"]=(()=>{
 const {cloudProgress,accountUsername,accountEmail,validAccountPassword,accountResetCode} = MODULES["accounts.js"];
 const {TANKS} = MODULES["data.js"];
-const escapeHTML=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const {escapeHTML} = MODULES["leaderboard.js"];
 const hasContact=p=>!!(p.instagram||p.discord||p.contact_email);
 const number=n=>Math.round(Number(n)||0).toLocaleString(document.documentElement.lang==='en'?'en-US':'cs-CZ');
 const currentMonth=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Prague',year:'numeric',month:'2-digit'}).format(new Date());
@@ -7599,7 +7604,12 @@ class AccountUI{
     this.account.storage.setItem(key,JSON.stringify(remaining));
    }
    this.status('Skóre uloženo k účtu.');return true;
-  }catch(e){this.lastError=e.message;this.toast('Skóre čeká na odeslání. '+e.message);return false;}
+  }catch(e){
+   this.lastError=e.message;this.toast('Skóre čeká na odeslání. '+e.message);
+   // The server takes one score per 30 s, so a queue of two would otherwise wait for the next save.
+   if(e.code==='score_cooldown'){clearTimeout(this.scoreTimer);this.scoreTimer=setTimeout(()=>this.flushScores(),31000);}
+   return false;
+  }
   finally{this.submitting=false;}
  }
 }
@@ -12082,7 +12092,7 @@ const {PlayerAccount} = MODULES["accounts.js"];
 const {AccountUI} = MODULES["account-ui.js"];
 const {ONLINE_CONFIG} = MODULES["online-config.js"];
 const {WorkshopEditor} = MODULES["workshop.js"];
-const {NATIONS,TANKS,MAPS,getTank,getMap,createBattleMap,terrainAt,terrainHeight} = MODULES["data.js"];
+const {NATIONS,TANKS,MAPS,getTank,getMap,createBattleMap,releaseBattleMap,terrainAt,terrainHeight} = MODULES["data.js"];
 const {Game} = MODULES["simulation.js"];
 const {CAMOUFLAGES,SKINS,ACCESSORIES,normalizeAppearance,normalizeAppearances,
  importTankImage,importWorkshopModel,workshopItems,normalizeCosmetics,DECAL_SURFACES} = MODULES["appearance.js"];
@@ -12146,7 +12156,7 @@ function lateTankSVG(t){
  return `<svg class="tank-mini" viewBox="0 0 200 88" aria-hidden="true"><ellipse cx="99" cy="77" rx="85" ry="6" fill="#111a13" opacity=".5"/><path d="M17 56H158L174 65 162 77H29L17 66Z" fill="#222b22" stroke="#89916b"/><path d="M24 55 48 35H136L162 55Z" fill="${t.color}" stroke="#d2d8ac55"/>${wheels}<path d="${turret}" fill="${t.color}" stroke="#d2d8ac88"/><path d="M112 24H193" stroke="${t.color}" stroke-width="${is?7:5}"/><path d="M183 20H196V28H183Z" fill="${t.color}"/><rect x="78" y="10" width="17" height="5" fill="${t.color}"/><path d="M46 37V7" stroke="#657554"/><path d="M31 48H145" stroke="#222f24" stroke-width="3"/>${t.nation==='us'?'<path d="m89 20 2 5 6 .5-5 3 2 6-5-4-5 4 2-6-5-3 6-.5z" fill="#d9dbc2"/>':''}</svg>`;
 }
 const roman=n=>['','I','II','III','IV','V','VI'][n]||n;
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const {escapeHTML:esc} = MODULES["leaderboard.js"];
 function save(next=progress){
   try{
     if(next!==progress&&localStorage.getItem(STORAGE)!==lastSavedProgress){
@@ -12601,6 +12611,7 @@ function backToHangar(research=false){
   $('#network-hud').hidden=true;
   releaseControls();
   scope=false;
+  if(game)releaseBattleMap(game.map.id);
   game=null;zoneHud.game=null;
   paused=false;
   modalView='';

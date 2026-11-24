@@ -40,3 +40,17 @@ test('a world without bot navigation still applies bridge and prop destruction',
   assert.ok(!game.map.bridges.includes(game.initialBridges[0]));
   assert.equal(game._nav, null);
 });
+
+test('releasing a finished battle map drops its seeded world and damaged copies only', () => {
+  const { createBattleMap, removeBridgeDeck, releaseBattleMap, getMap } = context.MODULES['data.js'];
+  const kept = createBattleMap('valley', 12);
+  const map = { ...createBattleMap('valley', 11) };
+  const world = map.id;
+  removeBridgeDeck(map, map.bridges[0]);
+  assert.notEqual(map.id, world);
+  assert.equal(getMap(map.id), map);
+  releaseBattleMap(map.id);
+  assert.equal(getMap(world).id, 'valley');
+  assert.equal(getMap(map.id).id, 'valley');
+  assert.equal(getMap(kept.id), kept);
+});

@@ -1,6 +1,7 @@
 -- Base backend for Hard Steel War: player accounts, monthly scores and the original anonymous TOP 5.
 -- Rebuilt from the game's client calls for the Frankfurt (eu-central-1) project.
 -- Auth settings this needs: email sign-up on, "Confirm email" off, anonymous sign-ins on.
+-- Outdated since 202611210001: the game now needs "Confirm email" on and anonymous sign-ins off.
 begin;
 
 -- Player accounts (auth email is <username>@accounts.hardsteelwar.invalid).
