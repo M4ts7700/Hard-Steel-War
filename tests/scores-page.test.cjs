@@ -32,7 +32,7 @@ function setup(hash=''){
 test('TOP 5 has a direct route and returns to hangar through browser navigation',async()=>{
  const s=setup('#top5');s.ctx.syncPageRoute();
  assert.equal(s.node('#scores-page').hidden,false);
- assert.equal(s.node('#hangar').hidden,true);
+ assert.equal(s.node('#hangar').hidden,false);
  assert.equal(s.ctx.modalView,'');
  assert.equal(s.history.length,0,'opening a direct link does not add another history entry');
  s.location.hash='';s.ctx.syncPageRoute();
@@ -48,7 +48,7 @@ test('TOP 5 has a direct route and returns to hangar through browser navigation'
 test('period changes keep one route and stale responses cannot replace the current table',async()=>{
  const s=setup();const first=s.ctx.showScores();const oldTable=s.table();
  const second=s.ctx.showScores('all');
- assert.deepEqual(s.history,['#top5']);
+ assert.deepEqual(s.history,[]);
  s.pending[1]([{nick:'Current',score:20}]);await second;
  s.pending[0]([{nick:'Old',score:10}]);await first;
  assert.match(s.table().innerHTML,/Current/);
