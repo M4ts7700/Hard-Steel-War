@@ -36,7 +36,7 @@ test('old single-model saves migrate and unrestricted transforms survive a save 
 });
 
 const trackerCode = fs.readFileSync(path.join(root, 'visit-tracker.js'), 'utf8');
-function tracker({ storage = new Map(), nav = {}, host = 'hsw.neplytegr.cz', referrer = '', response = { ok: true }, fail = false, blockedStorage = false } = {}) {
+function tracker({ storage = new Map(), nav = {}, host = 'hswar.cz', referrer = '', response = { ok: true }, fail = false, blockedStorage = false } = {}) {
   const requests = [], timers = [], events = new Map();
   const env = {
     window: {}, location: { hostname: host, protocol: 'https:' },

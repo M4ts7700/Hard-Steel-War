@@ -3,7 +3,7 @@ window.HSWVisitTracker = (() => {
   const KEY = 'hsw-visit-v1', WINDOW_MS = 30 * 60 * 1000;
   let started = false;
   function start(config) {
-    if (started || location.hostname !== 'hsw.neplytegr.cz' || location.protocol !== 'https:' ||
+    if (started || location.hostname !== 'hswar.cz' || location.protocol !== 'https:' ||
         navigator.doNotTrack === '1' || window.doNotTrack === '1' || navigator.globalPrivacyControl === true) return;
     started = true;
     let visit;

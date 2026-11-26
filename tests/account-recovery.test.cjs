@@ -51,10 +51,10 @@ test('checks the 7-digit emailed code with Supabase and returns its recovery tok
 
 test('passes the game language to Supabase emails through the return address',async()=>{
   const {account,requests}=loadAccounts();
-  account.config.emailRedirect=()=>'https://hsw.neplytegr.cz/?lang=en';
+  account.config.emailRedirect=()=>'https://hswar.cz/?lang=en';
   await account.sendPasswordReset('player@example.com');
   await account.resendConfirmation('player@example.com');
-  const query='?redirect_to='+encodeURIComponent('https://hsw.neplytegr.cz/?lang=en');
+  const query='?redirect_to='+encodeURIComponent('https://hswar.cz/?lang=en');
   assert.equal(requests[0].url,'https://example.com/auth/v1/recover'+query);
   assert.equal(requests[1].url,'https://example.com/auth/v1/resend'+query);
 });
@@ -166,9 +166,9 @@ test('an account waiting for deletion is signed out and points the player to sup
   const {account,storage,setResponse}=loadAccounts();
   account.persist({access_token:'token',refresh_token:'refresh',expires_in:3600,user:{id:'player-1'}});
   setResponse({ok:false,status:400,json:async()=>({code:'P0001',message:'account_deleted'})});
-  await assert.rejects(account.load(),{code:'account_deleted',message:/info@neplytegr\.cz/});
+  await assert.rejects(account.load(),{code:'account_deleted',message:/support@hswar\.cz/});
   assert.equal(account.session,null);
   assert.equal(storage.getItem(account.key),undefined);
   setResponse({ok:false,status:400,json:async()=>({code:400,error_code:'user_banned',msg:'User is banned'})});
-  await assert.rejects(account.login('player@example.com','example-password'),{code:'user_banned',message:/info@neplytegr\.cz/});
+  await assert.rejects(account.login('player@example.com','example-password'),{code:'user_banned',message:/support@hswar\.cz/});
 });

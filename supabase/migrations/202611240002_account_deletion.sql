@@ -4,7 +4,7 @@
 -- every device signed out, every account RPC refuses it and it leaves the TOP 5. A nightly job deletes it
 -- for good 7 days later; the scores and contacts go with it (on delete cascade).
 --
--- Support (info@neplytegr.cz), in the SQL Editor:
+-- Support (support@hswar.cz), in the SQL Editor:
 --   Restore within the 7 days:  select public.hsw_restore_account('player@example.com');
 --   Delete right away:          delete from auth.users where lower(email) = lower('player@example.com');
 --   Waiting for deletion:       select u.email, a.username, a.delete_requested_at
