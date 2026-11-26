@@ -279,31 +279,48 @@ body.in-battle .topbar{display:none}
 .battle-bottom{position:absolute;bottom:23px;left:25px;right:25px;justify-content:space-between;pointer-events:none}
 .module-panel,.minimap-wrap{background:#14251bdc;border:1px solid #b0c29c3d;backdrop-filter:blur(7px)}
 .module-panel{width:310px;padding:15px}
-.hud-caption{display:flex;justify-content:space-between;gap:8px;font-size:10px;letter-spacing:.8px;color:#d7e4c9}
-.hud-caption span:last-child{color:#93ad80;font-size:9px}
-.module-layout{display:flex;gap:18px;align-items:center;margin-top:14px}
-.tank-diagram{width:88px;height:139px;position:relative;flex-shrink:0}
-.track{
-  position:absolute;top:16px;bottom:3px;width:13px;border:1px solid #81aa76;
-  background:repeating-linear-gradient(#5d7d4b 0 4px,#2f4829 4px 7px);
-}
-.track.left{left:1px}
-.track.right{right:1px}
-.hull{position:absolute;inset:13px 19px 0;border:1px solid #8ca77c;background:#66825238}
-.turret-block{
-  position:absolute;z-index:1;width:38px;height:43px;top:18px;left:5px;border:1px solid #a0b990;background:#809b6e80;border-radius:7px;
-}
-.gun-block{position:absolute;left:15px;top:-34px;height:35px;width:6px;background:#a2bf8d}
-.engine-block{position:absolute;bottom:4px;left:5px;right:5px;height:31px;background:#728a595c;border:1px solid #8da677}
-.ammo-block{position:absolute;top:68px;left:5px;right:5px;height:16px;background:#9ea15d6b}
-.module-damaged{background:#e77c3c90!important;border-color:#e7a24d!important}
-.module-destroyed{background:#c34e4590!important;border-color:#ed7464!important}
-#module-bars{flex:1}
-.module-bar-row{display:flex;align-items:center;gap:8px;font-size:10px;margin:9px 0;color:#b8c9aa}
-.module-bar-row>span{width:60px}
-.module-bar-row>div{background:#354c30;height:5px;flex:1}
-.module-bar-row i{display:block;background:#93b87d;height:100%}
-.module-actions{display:flex;gap:10px;margin-top:13px;pointer-events:auto}
+/* The X-ray circle: a top-down view of the player's tank turned so the top
+   of the circle is where the camera looks. Crew chips wrap its lower-left
+   edge, smoke pips its right edge; the speed sits above-right. */
+.battle-bottom .module-panel{background:none;border:0;backdrop-filter:none;padding:0}
+.module-layout{display:flex;align-items:flex-end}
+.xray-hud{--xr:110px;position:relative;width:292px;height:292px;flex-shrink:0;color:#dfe9d4;text-shadow:0 1px 3px #000}
+.xray-hud svg{display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.xray-speed{position:absolute;right:2px;top:4px;display:flex;align-items:baseline;gap:5px}
+.xray-speed strong{font-size:34px;font-weight:300;line-height:1;font-variant-numeric:tabular-nums}
+.xray-speed span{font-size:10px;color:#c2d0b5}
+#xray-canvas{position:absolute;left:calc(146px - var(--xr));top:calc(146px - var(--xr));width:calc(var(--xr)*2);height:calc(var(--xr)*2);border-radius:50%;
+  background:#0f1d14e0;box-shadow:0 0 0 1px #b0c29c66,0 0 0 6px #0f1d1480}
+.xray-ring{position:absolute;inset:0;pointer-events:none}
+.xray-ring>*{position:absolute;transform:translate(-50%,-50%)}
+.xray-crew-chip{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;
+  background:#1d3a25e6;border:1px solid #9fd18a;color:#e4f3d6}
+.xray-crew-chip svg{width:17px;height:17px}
+.xray-crew-chip.wounded{border-color:#e2ad60;color:#f4d7a4;background:#3d3220e6}
+.xray-crew-chip.dead{border-color:#d4463a;background:#3a1612e6;color:#a8594f}
+.xray-crew-chip.dead::after{content:'';position:absolute;left:3px;right:3px;top:50%;height:2px;background:#e5574a;transform:rotate(-45deg)}
+.xray-crew-chip.moving{border-style:dashed;border-color:#f0c27a;color:#f0c27a;animation:xray-blink .7s steps(2) infinite}
+@keyframes xray-blink{50%{opacity:.35}}
+.xray-icon{color:#b9c9aa}
+.xray-icon svg{width:18px;height:18px}
+.xray-smoke-pip{width:12px;height:12px;border-radius:50%;border:1px solid #d3d1c7;background:#d3d1c7}
+.xray-smoke-pip.used{background:none;border-color:#6f7a66}
+.xray-smoke-pip.next{background:conic-gradient(#d3d1c7 var(--reload-fill,100%),transparent 0)}
+/* Progress circles under the crosshair: one per crewman changing seats (his
+   new seat's icon inside) and one for a repair (a wrench), side by side. */
+#action-rings{position:absolute;left:50%;top:calc(50% + 62px);transform:translateX(-50%);z-index:6;pointer-events:none;
+  display:flex;flex-direction:column;align-items:center;gap:8px}
+.action-ring-row{display:flex;gap:14px}
+.action-ring{position:relative;width:54px;height:54px;display:grid;place-items:center;color:#f0c27a;filter:drop-shadow(0 1px 3px #000)}
+.action-ring.repair{color:#9fd18a}
+.action-ring>svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.action-ring>svg circle{fill:#0f1d14b3;stroke:#ffffff2e;stroke-width:4}
+.action-ring>svg circle+circle{fill:none;stroke:currentColor;stroke-linecap:round}
+.action-ring>i svg{display:block;width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#repair-needed{font-size:11px;letter-spacing:2px;color:#f0c27a;text-shadow:0 1px 3px #000,0 0 2px #000;white-space:nowrap}
+#repair-needed[hidden]{display:none}
+.driving-hud .speed{display:none}
+.module-actions{display:none;gap:10px;margin-top:13px;pointer-events:auto}
 .module-actions button{border:1px solid #617c4c;padding:7px 8px;font-size:8px;flex:1;background:#354a2dc7}
 #smoke-button.reloading{background:linear-gradient(90deg,#354a2dc7 var(--reload-fill,0%),#141c11e6 var(--reload-fill,0%))}
 .missile-action.reloading{background:linear-gradient(90deg,#66522bc7 var(--reload-fill,0%),#1a150ce6 var(--reload-fill,0%))}
@@ -380,6 +397,7 @@ body.in-battle .topbar{display:none}
   h1{font-size:58px}
   .hero-corner small{display:none}
   .module-panel{width:260px}
+  .xray-hud{zoom:.87}
   .minimap-wrap{width:232px}
   .minimap-wrap canvas{width:210px;height:210px}
 }
@@ -402,10 +420,7 @@ body.in-battle .topbar{display:none}
   .battle-score{width:350px}
   .battle-bottom{left:12px;right:12px;bottom:12px}
   .module-panel{width:200px;padding:9px}
-  .tank-diagram{transform:scale(.75);margin:-17px -11px}
-  .module-layout{gap:8px;margin-top:5px}
-  .module-bar-row{font-size:8px;margin:7px 0}
-  .module-bar-row>span{width:46px}
+  .xray-hud{zoom:.68}
   .module-actions{gap:5px}
   .module-actions button{padding:7px 3px;font-size:7px}
   .driving-hud{transform-origin:bottom}
@@ -449,10 +464,7 @@ body.in-battle .topbar{display:none}
   .result-stats{grid-template-columns:repeat(2,1fr);gap:10px}
   .modal-actions .primary-button,.modal-actions .secondary-button{width:100%}
   .module-panel{width:157px}
-  .tank-diagram{display:none}
-  .module-layout{margin-top:8px}
-  .module-bar-row{margin:8px 0}
-  .module-bar-row>span{width:50px}
+  .xray-hud{zoom:.53}
   .module-actions{margin-top:7px}
   .driving-hud{bottom:0;left:calc(50% - 67px)}
   .ammo-hud{width:150px;padding:9px;gap:8px}
@@ -460,7 +472,6 @@ body.in-battle .topbar{display:none}
   .ammo-hud small{font-size:6px}
   .speed strong{font-size:32px}
   .minimap-wrap{width:120px;padding:7px}
-  .hud-caption span:last-child{display:none}
   .battle-score{width:285px;padding:10px}
   .score-row{font-size:7px}
   .score-row b{font-size:16px;margin:0 5px}
@@ -558,7 +569,7 @@ body.in-battle #scene{cursor:none;touch-action:none;outline:none}
 }
 
 #nuke-button{
-  position:absolute;left:25px;top:126px;z-index:8;border:1px solid #baa369;background:#25342ce8;color:#f1d38d;padding:12px 15px;
+  position:absolute;right:25px;top:66px;z-index:8;border:1px solid #baa369;background:#25342ce8;color:#f1d38d;padding:12px 15px;
   font:600 11px monospace;cursor:pointer;
 }
 #nuke-button:disabled{color:#a9b29f;border-color:#65715d;cursor:default}
@@ -569,7 +580,7 @@ body.in-battle #scene{cursor:none;touch-action:none;outline:none}
 #nuke-flash.detonate{animation:nuke-flash 4s ease-out forwards}
 @keyframes nuke-flash{0%{opacity:.95}15%{opacity:.9}45%{opacity:.35}100%{opacity:0}}
 @media(max-width:700px){
-  #nuke-button{left:12px;top:106px;padding:8px;font-size:9px}
+  #nuke-button{right:12px;top:60px;padding:8px;font-size:9px}
   .mg-hud{width:120px;font-size:8px}
 }
 
@@ -660,8 +671,7 @@ body.in-battle #scene{cursor:none;touch-action:none;outline:none}
   .driving-hud .ammo-hud{width:130px;padding:7px}
   .driving-hud .mg-hud{width:125px}
   .module-panel{width:150px;padding:6px}
-  .module-layout{gap:5px}
-  .module-panel .tank-diagram{display:none}
+  .xray-hud{zoom:.5}
   .view-status{display:none}
 }
 /* Touch buttons clear the larger damage panel and map. */
@@ -925,7 +935,7 @@ button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid #efd
   background:#000a;color:#c8f0b4;font:11px/1.3 monospace;
 }
 #network-hud{
-  position:absolute;right:25px;top:85px;background:#14251be6;border:1px solid #8dbd9b77;border-radius:4px;padding:10px 13px;
+  position:absolute;right:25px;top:116px;background:#14251be6;border:1px solid #8dbd9b77;border-radius:4px;padding:10px 13px;
   color:#a9e4cc;font:10px monospace;z-index:5;pointer-events:none;max-width:40vw;line-height:1.6;
 }
 @media(max-width:800px){
@@ -975,7 +985,7 @@ button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid #efd
   border-bottom:1px solid #6f7d5e50;color:var(--soft-text);font-size:12px;
 }
 .mp-offline button{border-radius:5px}
-#server-chat{position:absolute;left:25px;top:175px;width:min(330px,calc(100vw - 24px));z-index:12;pointer-events:none}
+#server-chat{position:absolute;left:25px;top:max(150px,calc(50% - 125px));width:min(330px,calc(100vw - 24px));z-index:12;pointer-events:none}
 #server-chat-toggle{
   pointer-events:auto;padding:9px 13px;border:1px solid #7c9e8360;background:#14221ef0;color:#d1e0d4;font:10px monospace;
   border-radius:4px;
@@ -1476,9 +1486,10 @@ html[data-theme=m90] .hangar-heading h1,html[data-theme=m90] .panel-head h2,html
   #touch-scope{padding:5px;font-size:9px}
   .battle-bottom{display:block;left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));bottom:calc(140px + env(safe-area-inset-bottom))}
   .module-panel{width:140px;padding:6px}
-  .module-layout,.module-panel .hud-caption{display:none}
-  .module-actions{margin:0;gap:4px}
+  .module-layout{display:none}
+  .module-actions{display:flex;margin:0;gap:4px}
   .module-actions button,.missile-action{min-height:44px;font-size:10px;padding:5px}
+  .driving-hud .speed{display:flex}
   .driving-hud{position:absolute;bottom:calc(-128px - env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:96px;min-width:0}
   .driving-hud .ammo-hud{width:96px;padding:5px;gap:3px}
   .driving-hud .shell-icon{display:none}
@@ -1491,7 +1502,7 @@ html[data-theme=m90] .hangar-heading h1,html[data-theme=m90] .panel-head h2,html
   .battle-score{width:min(65vw,350px);padding:8px}
   .zone-hud{margin-top:6px;gap:12px}
   .battle-map-label,.view-status,.camera-mode-button,.battle-objective{display:none}
-  #nuke-button{left:max(12px,env(safe-area-inset-left));top:calc(60px + env(safe-area-inset-top));min-height:44px;padding:6px;font-size:9px}
+  #nuke-button{left:auto;right:max(12px,env(safe-area-inset-right));top:calc(60px + env(safe-area-inset-top));min-height:44px;padding:6px;font-size:9px}
   .kill-feed{top:112px;right:12px;max-width:160px}
   .modal button,.modal select{min-height:44px}
   .modal input,.modal select{font-size:16px}
@@ -1530,7 +1541,7 @@ try{const theme=localStorage.getItem('hsw-theme');if(theme==='light'||theme==='m
 </div>
 <section class="game-about" aria-labelledby="about-title"><div><span class="eyebrow">TANKOVÁ HRA ZDARMA</span><h2 id="about-title">Co je Hard Steel War?</h2></div><div><p>Hard Steel War je bezplatná 3D tanková hra, kterou hraješ přímo v prohlížeči bez stahování. Vel tankům Německa, USA a SSSR, zkoumej nové stroje a upravuj jejich vzhled vlastními 3D modely.</p><p>Bojuj proti botům, vyzkoušej online multiplayer s přáteli nebo přežij vlny zombie. V režimu Nadvláda obsazuj zóny, v týmovém deathmatchi nič soupeřovy tanky. Hra podporuje češtinu i angličtinu a po prvním načtení nabízí i hraní proti botům offline.</p><small>Pro přehled návštěvnosti odesíláme do Supabase anonymní záznam návštěvy bez jména, e-mailu a cookies. Respektujeme Do Not Track i Global Privacy Control.</small></div></section><footer><span>HARD STEEL WAR <b> / </b> EXPERIMENTÁLNÍ TANKOVÝ POLYGON</span><span class="text-button">OFFLINE EDICE · VŠE V TOMTO SOUBORU</span><button class="text-button" data-view="guide">Ovládání a mechaniky ↗</button><button class="text-button" data-view="cookies">Cookies a soukromí ↗</button></footer></div>
 </main>
-<section id="battle" hidden><div id="battle-scene"></div><div class="battle-top"><button id="pause-button" class="hud-button">Ⅱ</button><div class="battle-score"><div class="score-row"><span class="team-blue">SPOJENCI <b id="friendly-score">2000</b></span><span id="battle-time">12:00</span><span class="team-red"><b id="enemy-score">2000</b> NEPŘÍTEL</span></div><div class="ticket-bars"><i id="friendly-bar"></i><i id="enemy-bar"></i></div><div id="zone-hud" class="zone-hud"></div></div><span class="battle-map-label" id="battle-map-label"></span></div><div id="network-hud" hidden></div><section id="server-chat" hidden><button id="server-chat-toggle" type="button">CHAT · ENTER</button><div id="server-chat-body" hidden><div id="server-chat-log" role="log" aria-label="Chat" aria-live="polite"></div><form id="server-chat-form"><input id="server-chat-input" aria-label="Zpráva" placeholder="Napiš zprávu…" maxlength="180" autocomplete="off"><button type="submit">ODESLAT</button></form></div></section><aside id="team-roster" hidden></aside><div id="name-tags"></div><div id="zombie-hud" hidden></div><div id="scope-overlay" class="scope-overlay" hidden><canvas id="scope-canvas" aria-hidden="true"></canvas></div><div id="view-status" class="view-status"></div><button id="camera-mode-button" class="camera-mode-button">1. OSOBA</button><div id="gun-marker" hidden></div><div id="reticle"><span></span></div><div id="hit-notice" aria-live="polite"></div><div id="kill-confirmation" class="kill-confirmation" hidden><span>✦</span><strong>CÍL ZNIČEN</strong><small></small></div><div id="kill-feed" class="kill-feed"></div><div class="battle-objective" id="battle-objective">OBSAĎ A UDRŽ ZÓNY</div><div id="damage-flash"></div><div id="nuke-flash"></div><button id="nuke-button" disabled>☢ BODY 0 / 10</button><div class="battle-bottom"><div class="module-panel"><div class="hud-caption"><span id="battle-tank-name"></span><span id="crew-label">POSÁDKA</span></div><div class="module-layout"><div id="tank-diagram" class="tank-diagram"><div class="track left"></div><div class="hull"><div class="engine-block"></div><div class="turret-block"><div class="gun-block"></div></div><div class="ammo-block"></div></div><div class="track right"></div></div><div id="module-bars"></div></div><div class="module-actions"><button id="repair-button">[F] Opravit</button><button id="smoke-button">[G] Kouř <span>3</span></button></div><button id="secondary-button" class="missile-action" hidden>[R] 75 mm · PŘIPRAVENO</button><button id="missile-button" class="missile-action" hidden>[2] RAKETA 4/4</button></div><div class="driving-hud"><small id="cruise-status" hidden></small><div class="speed"><strong id="speed-value">0</strong><span>km/h</span></div><div class="ammo-hud"><div class="shell-icon"></div><div><strong id="ammo-name">APHE</strong><small id="reload-label">PŘIPRAVENO</small><div class="reload-track"><i id="reload-bar"></i></div></div><span id="reload-count"></span></div><div class="mg-hud"><span id="mg-status">KULOMET</span><div><i id="mg-heat"></i></div></div></div><div class="minimap-wrap"><canvas id="minimap" width="300" height="300" aria-label="Taktická mapa bojiště"></canvas></div></div><div id="respawn-panel" hidden><span class="eyebrow">STROJ VYŘAZEN</span><h2>Bitva ještě nekončí.</h2><p id="death-killer" translate="no"></p><p id="respawn-text">Připravuje se záložní tank…</p><button id="respawn-button" class="primary-button">ZPĚT DO BOJE →</button></div><div class="touch-controls"><div id="touch-stick" role="group" aria-label="Joystick"><span>POHYB</span><i></i></div><div class="touch-pad"><button data-key="KeyW">▲</button><button data-key="KeyA">◀</button><button data-key="KeyS">▼</button><button data-key="KeyD">▶</button></div><div class="touch-aim-actions"><button id="touch-scope">ZAMĚŘOVAČ</button><button id="touch-mg">KULOMET</button><button id="touch-fire">PALBA</button></div></div></section>
+<section id="battle" hidden><div id="battle-scene"></div><div class="battle-top"><button id="pause-button" class="hud-button">Ⅱ</button><div class="battle-score"><div class="score-row"><span class="team-blue">SPOJENCI <b id="friendly-score">2000</b></span><span id="battle-time">12:00</span><span class="team-red"><b id="enemy-score">2000</b> NEPŘÍTEL</span></div><div class="ticket-bars"><i id="friendly-bar"></i><i id="enemy-bar"></i></div><div id="zone-hud" class="zone-hud"></div></div><span class="battle-map-label" id="battle-map-label"></span></div><div id="network-hud" hidden></div><section id="server-chat" hidden><button id="server-chat-toggle" type="button">CHAT · ENTER</button><div id="server-chat-body" hidden><div id="server-chat-log" role="log" aria-label="Chat" aria-live="polite"></div><form id="server-chat-form"><input id="server-chat-input" aria-label="Zpráva" placeholder="Napiš zprávu…" maxlength="180" autocomplete="off"><button type="submit">ODESLAT</button></form></div></section><aside id="team-roster" hidden></aside><div id="name-tags"></div><div id="zombie-hud" hidden></div><div id="scope-overlay" class="scope-overlay" hidden><canvas id="scope-canvas" aria-hidden="true"></canvas></div><div id="view-status" class="view-status"></div><button id="camera-mode-button" class="camera-mode-button">1. OSOBA</button><div id="gun-marker" hidden></div><div id="reticle"><span></span></div><div id="action-rings" aria-live="polite"><div class="action-ring-row"></div><span id="repair-needed" hidden>NUTNÁ OPRAVA · F</span></div><div id="hit-notice" aria-live="polite"></div><div id="kill-confirmation" class="kill-confirmation" hidden><span>✦</span><strong>CÍL ZNIČEN</strong><small></small></div><div id="kill-feed" class="kill-feed"></div><div class="battle-objective" id="battle-objective">OBSAĎ A UDRŽ ZÓNY</div><div id="damage-flash"></div><div id="nuke-flash"></div><button id="nuke-button" disabled>☢ BODY 0 / 10</button><div class="battle-bottom"><div class="module-panel"><div class="module-layout"><div id="xray-hud" class="xray-hud"><div class="xray-speed"><strong id="xray-speed">0</strong><span>km/h</span></div><canvas id="xray-canvas" aria-label="Rentgen tanku shora"></canvas><div id="xray-crew" class="xray-ring"></div><div id="xray-smoke" class="xray-ring"></div></div></div><div class="module-actions"><button id="repair-button">[F] Opravit</button><button id="smoke-button">[G] Kouř <span>3</span></button></div><button id="secondary-button" class="missile-action" hidden>[R] 75 mm · PŘIPRAVENO</button><button id="missile-button" class="missile-action" hidden>[2] RAKETA 4/4</button></div><div class="driving-hud"><small id="cruise-status" hidden></small><div class="speed"><strong id="speed-value">0</strong><span>km/h</span></div><div class="ammo-hud"><div class="shell-icon"></div><div><strong id="ammo-name">APHE</strong><small id="reload-label">PŘIPRAVENO</small><div class="reload-track"><i id="reload-bar"></i></div></div><span id="reload-count"></span></div><div class="mg-hud"><span id="mg-status">KULOMET</span><div><i id="mg-heat"></i></div></div></div><div class="minimap-wrap"><canvas id="minimap" width="300" height="300" aria-label="Taktická mapa bojiště"></canvas></div></div><div id="respawn-panel" hidden><span class="eyebrow">STROJ VYŘAZEN</span><h2>Bitva ještě nekončí.</h2><p id="death-killer" translate="no"></p><p id="respawn-text">Připravuje se záložní tank…</p><button id="respawn-button" class="primary-button">ZPĚT DO BOJE →</button></div><div class="touch-controls"><div id="touch-stick" role="group" aria-label="Joystick"><span>POHYB</span><i></i></div><div class="touch-pad"><button data-key="KeyW">▲</button><button data-key="KeyA">◀</button><button data-key="KeyS">▼</button><button data-key="KeyD">▶</button></div><div class="touch-aim-actions"><button id="touch-scope">ZAMĚŘOVAČ</button><button id="touch-mg">KULOMET</button><button id="touch-fire">PALBA</button></div></div></section>
 <section id="scores-page" class="scores-page" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="scores-title"><button id="scores-close" class="modal-close" aria-label="Zavřít">&times;</button><h1 id="scores-title" tabindex="-1">TOP 5</h1><div id="scores-content"></div></div></section>
 <div id="modal" class="modal-backdrop" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button id="close-modal" class="modal-close" aria-label="Zavřít">×</button><div id="modal-content"></div></section></div>
 <section id="workshop" hidden><div class="workshop-dialog" role="dialog" aria-modal="true" aria-labelledby="custom-title"><button id="custom-close" class="modal-close" aria-label="Zavřít">&times;</button><div id="custom-preview"></div><aside><span class="eyebrow">DÍLNA / VLASTNÍ VZHLED</span><h2 id="custom-title" tabindex="-1"></h2><p>Pravým tlačítkem si tank prohlédni ze všech stran. Štětec a nálepky použij přímo na 3D náhledu.</p><div id="custom-form"></div><button id="custom-reset" class="text-button">Obnovit původní vzhled</button><div class="custom-actions"><small id="custom-price" role="status"></small><button id="custom-save" class="primary-button">ULOŽIT VZHLED</button><button id="custom-cancel" class="secondary-button">ZRUŠIT</button></div><small>Úpravy vzhledu nemění bojové vlastnosti. Odemčené položky a vlastní vzhledy přeneseš zálohou v nastavení.</small></aside></div></section><div id="toast" role="status"></div>
@@ -1710,6 +1721,8 @@ const CONTENT_TRANSLATIONS=[
  ['Spojenec v dráze střely','Ally in the line of fire'],['Zásah pásu · mimo korbu','Track hit · outside hull'],
  ['Odražená střela','Ricochet'],['Neproraženo','No penetration'],['APHE · výbuch uvnitř','APHE · internal explosion'],
  ['Vyřazen','Disabled'],['Zásah','Hit'],['motor','engine'],['pásy','tracks'],['pohon věže','turret drive'],['závěr děla','gun breech'],['munice','ammunition'],['posádka','crew'],
+ ['řidič','driver'],['střelec','gunner'],['nabíječ','loader'],['velitel','commander'],['radista','radio operator'],['převodovka','transmission'],['palivová nádrž','fuel tank'],['pás','track'],['Průstřel','Penetration'],
+ ['Řidič','Driver'],['Střelec','Gunner'],['Nabíječ','Loader'],['Velitel','Commander'],['Radista','Radio operator'],['přebírá řízení','takes over driving'],['přebírá kanón','takes over the gun'],
  ['zničen','destroyed'],['Výbuch munice','Ammunition explosion'],['Bitva opuštěna','Battle abandoned'],['OPERACE VYHRÁNA','OPERATION WON'],
  ['Přesný dlouhý kanón. Drž si odstup a nastav nepříteli čelo korby.','Accurate long gun. Keep your distance and face the enemy with your hull front.'],
  ['Silnější čelní pancíř a boční představné pláty. Spolehlivá palebná podpora.','Stronger frontal armor and side skirts. Reliable fire support.'],
@@ -2031,6 +2044,12 @@ Munice	Ammo
 [G] Kouř	[G] Smoke
 RAKETA	MISSILE
 OPRAVA	REPAIR
+Řidič	Driver
+Střelec	Gunner
+Nabíječ	Loader
+Velitel	Commander
+Radista	Radio operator
+NUTNÁ OPRAVA · F	REPAIR NEEDED · F
 TAKTICKÁ MAPA	TACTICAL MAP
 TERÉN	TERRAIN
 Pohyb	Move
@@ -3723,7 +3742,105 @@ function releaseBattleMap(id) {
   for(const key of variants.keys())if(key===world||key.startsWith(world+':'))variants.delete(key);
 }
 
-return {NATIONS,TANKS,TERRAIN,BRIDGE_FILL,terrainHeight,surfaceHeight,terrainAt,bareTerrainAt,bridgeAllows,parapetCrossed,deckFunnel,underDeckExit,blockedAt,waterNearSegment,waterLevel,waterBetween,MAPS,getTank,createBattleMap,getMap,removeBridgeDeck,releaseBattleMap};
+// ---------------------------------------------------------------------------
+// Vehicle internals: every crew seat and damageable component as a box, shared
+// by the damage model, the X-ray view and the HUD. Hull frame in metres: x
+// across (the models' drivers and commander cupolas sit on -x, so "L" ids are
+// -x), y up from the ground, z forward (+z = bow), matching Game._hit's
+// hit.local. turret:true boxes are in the turret frame: relative to the
+// traverse pivot (0, turretBaseY, turretOffsetZ) and turning with the turret.
+// x,y,z is a box centre, sx,sy,sz its full size. Boxes fit inside both the hit
+// box (Game._spawn width/length) and the visible model's hull.
+const VISUAL_HULL={pz4f2:[3.25,5.9],pz4h:[3.25,5.9],tigerh1:[3.8,6.65],tigere:[3.8,6.65],tiger2:[3.95,7.4],m4a1:[3.3,5.8],m4a2:[3.3,5.8],
+  m4a376:[3.3,5.8],m26:[3.5,6.5],t341941:[3.45,6.25],t341942:[3.45,6.25],t3485:[3.45,6.25],is1:[3.6,6.9],is2:[3.6,7.1]};
+const CREW_ROLES=['commander','gunner','loader','driver','radio'];
+const layouts=new Map();
+function tankLayout(type){
+  const cached=layouts.get(type);if(cached)return cached;
+  const spec=getTank(type),id=spec.id,geo=MODULES["ballistics.js"].weaponGeometry(id);
+  const heavy=spec.role==='Těžký tank'||id==='bmpt';
+  const simW=spec.width??(heavy?4:3.45),simL=spec.length??(heavy?7.2:6.5),[visW,visL]=VISUAL_HULL[id]||[simW,simL];
+  const W=Math.min(simW,visW),L=Math.min(simL,visL),base=geo.turretBaseY;
+  const floor=.82,inner=base-.08-floor,front=L/2-.34,rear=-L/2+.34,seated=Math.min(.92,inner-.04);
+  const tl=geo.turretLength??2.9,tw=Math.min(geo.turretWidth??simW*.7,id==='maus'?3.45:2.3),k=tw/2.2;
+  const crew=[],parts=[],low=sy=>floor+sy/2;
+  const hullSeat=(role,x,z)=>crew.push({role,seat:role,x,y:low(seated),z,sx:.5,sy:seated,sz:.56,turret:false});
+  const turretSeat=(role,x,z,y=-.36)=>crew.push({role,seat:role,x,y,z,sx:.48,sy:.95,sz:.54,turret:true});
+  const part=(pid,kind,x,y,z,sx,sy,sz,extra)=>parts.push({id:pid,kind,x,y,z,sx,sy,sz,turret:false,...extra});
+  const turretPart=(pid,kind,x,y,z,sx,sy,sz,extra)=>parts.push({id:pid,kind,x,y,z,sx,sy,sz,turret:true,...extra});
+  const pair=(prefix,kind,x,y,z,sx,sy,sz,extra)=>{part(prefix+'L',kind,-x,y,z,sx,sy,sz,extra);part(prefix+'R',kind,x,y,z,sx,sy,sz,extra);};
+  // Tracks fill the outer band of the hit box that Game._hit treats as track.
+  const tracks=(sy,sz)=>pair('track','track',simW*.4525,Math.max(.62,sy/2),0,simW*.09,sy,sz);
+  const turretRing=size=>turretPart('turretDrive','turretDrive',0,.05,0,size,.3,size);
+  const breech=(sx,sy,sz)=>turretPart('breech','breech',0,geo.gunY,Math.max(-tl/2+sz/2,geo.mantletZ-sz/2-.22),sx,sy,sz);
+  if(id==='btr80a'){
+    hullSeat('driver',-.45,2.3);hullSeat('commander',.45,2.3);turretSeat('gunner',0,-.05,-.55);
+    part('engine','engine',0,low(.75),-2.7,1.3,.75,1.3);
+    part('transmission','transmission',0,low(.35),-1.4,.8,.35,.9);
+    pair('fuel','fuel',.85,low(.6),-1.5,.45,.6,1);
+    part('ammoHull','ammo',.8,low(.5),.4,.4,.5,.9);
+    turretPart('ammoTurret','ammo',0,-.22,-.1,.5,.3,.5);
+    breech(.28,.3,.6);turretRing(.9);
+    tracks(1.3,6.6);
+  }else if(id==='bmpt'){
+    hullSeat('driver',0,front-.5);hullSeat('radio',-1,front-.76);hullSeat('radio',1,front-.76);
+    hullSeat('gunner',-.5,0);hullSeat('commander',.5,0);
+    part('transmission','transmission',0,low(.5),rear+.32,1.7,.5,.56);
+    const engineZ=rear+.72+.7;
+    part('engine','engine',0,low(.76),engineZ,1.6,.76,1.4);
+    pair('fuel','fuel',1.3,low(.6),engineZ,.45,.6,1.2);
+    pair('ammoHull','ammo',1.05,low(.55),.1,.45,.55,1.3);
+    turretPart('ammoTurret','ammo',0,.35,-.75,1.1,.4,.5);
+    breech(.75,.32,.7);turretRing(1.3);
+    tracks(.9,6);
+  }else if(id==='maus'){
+    hullSeat('driver',-.75,front-.6);hullSeat('radio',.75,front-.6);
+    turretSeat('gunner',-.7,.55);turretSeat('commander',-.8,-.5,-.18);turretSeat('loader',.75,.3);turretSeat('loader',.75,-.55);
+    part('engine','engine',0,low(.85),2.2,1.7,.85,1.6);
+    part('transmission','transmission',0,low(.6),rear+.45,1.9,.6,.7);
+    pair('fuel','fuel',1.15,low(.8),2.2,.5,.8,1.6);
+    pair('ammoHull','ammo',1.25,low(.7),-1,.5,.7,2);
+    turretPart('ammoTurret','ammo',0,.5,-1.4,1.6,.5,.55);
+    breech(.65,.45,1.1);turretRing(2.4);
+    tracks(1,L*.88);
+  }else{
+    const german=id.startsWith('pz4')||id.startsWith('tiger'),sherman=id.startsWith('m4'),t34=id.startsWith('t34'),is=id.startsWith('is');
+    const frontTransmission=german||sherman||id==='m18',side=german||sherman||id==='m18'?-1:1;
+    const hullZ=frontTransmission?front-1:front-.55;
+    hullSeat('driver',is?0:-W*.2,hullZ);
+    if(!is)hullSeat('radio',W*.2,hullZ);
+    if(id==='t341941'||id==='t341942'){turretSeat('gunner',side*.46*k,.12*k);turretSeat('loader',-side*.48*k,.05*k);}
+    else{turretSeat('gunner',side*.46*k,.32*k);turretSeat('commander',side*.5*k,-.5*k,-.18);turretSeat('loader',-side*.5*k,0);}
+    const engineSy=Math.min(.8,inner-.1),engineSz=heavy?1.45:1.25,transmissionSy=Math.min(.55,inner-.2);
+    let engineZ;
+    if(frontTransmission){
+      part('transmission','transmission',0,low(transmissionSy),front-.3,W*.36,transmissionSy,.55);
+      engineZ=rear+.12+engineSz/2;
+    }else{
+      part('transmission','transmission',0,low(transmissionSy),rear+.32,W*.4,transmissionSy,.56);
+      engineZ=rear+.72+engineSz/2;
+    }
+    part('engine','engine',0,low(engineSy),engineZ,W*.36,engineSy,engineSz);
+    // T-34s carry their fuel in tanks along the fighting compartment walls.
+    if(t34)pair('fuel','fuel',W*.36,low(Math.min(.8,inner-.1)),-.2,.26,Math.min(.8,inner-.1),1.4);
+    else pair('fuel','fuel',W*.31,low(engineSy*.8),engineZ,.4,engineSy*.8,engineSz*.85);
+    if(id==='m4a376')pair('ammoFloor','ammo',.42,low(.42),-.05,.62,.42,1.1,{wet:true});
+    else if(t34)pair('ammoFloor','ammo',.5,low(.32),.05,.7,.32,1.3);
+    else if(sherman)pair('ammoHull','ammo',W*.3,low(.5)+.12,.15,.4,.5,1.1);
+    else if(id.startsWith('tiger'))pair('ammoHull','ammo',W*.31,low(.7),.1,.45,.7,1.6);
+    else if(is)pair('ammoHull','ammo',W*.3,low(.6),-.55,.42,.6,1);
+    else pair('ammoHull','ammo',W*.3,low(Math.min(.6,inner-.1)),id==='m18'?-.25:-.15,.4,Math.min(.6,inner-.1),1.15);
+    if(['tiger2','t3485','is1','is2','m26','m18'].includes(id))turretPart('ammoTurret','ammo',0,.42,-(tl/2-.42),1.05*k,.42,.45);
+    const big=(spec.gunCaliber||75)>=100;
+    breech(big?.56:.42,.38,.8);turretRing(Math.min(1.75,tw*.72));
+    tracks(.95,L*.86);
+  }
+  crew.sort((a,b)=>CREW_ROLES.indexOf(a.role)-CREW_ROLES.indexOf(b.role));
+  const layout={crew,parts,width:visW,length:visL,turretBaseY:base,turretOffsetZ:geo.turretOffsetZ};
+  layouts.set(type,layout);return layout;
+}
+
+return {NATIONS,TANKS,TERRAIN,BRIDGE_FILL,terrainHeight,surfaceHeight,terrainAt,bareTerrainAt,bridgeAllows,parapetCrossed,deckFunnel,underDeckExit,blockedAt,waterNearSegment,waterLevel,waterBetween,MAPS,getTank,createBattleMap,getMap,removeBridgeDeck,releaseBattleMap,tankLayout,CREW_ROLES};
 })();
 MODULES["tactics.js"]=(()=>{
 const {getTank,waterBetween} = MODULES["data.js"];
@@ -4056,7 +4173,7 @@ const {TacticalDirector} = MODULES["tactics.js"];
 const {ObstacleIndex,Lattice} = MODULES["spatial.js"];
 // Tanks with deep-wading gear (Maus, both Tiger I variants); the rest drown.
 const WADERS=new Set(['maus','tigerh1','tigere']),DROWN_TIME=5;
-const { TANKS, getTank, getMap, createBattleMap, removeBridgeDeck, terrainHeight, terrainAt, surfaceHeight, bridgeAllows, parapetCrossed, deckFunnel, underDeckExit, blockedAt, waterNearSegment } = MODULES["data.js"];
+const { TANKS, getTank, getMap, createBattleMap, removeBridgeDeck, terrainHeight, terrainAt, surfaceHeight, bridgeAllows, parapetCrossed, deckFunnel, underDeckExit, blockedAt, waterNearSegment, tankLayout } = MODULES["data.js"];
 const { weaponFrame, weaponGeometry, secondaryWeaponGeometry, solveWeaponAim, GRAVITY } = MODULES["ballistics.js"];
 const TAU = Math.PI * 2;
 const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
@@ -4066,6 +4183,68 @@ const distance = (a,b) => Math.sqrt(dist2(a,b));
 const mix = (a,b,t) => a+(b-a)*t;
 const MECHANICAL = ['engine','tracks','turret','breech'];
 const MODULE_NAMES = {engine:'motor',tracks:'pásy',turret:'pohon věže',breech:'závěr děla',ammo:'munice',crew:'posádka'};
+// Individual internals (see tankLayout): t.crew = [{role, seat, hp, at, moving?}]
+// in layout.crew order, at = index of the layout crew box the member occupies,
+// moving = {seat, until} while climbing into an empty seat; t.parts = {id: hp}.
+// t.modules stays as the old six-value summary, recomputed by syncModules().
+const ROLE_NAMES={driver:'řidič',gunner:'střelec',loader:'nabíječ',commander:'velitel',radio:'radista'};
+const PART_NAMES={engine:'motor',transmission:'převodovka',fuel:'palivová nádrž',ammo:'munice',breech:'závěr děla',turretDrive:'pohon věže',track:'pás'};
+const LEGACY_MODULE={engine:'engine',transmission:'engine',fuel:'engine',ammo:'ammo',breech:'breech',turretDrive:'turret',track:'tracks'};
+const REPAIRABLE=new Set(['engine','transmission','fuel','breech','turretDrive','track']);
+// How much of a penetrator's energy is left after it crosses each kind of item.
+const PASS_THROUGH={crew:.8,engine:.35,transmission:.4,fuel:.6,ammo:.55,breech:.3,turretDrive:.65,track:.6};
+// Crew are softer than steel: a penetration should usually take out a tank in
+// two or three hits from the side, a few more from the front.
+const CREW_WOUND=1.6;
+// Extra punch for the APHE bursting charge and its fragments.
+const APHE_BOOST=1.5;
+// Top of each model's track loop (0.11 m + the wheel-run diameter, see the
+// tank builders), and the hull belly height behind the road wheels.
+const TRACK_TOPS={tigerh1:1.41,tigere:1.41,tiger2:1.41,m4a1:1.19,m4a2:1.19,m4a376:1.19,maus:1.49,m18:1.19,btr80a:1.19,bmpt:1.35};
+const trackTop=type=>TRACK_TOPS[type]??1.29,HULL_BELLY=.45;
+const SWAP_TIME=5,SWAP_ORDER=['radio','loader','commander'],SWAP_TASK={driver:'řízení',gunner:'kanón'};
+const capitalize=s=>s[0].toUpperCase()+s.slice(1);
+function freshInternals(t){
+  const layout=tankLayout(t.type);
+  t.crew=layout.crew.map((c,i)=>({role:c.role,seat:c.role,hp:100,at:i}));
+  t.parts=Object.fromEntries(layout.parts.map(p=>[p.id,100]));
+  t._layoutType=t.type;
+  return syncModules(t);
+}
+function syncModules(t){
+  if(!t.parts||!t.crew)return t.modules;
+  const layout=tankLayout(t.type),worst={};
+  for(const p of layout.parts)worst[p.kind]=Math.min(worst[p.kind]??100,t.parts[p.id]??100);
+  const crew=t.crew.length?t.crew.reduce((sum,c)=>sum+Math.max(0,c.hp),0)/t.crew.length:0;
+  return Object.assign(t.modules||(t.modules={}),{engine:Math.min(worst.engine??100,worst.transmission??100),tracks:worst.track??100,
+    turret:worst.turretDrive??100,breech:worst.breech??100,ammo:worst.ammo??100,crew:Math.round(crew*10)/10});
+}
+// Whoever works a station right now; null when it is empty or being taken over.
+function seatOccupant(t,seat){return t.crew?.find(c=>c.hp>0&&c.seat===seat&&!c.moving)||null;}
+// Station efficiency 0..1. Without crew data (old snapshots, tests) all work.
+// A lone survivor does every job at reduced speed instead of changing seats.
+function seatFactor(t,seat){
+  if(!t.crew||t.developer)return 1;
+  const living=t.crew.filter(c=>c.hp>0);
+  if(!living.length)return 0;
+  if(living.length===1)return seat==='loader'?0:living[0].seat===seat?1:.55;
+  const c=seatOccupant(t,seat);
+  return c ? .7+.3*c.hp/100 : 0;
+}
+// Loading speed as a share of the normal rate: 1 with someone in a loader's
+// seat, otherwise the gunner or commander loads between shots and a reload
+// takes twice as long. Autocannons (BMPT, BTR-80A) feed themselves.
+function loadRate(t){
+  if(!t.crew||t.developer)return 1;
+  if(!t.crew.some(c=>c.hp>0))return 0;
+  if(getTank(t.type).weapon==='autocannon')return 1;
+  return seatOccupant(t,'loader') ? 1 : .5;
+}
+function damageCrew(t,amount,index=-1){
+  let loss=0;
+  for(const [i,c] of t.crew.entries())if((index<0||i===index)&&c.hp>0){const d=Math.min(c.hp,amount);c.hp-=d;loss+=d;}
+  return loss;
+}
 const DIFFICULTY = {
   easy:{aim:2.0,think:.7,reaction:1.6,enemyDamage:.85,vision:1050},
   normal:{aim:.9,think:.45,reaction:.8,enemyDamage:1,vision:1400},
@@ -4210,6 +4389,7 @@ class Game {
       _aimX:x,_aimZ:z+sign*100,_aimY:null,sightRange:0,_playerDamage:0,gunPitch:0,_think:this._rand()*.3,_targetId:null,_goal:null,_path:[],_pathAge:99,_reaction:this._rules.reaction,
       _approachKey:null,_approach:null,_approachDone:false,_observed:null,_flankDone:null,_crossing:null,_crossed:null,_order:null,_tactic:null,_sightChecks:new Map(),
       _slopeStall:0,_escapeSlope:null,_avoidSlope:null,_stuck:0,_reverse:0,_lastX:x,_lastZ:z,_lastPlayerHit:-999,_fireSource:null,_repairTotal:0,_captureClock:0,lastHit:null,lastKiller:null});
+    freshInternals(t);
     if(!initial&&t.isPlayer)this._message('Nový tank připraven. Zpátky do boje!',t);
   }
 
@@ -4250,22 +4430,26 @@ class Game {
       t.smoke=Math.max(0,t.smoke-dt);
       t.smokeCooldown=Math.max(0,t.smokeCooldown-dt);
       t.missileReload=Math.max(0,t.missileReload-dt);
+      if(t._layoutType!==t.type||!t.crew||!t.parts)freshInternals(t);
+      this._updateCrew(t);
       if(t.modules.breech>0){
-        const loading=dt*(.65+.35*t.modules.crew/100);
+        const loading=dt*loadRate(t);
         t.reload=Math.max(0,t.reload-loading);
         t.secondaryReload=Math.max(0,(t.secondaryReload||0)-loading);
       }
       if(t.fire>0){
         const durability=getTank(t.type).durability||1;
         t.fire=Math.max(0,t.fire-dt);
-        t.modules.crew=Math.max(0,t.modules.crew-dt*2.5/durability);
-        t.modules.ammo=Math.max(0,t.modules.ammo-dt*1.3/durability);
-        if(t.modules.crew<=0||t.modules.ammo<=0){this._destroy(t,t._fireSource,'Požár zničil tank');continue;}
+        damageCrew(t,dt*2.2/durability);
+        let cookOff=false;
+        for(const p of tankLayout(t.type).parts)if(p.kind==='ammo'){t.parts[p.id]=Math.max(0,t.parts[p.id]-dt*1.3/durability);if(t.parts[p.id]<=0)cookOff=true;}
+        syncModules(t);
+        if(t.modules.crew<=0||cookOff){this._destroy(t,t._fireSource,'Požár zničil tank');continue;}
       }
       if(t.repair>0){
         t.repair=Math.max(0,t.repair-dt);
         if(t.repair===0){
-          for(const key of MECHANICAL)t.modules[key]=Math.max(85,t.modules[key]);
+          this._repairInternals(t);
           t.fire=0;
           this._event({type:'repair',text:'Oprava dokončena',x:t.x,z:t.z,team:t.team,targetId:t.id,playerRelated:t.isPlayer});
         }
@@ -4275,7 +4459,7 @@ class Game {
       // Deep water: the Maus and the Tiger I wade through, every other tank drowns.
       if(!t.flight&&!t.developer&&!WADERS.has(t.type)&&blockedAt(this.map.id,t.x,t.z,t.y)){
         t.drown=(t.drown||0)+dt;
-        if(t.drown>=DROWN_TIME){t.modules.crew=0;this._destroy(t,null,'Tank utonul');continue;}
+        if(t.drown>=DROWN_TIME){damageCrew(t,100);syncModules(t);this._destroy(t,null,'Tank utonul');continue;}
       }else t.drown=0;
       if(t.modules.crew<=0)this._destroy(t,t._fireSource,'Posádka vyřazena');
     }
@@ -4312,10 +4496,13 @@ class Game {
 
   _aim(t,dt,x,z) {
     if(t.modules.turret<=0)return;
+    // The gunner lays the gun; without a commander calling targets it is slower.
+    const gunner=seatFactor(t,'gunner');if(gunner<=0)return;
+    const crewRate=gunner*(t.crew&&!t.developer&&tankLayout(t.type).crew.some(c=>c.role==='commander')&&!seatOccupant(t,'commander')?.85:1);
     const solution=this.gunSolution(t),angle=solution.desiredYaw,spec=getTank(t.type);
-    const rate=(t.developer?3.6:spec.turretRate??(spec.role==='Těžký tank'?.73:1.18))*(.25+.75*t.modules.turret/100);
+    const rate=(t.developer?3.6:spec.turretRate??(spec.role==='Těžký tank'?.73:1.18))*(.25+.75*t.modules.turret/100)*crewRate;
     t.turretAngle=norm(t.turretAngle+clamp(norm(angle-t.turretAngle),-rate*dt,rate*dt));
-    const elevationRate=(t.developer?2.6:t.type==='m18'?1.2:t.type==='bmpt'?.65:.38)*(.25+.75*t.modules.turret/100);
+    const elevationRate=(t.developer?2.6:t.type==='m18'?1.2:t.type==='bmpt'?.65:.38)*(.25+.75*t.modules.turret/100)*crewRate;
     t.gunPitch+=clamp(solution.desiredPitch-t.gunPitch,-elevationRate*dt,elevationRate*dt);
   }
 
@@ -4335,7 +4522,8 @@ class Game {
 
   _move(t,dt,throttle,steer) {
     const spec=getTank(t.type),ground=terrainAt(this.map.id,t.x,t.z,t.y);
-    const engine=t.modules.engine<=0?0:.25+.75*t.modules.engine/100;
+    // Nobody at the controls: the tank coasts to a stop and cannot steer.
+    const engine=t.modules.engine<=0?0:(.25+.75*t.modules.engine/100)*seatFactor(t,'driver');
     const tracks=t.modules.tracks<=0?0:.4+.6*t.modules.tracks/100;
     const terrainBonus=spec.nation==='ussr'&&ground.speed<.9?1.1:1;
     const ahead=surfaceHeight(this.map.id,t.x+Math.sin(t.angle)*4,t.z+Math.cos(t.angle)*4,t.y),
@@ -4577,6 +4765,8 @@ class Game {
   fireMachineGunPlayer(t=this.player){
     if(t.developer)return this._fireDevAutocannon(t);
     if(this.finished||!t.alive||t.modules.crew<=0||t.modules.turret<=0||(t.mgCooldown||0)>0||t.mgOverheated)return false;
+    // The coaxial gun needs the gunner, the bow gun the radio operator.
+    if(seatFactor(t,'gunner')<=0&&seatFactor(t,'radio')<=0)return false;
     const frame=weaponFrame(t,this.map.id),side=.35;
     const pivot={x:frame.pivot.x+Math.cos(t.turretAngle)*side,y:frame.pivot.y,z:frame.pivot.z-Math.sin(t.turretAngle)*side};
     const muzzle={x:pivot.x+frame.direction.x*.8,y:pivot.y+frame.direction.y*.8,z:pivot.z+frame.direction.z*.8};
@@ -4631,9 +4821,53 @@ class Game {
   }
   abandon() {if(!this.finished)this._finish(1,'Bitva opuštěna',true);return this.finished;}
 
+  // Seat changes: an empty driver or gunner station is taken over by the
+  // radio operator, then the loader, then the commander, after SWAP_TIME.
+  _updateCrew(t) {
+    const crew=t.crew;if(!crew)return;
+    const living=crew.filter(c=>c.hp>0);
+    let changed=false;
+    for(const c of crew)if(c.moving&&(c.hp<=0||living.length<=1||this.time>=c.moving.until)){
+      if(c.hp>0&&living.length>1){
+        const target=c.moving.seat,vacated=crew.find(o=>o!==c&&o.hp<=0&&o.seat===target);
+        c.seat=target;if(vacated)c.at=vacated.at;
+      }
+      delete c.moving;changed=true;
+    }
+    if(living.length>1)for(const seat of ['gunner','driver']){
+      if(living.some(c=>c.moving?c.moving.seat===seat:c.seat===seat))continue;
+      if(!tankLayout(t.type).crew.some(c=>c.role===seat))continue;
+      const pick=SWAP_ORDER.map(s=>living.find(c=>!c.moving&&c.seat===s)).find(Boolean);
+      if(!pick)continue;
+      pick.moving={seat,until:this.time+SWAP_TIME};changed=true;
+      if(t.isPlayer||t.isHuman)this._event({type:'message',text:`${capitalize(ROLE_NAMES[pick.role])} přebírá ${SWAP_TASK[seat]}`,x:t.x,z:t.z,team:t.team,targetId:t.id,playerRelated:t.isPlayer});
+    }
+    if(changed)syncModules(t);
+  }
+  // Mechanical parts come back to working order; dead crew stay dead until the
+  // next tank, wounded crew patch themselves up a little.
+  _repairInternals(t) {
+    if(!t.parts)return;
+    for(const p of tankLayout(t.type).parts)if(REPAIRABLE.has(p.kind))t.parts[p.id]=Math.max(85,t.parts[p.id]);
+    for(const c of t.crew||[])if(c.hp>0)c.hp=Math.min(100,c.hp+20);
+    syncModules(t);
+  }
+  // Everything back to new, the dead crew replaced (zombie-mode workshop).
+  _restoreInternals(t) {freshInternals(t);}
+  // Zombies clawing at the hull wound every crew member and wear the tracks.
+  _hordeDamage(t,damage) {
+    if(!t.crew||!t.parts)freshInternals(t);
+    damageCrew(t,damage);
+    for(const p of tankLayout(t.type).parts)if(p.kind==='track')t.parts[p.id]=Math.max(0,t.parts[p.id]-damage*.6);
+    syncModules(t);
+  }
+  _needsRepair(t) {
+    if(!t.parts)return MECHANICAL.some(k=>t.modules[k]<85);
+    return tankLayout(t.type).parts.some(p=>REPAIRABLE.has(p.kind)&&t.parts[p.id]<85);
+  }
   _startRepair(t) {
     if(!t.alive||t.repair>0||this.finished)return false;
-    if(!MECHANICAL.some(k=>t.modules[k]<85)&&t.fire<=0){
+    if(!this._needsRepair(t)&&t.fire<=0){
       if(t.isPlayer)this._message('Mechanické moduly jsou v pořádku');
       return false;
     }
@@ -4655,7 +4889,7 @@ class Game {
   }
 
   _fire(t) {
-    if(this.finished||!t.alive||t.reload>.001||t.modules.breech<=0||t.modules.crew<=0)return false;
+    if(this.finished||!t.alive||t.reload>.001||t.modules.breech<=0||t.modules.crew<=0||seatFactor(t,'gunner')<=0)return false;
     const spec=getTank(t.type),barrelIndex=t._barrelIndex;
     // A stopped gun shoots along its visible axis. Motion adds only a small,
     // symmetric dispersion; it never silently changes the gun's elevation.
@@ -4677,7 +4911,7 @@ class Game {
 
   fireSecondaryPlayer(t=this.player) {
     const spec=secondaryWeaponGeometry(t.type);
-    if(!spec||this.finished||!t.alive||(t.secondaryReload||0)>.001||t.modules.breech<=0||t.modules.crew<=0)return false;
+    if(!spec||this.finished||!t.alive||(t.secondaryReload||0)>.001||t.modules.breech<=0||t.modules.crew<=0||seatFactor(t,'gunner')<=0)return false;
     const spread=Math.abs(t.speed)*.0001;
     const frame=weaponFrame(t,this.map.id,{secondary:true,yaw:t.turretAngle+(this._rand()-.5)*spread*2});
     const {direction,speed,muzzle}=frame;
@@ -4692,7 +4926,7 @@ class Game {
   }
 
   _fireMissile(t) {
-    if(this.finished||!t.alive||t.type!=='bmpt'||t.missiles<=0||t.missileReload>.001||t.modules.breech<=0||t.modules.turret<=0||t.modules.crew<=0)return false;
+    if(this.finished||!t.alive||t.type!=='bmpt'||t.missiles<=0||t.missileReload>.001||t.modules.breech<=0||t.modules.turret<=0||t.modules.crew<=0||seatFactor(t,'gunner')<=0)return false;
     const angle=t.turretAngle,side=t.missiles%2?-1:1,muzzle=95;
     const x=t.x+Math.sin(angle)*2.4+Math.cos(angle)*side*1.65,z=t.z+Math.cos(angle)*2.4-Math.sin(angle)*side*1.65;
     const y=surfaceHeight(this.map.id,t.x,t.z)+2.65;
@@ -4753,7 +4987,7 @@ class Game {
       ];
       for(const box of boxes){
         const la=localPoint(a,box.ref,box.y),lb=localPoint(b,box.ref,box.y),hit=segmentBox(la,lb,box.min,box.max);
-        if(hit&&(!closest||hit.t<closest.t))closest={...hit,tank:t,local:{x:mix(la.x,lb.x,hit.t),y:mix(la.y,lb.y,hit.t)+(box.turret?geometry.turretBaseY:0),z:mix(la.z,lb.z,hit.t)},localVelocity:{x:lb.x-la.x,y:lb.y-la.y,z:lb.z-la.z}};
+        if(hit&&(!closest||hit.t<closest.t))closest={...hit,tank:t,turret:!!box.turret,local:{x:mix(la.x,lb.x,hit.t),y:mix(la.y,lb.y,hit.t)+(box.turret?geometry.turretBaseY:0),z:mix(la.z,lb.z,hit.t)},localVelocity:{x:lb.x-la.x,y:lb.y-la.y,z:lb.z-la.z}};
       }
     }
     if(includeTanks)for(const s of this.sahurs){
@@ -4856,15 +5090,25 @@ class Game {
     }
     const spec=getTank(t.type),v=hit.localVelocity,speed=Math.hypot(v.x,v.y,v.z);
     const damageScale=(shell.damageScale??1)/(getTank(t.type).durability||1);
+    if(!t.parts||!t.crew||t._layoutType!==t.type)freshInternals(t);
     let trackArmor=0,trackDamage=0;
-    // Tracks are an external layer, not a terminal internal module. Follow the
-    // projectile through the gap to the actual hull; a shot underneath misses it.
-    if(hit.local.y<.95&&Math.abs(hit.local.x)>t.width*.405){
-      trackArmor=(spec.wheeled?3:18)/Math.max(.16,Math.abs(v[hit.axis])/(speed||1));
-      trackDamage=Math.min(t.modules.tracks,(18+this._rand()*17)*damageScale);
-      t.modules.tracks-=trackDamage;
+    // Tracks and road wheels are a thin outer layer, as on the models: they
+    // run along the outer band of the hit box from the ground up to the top of
+    // the track loop. Behind them the hull continues down to its belly: the
+    // sponsons from 0.77 m up, the narrower lower hull between the tracks
+    // below that. A shot through the running gear goes on into whichever hull
+    // part is behind it; only one passing under the belly hits the track alone.
+    if(!hit.turret&&hit.local.y<trackTop(t.type)&&Math.abs(hit.local.x)>t.width*.405){
+      trackArmor=(spec.wheeled?3:12)/Math.max(.6,Math.abs(v[hit.axis])/(speed||1));
+      const trackId=hit.local.x<0?'trackL':'trackR';
+      // Any cannon round (main gun, autocannon, the Maus 75 mm) or missile
+      // snaps the track outright; machine-gun fire needs ten hits to break it.
+      trackDamage=Math.min(t.parts[trackId]??0,!shell.missile&&shell.weapon==='machinegun'?10:Infinity);
+      t.parts[trackId]=Math.max(0,(t.parts[trackId]??0)-trackDamage);syncModules(t);
       const end={x:hit.local.x+v.x/(speed||1)*t.length*2,y:hit.local.y+v.y/(speed||1)*t.length*2,z:hit.local.z+v.z/(speed||1)*t.length*2};
-      const hull=segmentBox(hit.local,end,{x:-t.width*.405,y:.77,z:-t.length/2},{x:t.width*.405,y:weaponGeometry(t.type).turretBaseY-.05,z:t.length/2});
+      const upper=segmentBox(hit.local,end,{x:-t.width*.405,y:.77,z:-t.length/2},{x:t.width*.405,y:weaponGeometry(t.type).turretBaseY-.05,z:t.length/2});
+      const lower=segmentBox(hit.local,end,{x:-t.width*.33,y:HULL_BELLY,z:-t.length*.47},{x:t.width*.33,y:.77,z:t.length*.47});
+      const hull=upper&&(!lower||upper.t<=lower.t)?upper:lower;
       if(!hull){
         if(shell.shooterId==='player'){this._addDamage(trackDamage);t._lastPlayerHit=this.time;}
         t.lastHit={time:this.time,penetrated:false,module:'tracks',aspect:'side',trackOnly:true};
@@ -4889,43 +5133,119 @@ class Game {
       this._event({type:'bounce',text:ricochet?'Odražená střela':`Neproraženo · ${Math.round(effective)} mm`,...p,team:shell.team,targetId:t.id,playerRelated,weapon:shell.weapon});
       return;
     }
-    let module;
-    if(hit.local.y>1.7)module=this._rand()<.53?'breech':'turret';
-    else if(hit.local.z<-t.length*.20)module='engine';
-    else if(Math.abs(hit.local.x)>t.width*.28)module=this._rand()<.52?'ammo':'crew';
-    else module=this._rand()<.72?'crew':'breech';
     const excess=clamp((penetration-effective)/penetration,0,1);
-    let damage=(45+this._rand()*24+excess*22)*(this.mode!=='multiplayer'&&shell.team===1?this._rules.enemyDamage:1)*damageScale;
-    if(module==='ammo'&&t.type==='m4a376')damage*=.72;
-    let dealt=trackDamage+Math.min(t.modules[module],damage);t.modules[module]=Math.max(0,t.modules[module]-damage);
-    if(module!=='crew'&&module!=='tracks'){
-      const spall=(15+excess*18+this._rand()*9)*damageScale;
-      dealt+=Math.min(t.modules.crew,spall);
-      t.modules.crew=Math.max(0,t.modules.crew-spall);
-    }
-    // The main gun uses APHE. Its bursting charge damages nearby internals after
-    // penetration; engine-compartment bulkheads attenuate the crew blast.
     const aphe=!shell.missile&&(shell.weapon??'cannon')==='cannon';
-    if(aphe){
-      const burstPower=({pz4f2:1,pz4h:1,tigerh1:1.4,tigere:1.4,tiger2:1.45,m4a1:1.25,m4a2:1.25,m4a376:.95,m26:1.4,t341941:1.35,t341942:1.35,t3485:1.45,is1:1.45,is2:1.8})[this.tanks.find(o=>o.id===shell.shooterId)?.type]||1;
-      const blast=(62+excess*35)*damageScale*burstPower*(this.mode!=='multiplayer'&&shell.team===1?this._rules.enemyDamage:1);
-      const nearby=module==='engine'?{crew:.25,ammo:.15}:{crew:1,ammo:t.type==='m4a376'?.32:.65,breech:.45,turret:.3};
-      for(const [key,factor] of Object.entries(nearby)){
-        const loss=Math.min(t.modules[key],blast*factor);t.modules[key]-=loss;dealt+=loss;
-      }
-    }
-    if(module==='engine'&&this._rand()<.55*Math.min(1,damageScale)){t.fire=13;t._fireSource=shell.shooterId;}
-    if(module==='ammo'&&(t.modules.ammo<=0||(t.modules.ammo<25&&this._rand()<.45))){t.modules.ammo=0;t.modules.crew=0;}
+    const burstPower=aphe?({pz4f2:1,pz4h:1,tigerh1:1.4,tigere:1.4,tiger2:1.45,m4a1:1.25,m4a2:1.25,m4a376:.95,m26:1.4,t341941:1.35,t341942:1.35,t3485:1.45,is1:1.45,is2:1.8})[this.tanks.find(o=>o.id===shell.shooterId)?.type]||1:0;
+    // Entry point and flight direction in the hull frame; a turret plate hit
+    // arrives in the turret frame (see _traceSegment).
+    const geometry=weaponGeometry(t.type),ly=(t.turretAngle??t.angle)-t.angle,cs=Math.cos(ly),sn=Math.sin(ly);
+    const toHull=(q,offset)=>({x:q.x*cs+q.z*sn,y:q.y,z:-q.x*sn+q.z*cs+offset});
+    const entry=hit.turret?toHull(hit.local,geometry.turretOffsetZ):{...hit.local},flight=hit.turret?toHull(v,0):v;
+    const dir={x:flight.x/(speed||1),y:flight.y/(speed||1),z:flight.z/(speed||1)};
+    const result=this._penetrate(t,entry,dir,{excess,scale:damageScale*(this.mode!=='multiplayer'&&shell.team===1?this._rules.enemyDamage:1),
+      aphe,burstPower,heat:!!shell.missile,weapon:shell.weapon??'cannon'});
+    if(result.fire&&!(t.fire>0)){t.fire=13;t._fireSource=shell.shooterId;}
+    if(result.detonated)damageCrew(t,100);
+    syncModules(t);
+    const dealt=trackDamage+result.parts*.4+result.crew*.5,module=result.module;
     if(t.repair>0)t.repair=Math.min(11,t.repair+1.5);
     if(shell.shooterId==='player'){
       this._addDamage(dealt);
       t._playerDamage=(t._playerDamage||0)+dealt;
       t._lastPlayerHit=this.time;
     }
-    t.lastHit={time:this.time,penetrated:true,module,aphe,armor:Math.round(effective),penetration:Math.round(penetration),aspect};
-    const destroyed=t.modules[module]<=0;
-    this._event({type:'hit',text:`${aphe?'APHE · výbuch uvnitř · ':''}${destroyed?'Vyřazen':'Zásah'}: ${MODULE_NAMES[module]} · ${Math.round(dealt)}`,...p,team:shell.team,module,targetId:t.id,playerRelated,damage:Math.round(dealt),penetration:Math.round(penetration),armor:Math.round(effective),missile:!!shell.missile,weapon:shell.weapon});
-    if(t.modules.crew<=0||t.modules.ammo<=0)this._destroy(t,shell.shooterId,t.modules.ammo<=0?'Výbuch munice':'Posádka vyřazena');
+    t.lastHit={time:this.time,penetrated:true,module,knocked:result.knocked,aphe,armor:Math.round(effective),penetration:Math.round(penetration),aspect};
+    const what=result.detonated?'Výbuch munice':result.knocked.length?`Vyřazen: ${result.knocked.join(', ')}`:result.primary?`Zásah: ${result.primary}`:'Průstřel';
+    this._event({type:'hit',text:`${aphe?'APHE · výbuch uvnitř · ':''}${what} · ${Math.round(dealt)}`,...p,team:shell.team,module,knocked:result.knocked,targetId:t.id,playerRelated,damage:Math.round(dealt),penetration:Math.round(penetration),armor:Math.round(effective),missile:!!shell.missile,weapon:shell.weapon});
+    if(result.detonated||t.modules.crew<=0)this._destroy(t,shell.shooterId,result.detonated?'Výbuch munice':'Posádka vyřazena');
+  }
+
+  // A penetrating round in the hull frame: it damages every crew box and
+  // component it passes through, losing energy in each. APHE bursts after a
+  // short fuse and its blast hits everything close by; then fragments (spall)
+  // fly on in a cone from the burst or entry point.
+  _penetrate(t,entry,dir,o) {
+    const layout=tankLayout(t.type),geo=weaponGeometry(t.type),offset=geo.turretOffsetZ,base=geo.turretBaseY;
+    const ly=(t.turretAngle??t.angle)-t.angle,cs=Math.cos(ly),sn=Math.sin(ly);
+    const toTurret=p=>{const z=p.z-offset;return {x:p.x*cs-z*sn,y:p.y-base,z:p.x*sn+z*cs};};
+    const items=[...layout.parts.map(part=>({box:part,part})),...layout.crew.map((box,crew)=>({box,crew}))];
+    for(const item of items){const b=item.box;item.min={x:b.x-b.sx/2,y:b.y-b.sy/2,z:b.z-b.sz/2};item.max={x:b.x+b.sx/2,y:b.y+b.sy/2,z:b.z+b.sz/2};}
+    const local=(item,p)=>item.box.turret?toTurret(p):p,reach=Math.hypot(t.width,t.length)*1.2;
+    const along=(from,d)=>{
+      const to={x:from.x+d.x*reach,y:from.y+d.y*reach,z:from.z+d.z*reach},list=[];
+      for(const item of items){const hit=segmentBox(local(item,from),local(item,to),item.min,item.max);if(hit)list.push({item,dist:hit.t*reach});}
+      return list.sort((a,b)=>a.dist-b.dist);
+    };
+    const out={crew:0,parts:0,knocked:[],fire:false,detonated:false,module:'crew',primary:''},losses=new Map();
+    // The round itself striking an ammunition rack sets it off (machine-gun
+    // bullets excepted); wet stowage often smothers it. Fragments and blast
+    // only damage racks, which may still cook off below.
+    let ammoStruck=false;
+    const hurt=(item,amount,direct=false)=>{
+      if(!(amount>0))return;
+      if(direct&&item.part?.kind==='ammo'&&o.weapon!=='machinegun'&&(!item.part.wet||this._rand()<.4))ammoStruck=true;
+      let d=0;
+      if(item.part){
+        const id=item.part.id,hp=t.parts[id]??0;if(hp<=0)return;
+        d=Math.min(hp,amount*(item.part.wet?.55:1));t.parts[id]=hp-d;out.parts+=d;
+        if(t.parts[id]<=0)out.knocked.push(PART_NAMES[item.part.kind]);
+      }else for(const c of t.crew)if(c.hp>0&&c.at===item.crew){
+        const x=Math.min(c.hp,amount*CREW_WOUND);c.hp-=x;d+=x;out.crew+=x;
+        if(c.hp<=0)out.knocked.push(ROLE_NAMES[c.role]);
+      }
+      if(d>0)losses.set(item,(losses.get(item)||0)+d);
+    };
+    const kindOf=item=>item.part?item.part.kind:'crew';
+    // 1. The round itself.
+    const path=along(entry,dir),burst=o.aphe?Math.min(1.4,(path[0]?.dist??.85)+.35):Infinity;
+    let energy=(45+this._rand()*24+o.excess*22)*o.scale*(o.heat?1.35:1);
+    for(const step of path){
+      if(step.dist>burst||energy<.5)break;
+      hurt(step.item,energy*(step.item.part?1:1.1),true);
+      energy*=Math.min(.92,PASS_THROUGH[kindOf(step.item)]*(o.heat?1.3:1));
+    }
+    // 2. The APHE bursting charge, or a HEAT warhead's overpressure just behind the plate.
+    let origin=entry;
+    if(o.aphe||o.heat){
+      const at=o.aphe?burst:.6;
+      origin={x:entry.x+dir.x*at,y:entry.y+dir.y*at,z:entry.z+dir.z*at};
+      const radius=o.aphe?1.6+.5*o.burstPower:1.5,blast=(62+o.excess*35)*o.scale*(o.aphe?o.burstPower*APHE_BOOST:.8);
+      for(const item of items){
+        const q=local(item,origin),d=Math.hypot(Math.max(item.min.x-q.x,0,q.x-item.max.x),Math.max(item.min.y-q.y,0,q.y-item.max.y),Math.max(item.min.z-q.z,0,q.z-item.max.z));
+        if(d<radius)hurt(item,blast*Math.pow(1-d/radius,.8)*(item.part?item.part.kind==='ammo'?.4:.6:1.55));
+      }
+    }
+    // 3. Spall: fragments in a cone around the flight direction.
+    const rays=o.weapon==='machinegun'?0:o.aphe?10:o.heat?8:o.weapon==='autocannon'?3:6;
+    if(rays){
+      const cone=o.aphe?1:o.heat?.45:.55,spall=(15+o.excess*18+this._rand()*9)*o.scale*(o.aphe?.55*APHE_BOOST:o.heat?1.1:.9);
+      const ref=Math.abs(dir.y)<.9?{x:0,y:1,z:0}:{x:1,y:0,z:0};
+      let u={x:dir.y*ref.z-dir.z*ref.y,y:dir.z*ref.x-dir.x*ref.z,z:dir.x*ref.y-dir.y*ref.x};
+      const ul=Math.hypot(u.x,u.y,u.z)||1;u={x:u.x/ul,y:u.y/ul,z:u.z/ul};
+      const w={x:dir.y*u.z-dir.z*u.y,y:dir.z*u.x-dir.x*u.z,z:dir.x*u.y-dir.y*u.x};
+      for(let i=0;i<rays;i++){
+        const cosT=1-this._rand()*(1-Math.cos(cone)),sinT=Math.sqrt(1-cosT*cosT),phi=this._rand()*TAU,a=Math.cos(phi)*sinT,b=Math.sin(phi)*sinT;
+        const d={x:dir.x*cosT+u.x*a+w.x*b,y:dir.y*cosT+u.y*a+w.y*b,z:dir.z*cosT+u.z*a+w.z*b};
+        let e=spall;
+        for(const step of along(origin,d).slice(0,2)){hurt(step.item,e);e*=.45;}
+      }
+    }
+    // Consequences: ammunition cook-off, fuel and engine fires.
+    if(ammoStruck)out.detonated=true;
+    let worst=null;
+    for(const [item,loss] of losses){
+      if(!worst||loss>worst.loss)worst={item,loss};
+      if(item.part?.kind==='ammo'){
+        const hp=t.parts[item.part.id];
+        // A wrecked rack usually cooks off; a badly damaged one may.
+        if(this._rand()<(hp<=0?.5:hp<25?.3:hp<50?.05:0)*(item.part.wet?.4:1))out.detonated=true;
+      }
+      if(item.part?.kind==='engine'&&loss>8&&this._rand()<.55*Math.min(1,o.scale))out.fire=true;
+      if(item.part?.kind==='fuel'&&loss>8&&this._rand()<(getTank(t.type).nation==='ussr'?.12:.3)*Math.min(1,o.scale))out.fire=true;
+    }
+    if(worst){out.module=worst.item.part?LEGACY_MODULE[worst.item.part.kind]:'crew';out.primary=worst.item.part?PART_NAMES[worst.item.part.kind]:ROLE_NAMES[layout.crew[worst.item.crew].role];}
+    out.knocked=[...new Set(out.knocked)];
+    return out;
   }
 
   _addDamage(value){this.stats.damage+=Math.round(value);this._recalculateXP();}
@@ -5247,7 +5567,7 @@ class Game {
 
 function specName(t) {const s=getTank(t.type);return `${s.name} ${s.variant}`;}
 
-return {BATTLE_SETTINGS,Game};
+return {BATTLE_SETTINGS,SWAP_TIME,loadRate,Game};
 })();
 MODULES["appearance.js"]=(()=>{
 const {TANKS,getTank} = MODULES["data.js"];
@@ -5409,7 +5729,7 @@ return {cleanNick,escapeHTML};
 })();
 MODULES["multiplayer-game.js"]=(()=>{
 const {Game} = MODULES["simulation.js"];
-const {TANKS,MAPS,getTank,surfaceHeight} = MODULES["data.js"];
+const {TANKS,MAPS,getTank,surfaceHeight,tankLayout,CREW_ROLES} = MODULES["data.js"];
 const {normalizeAppearance} = MODULES["appearance.js"];
 const {cleanNick} = MODULES["leaderboard.js"];
 const finite=(v,min,max)=>Number.isFinite(v)&&v>=min&&v<=max;
@@ -5558,9 +5878,24 @@ class HostedBattle extends Game{
 
 const tankFields=['fall','x','z','y','angle','turretAngle','gunPitch','speed','yawVelocity','reload','secondaryReload','mgCooldown','mgHeat','repair','fire','respawnIn','smoke','smokes','smokeCooldown','missiles','missileReload','width','length','health','maxSpeed','_barrelIndex','drown'];
 const rounded=v=>Math.round(v*10000)/10000;
+// Crew seats and component health travel with every tank (see tankLayout).
+function snapshotInternals(t){
+ if(!t.crew||!t.parts)return {};
+ return {crew:t.crew.map(c=>({role:c.role,seat:c.seat,hp:Math.round(c.hp*10)/10,at:c.at,...(c.moving?{moving:{seat:c.moving.seat,until:rounded(c.moving.until)}}:{})})),
+  parts:Object.fromEntries(Object.entries(t.parts).map(([k,v])=>[k,Math.round(v*10)/10]))};
+}
+const crewRoles=new Set(CREW_ROLES);
+function validInternals(t){
+ if(t.crew===undefined&&t.parts===undefined)return true;
+ const layout=tankLayout(t.type);
+ if(!Array.isArray(t.crew)||t.crew.length!==layout.crew.length||!t.crew.every((c,i)=>c&&c.role===layout.crew[i].role&&crewRoles.has(c.seat)&&finite(c.hp,0,100)&&Number.isInteger(c.at)&&c.at>=0&&c.at<layout.crew.length&&(c.moving===undefined||c.moving&&crewRoles.has(c.moving.seat)&&finite(c.moving.until,0,800))))return false;
+ if(!t.parts||typeof t.parts!=='object'||Array.isArray(t.parts))return false;
+ const keys=Object.keys(t.parts);
+ return keys.length===layout.parts.length&&layout.parts.every(p=>finite(t.parts[p.id],0,100));
+}
 function makeSnapshot(game,sequence,ack=0,paused=false){
  return {match:game.descriptor.id,sequence,ack,paused:!!paused,time:rounded(game.time),remaining:rounded(game.remaining),duration:game.duration,initialTickets:game.initialTickets,tickets:game.tickets.map(rounded),
-  sahurs:game.sahurs.map(({id,kind,x,y,z,angle})=>({id,kind,x,y,z,angle})),brokenBridges:[...game.brokenBridges],demolished:[...(game.demolished||[])],treeFalls:{...(game.treeFalls||{})},tanks:game.tanks.map(t=>({id:t.id,type:t.type,flight:t.flight?{...t.flight}:null,drone:t.drone?{...t.drone}:null,developer:!!t.developer,team:t.team,alive:t.alive,isHuman:!!t.isHuman,nick:t.nick||'',...Object.fromEntries(tankFields.map(k=>[k,rounded(t[k]||0)])),modules:{...t.modules},mgOverheated:!!t.mgOverheated,lastKiller:t.lastKiller?{...t.lastKiller}:null,_aimX:t._aimX,_aimY:t._aimY,_aimZ:t._aimZ})),
+  sahurs:game.sahurs.map(({id,kind,x,y,z,angle})=>({id,kind,x,y,z,angle})),brokenBridges:[...game.brokenBridges],demolished:[...(game.demolished||[])],treeFalls:{...(game.treeFalls||{})},tanks:game.tanks.map(t=>({id:t.id,type:t.type,flight:t.flight?{...t.flight}:null,drone:t.drone?{...t.drone}:null,developer:!!t.developer,team:t.team,alive:t.alive,isHuman:!!t.isHuman,nick:t.nick||'',...Object.fromEntries(tankFields.map(k=>[k,rounded(t[k]||0)])),modules:{...t.modules},...snapshotInternals(t),mgOverheated:!!t.mgOverheated,lastKiller:t.lastKiller?{...t.lastKiller}:null,_aimX:t._aimX,_aimY:t._aimY,_aimZ:t._aimZ})),
   shells:game.shells.slice(-192).map(s=>({id:s.id,developer:!!s.developer,team:s.team,shooterId:s.shooterId,weapon:s.weapon||'cannon',missile:!!s.missile,age:s.age||0,...Object.fromEntries(['x','y','z','vx','vy','vz'].map(k=>[k,rounded(s[k]||0)]))})),
   smokeClouds:game.smokeClouds.slice(-16).map(c=>({id:c.id,x:c.x,z:c.z,radius:c.radius,life:c.life})),zones:game.zones.map(z=>({id:z.id,owner:z.owner,progress:z.progress,contested:!!z.contested})),stats:structuredClone(game.humanStats),
   nuke:{state:game.nuke.state==='ready'?'locked':game.nuke.state,timer:rounded(game.nuke.timer||0),team:game.nuke.team??0},
@@ -5579,7 +5914,7 @@ function validSnapshot(s,descriptor){
  }
  const ids=new Set(s.tanks.map(t=>t.id));
  for(const t of s.tanks){
-  if(typeof t.id!=='string'||t.id.length>30||!tankTypes.has(t.type)||![0,1].includes(t.team)||typeof t.alive!=='boolean'||!modules.every(k=>finite(t.modules?.[k],0,100)))return false;
+  if(typeof t.id!=='string'||t.id.length>30||!tankTypes.has(t.type)||![0,1].includes(t.team)||typeof t.alive!=='boolean'||!modules.every(k=>finite(t.modules?.[k],0,100))||!validInternals(t))return false;
   if(!tankFields.every(k=>finite(t[k],['x','y','z','angle','turretAngle','gunPitch','speed','yawVelocity'].includes(k)?-4000:0,4000)))return false;
   if(Math.abs(t.x)>1200||Math.abs(t.z)>1200)return false;
   if(t.lastKiller!==undefined&&t.lastKiller!==null&&(!t.lastKiller||typeof t.lastKiller!=='object'||!['id','nick','tankId','tankName','reason'].every(k=>t.lastKiller[k]===null||typeof t.lastKiller[k]==='string'&&t.lastKiller[k].length<=200)))return false;
@@ -5639,7 +5974,8 @@ class ReplicaBattle extends Game{
   this.tanks=b.tanks.map(t=>{
    const localId=id(t.id),old=oldById.get(localId),previous=aById.get(t.id)||t,isPlayer=localId==='player',
      profile=this.descriptor.members?.find(m=>memberTankId(this.descriptor,m.id)===t.id)||(t.id==='guest'?this.descriptor.guest:this.descriptor.host);
-   const o={...(old||{}),...t,id:localId,team:t.team^this.localTeam,isPlayer,lastKiller:t.lastKiller?{...t.lastKiller,id:id(t.lastKiller.id)}:null,modules:{...t.modules},_sightChecks:old?._sightChecks||new Map(),nick:t.isHuman?(this.descriptor.public?cleanNick(t.nick):profile.nick):'',appearance:t.isHuman?(this.descriptor.public?publicAppearance(t.appearance,t.type):profile.appearance):undefined};
+   const o={...(old||{}),...t,id:localId,team:t.team^this.localTeam,isPlayer,lastKiller:t.lastKiller?{...t.lastKiller,id:id(t.lastKiller.id)}:null,modules:{...t.modules},
+     crew:t.crew?.map(c=>({...c,...(c.moving?{moving:{...c.moving}}:{})})),parts:t.parts?{...t.parts}:undefined,_sightChecks:old?._sightChecks||new Map(),nick:t.isHuman?(this.descriptor.public?cleanNick(t.nick):profile.nick):'',appearance:t.isHuman?(this.descriptor.public?publicAppearance(t.appearance,t.type):profile.appearance):undefined};
    if(t.drone&&previous.drone)o.drone={...t.drone,x:mix(previous.drone.x,t.drone.x,alpha),y:mix(previous.drone.y,t.drone.y,alpha),z:mix(previous.drone.z,t.drone.z,alpha)};
    if(t.flight&&previous.flight)o.flight={...t.flight,x:mix(previous.flight.x,t.flight.x,alpha),y:mix(previous.flight.y,t.flight.y,alpha),z:mix(previous.flight.z,t.flight.z,alpha)};
    if(previous.alive&&t.alive){
@@ -7934,7 +8270,7 @@ class ZombieGame extends Game{
   if(this.finished||this.phase!=='shop'||!u||(this.upgrades[id]||0)>=u.max||this.credits<cost)return false;
   this.credits-=cost;this.upgrades[id]=(this.upgrades[id]||0)+1;
   if(id==='repair'){
-    for(const k of Object.keys(this.player.modules))this.player.modules[k]=100;
+    this._restoreInternals(this.player);
     Object.assign(this.player,{health:100,repair:0,fire:0,smokes:5,missiles:this.player.type==='bmpt'?4:0,mgHeat:0,mgOverheated:false});
   }
   return true;
@@ -7972,7 +8308,7 @@ class ZombieGame extends Game{
   if(p.mgHeat<.3)p.mgOverheated=false;
   if(p.repair>0){
     p.repair=Math.max(0,p.repair-dt);
-    if(p.repair===0)for(const k of ['engine','tracks','turret','breech'])p.modules[k]=Math.max(85,p.modules[k]);
+    if(p.repair===0)this._repairInternals(p);
   }
   for(const c of this.smokeClouds){c.life-=dt;c.radius=Math.min(15,c.radius+dt*6);}
   this.smokeClouds=this.smokeClouds.filter(c=>c.life>0);
@@ -7988,8 +8324,7 @@ class ZombieGame extends Game{
     if(z.attack<=0){
       z.attack=.8;
       const damage=(z.kind==='brute'?8:3)*(1+(this.wave-1)*.06)*Math.pow(.78,this.upgrades.armor||0);
-      p.modules.crew=Math.max(0,p.modules.crew-damage);
-      p.modules.tracks=Math.max(0,p.modules.tracks-damage*.6);
+      this._hordeDamage(p,damage);
       p.repair=0;
       this._event({type:'hit',x:p.x,z:p.z,targetId:p.id,team:1,playerRelated:true,text:'HORDA NA KORBĚ · ROZJEĎ SE!',weapon:'machinegun'});
     }
@@ -8070,7 +8405,7 @@ return {ZOMBIE_UPGRADES,ZombieGame};
 MODULES["renderer.js"]=(()=>{
 
 const {normalizeAppearance,SKINS,PAINT_SIDES,PAINT_SURFACES,PAINT_EXTENT,parseWorkshopOBJ} = MODULES["appearance.js"];
-const { getTank, getMap, terrainHeight, surfaceHeight, terrainAt, bareTerrainAt, waterLevel, TERRAIN, BRIDGE_FILL } = MODULES["data.js"];
+const { getTank, getMap, terrainHeight, surfaceHeight, terrainAt, bareTerrainAt, waterLevel, TERRAIN, BRIDGE_FILL, tankLayout } = MODULES["data.js"];
 const { weaponFrame, weaponGeometry, hullPose, GRAVITY } = MODULES["ballistics.js"];
 // All geometry and surface textures are generated locally. No runtime asset requests.
 const TAU = Math.PI * 2;
@@ -8523,7 +8858,7 @@ function addWorkshopModel(model,attachment){
 }
 
 function makeTank(id,appearance,enableBrush=false,brushTile=PAINT_TILE_BATTLE){
- const model=makeTankBase(id);if(!appearance)return model;
+ const model=makeTankBase(id);model.layoutId=id;if(!appearance)return model;
  const a=normalizeAppearance(appearance,id),nation=getTank(id).nation,paint=model.skinMaterials[0];
  const skin=SKINS.find(s=>s.id===a.pattern);
  if(skin||a.pattern!=='factory'){
@@ -8814,27 +9149,14 @@ function makeTankBase(id) {
     badge(turret, markTexture(data.nation), side * (tiger ? 1.3 : sherman ? 1.115 : 1.06), .56, .05, .5, .5, side * Math.PI / 2);
     badge(turret, numberTexture(data.nation), side * (tiger ? 1.3 : sherman ? 1.12 : 1.06), .57, -.55, .68, .4, side * Math.PI / 2);
   }
-  const moduleMeshes = {};
-  const addModule = (name, geo, x, y, z, sx, sy, sz, c) => {
-    const material = mat(c, { emissive: c, emissiveIntensity: .5, transparent: true, opacity: .85 });
-    const mesh = addMesh(internals, geo, material, x, y, z, sx, sy, sz); moduleMeshes[name] = mesh; return mesh;
-  };
-  addModule('engine', BOX(), 0, 1.28, -length * .3, 1.35, .7, 1.2, '#73b39e');
-  addModule('ammo', BOX(), .73, 1.15, .1, .45, .65, 1.65, '#dbb96b');
-  addModule('breech', BOX(), 0, hullHeight + .55, .65, .5, .35, .6, '#7bacd1');
-  addModule('turret', CYL(), 0, hullHeight + .05, .27, .75, .15, .75, '#ab88d6');
-  addModule('crew', BALL(), -.48, 1.52, .76, .29, .48, .29, '#9cb8b6');
-  // One tracks module, drawn on both sides: the left box shares the material
-  // so the X-ray health colour reaches it too.
-  const trackModule = addModule('tracks', BOX(), -trackX, .72, 0, .4, .65, length * .7, '#b1bf8b');
-  addMesh(internals, BOX(), trackModule.material, trackX, .72, 0, .4, .65, length * .7);
+  // X-ray internals are built from tankLayout on first use (see setXray).
   internals.visible = false;
   addArmorDetails(hull,turret,paint,steel,dirt,width,length,hullHeight,data.nation);
   mergeStatic(hull); mergeStatic(turret); mergeStatic(gun);
   for (const mesh of gun.children) mesh.geometry.translate(0, -gunY, -mantletZ);
   gun.position.set(0, gunY, mantletZ); turret.add(gun);
   const originalColors = new Map(skinMaterials.map(m => [m, m.color.clone()]));
-  const model = { group: ground, hull, turret, internals, moduleMeshes, skinMaterials, originalColors, width, length, height: hullHeight + roofY + .4, muzzleZ, gunY, turretBaseY: gunGeometry.turretBaseY, turretOffsetZ: gunGeometry.turretOffsetZ, dead: false, xray: false, barrels: [gun], barrelBaseZ: [mantletZ], recoil: [0] };
+  const model = { group: ground, hull, turret, internals, skinMaterials, originalColors, width, length, height: hullHeight + roofY + .4, muzzleZ, gunY, turretBaseY: gunGeometry.turretBaseY, turretOffsetZ: gunGeometry.turretOffsetZ, dead: false, xray: false, barrels: [gun], barrelBaseZ: [mantletZ], recoil: [0] };
   return model;
 }
 
@@ -8950,14 +9272,8 @@ function makeSpecialTank(id) {
   mergeStatic(hull);mergeStatic(turret);mergeStatic(gun);turret.add(gun);
   if(secondaryPivot)turret.add(secondaryPivot);
   for(const wheel of wheels)hull.add(wheel.root);
-  const moduleMeshes={};
-  for(const [name,x,y,z,sx,sy,sz,c] of [['engine',0,h*.7,-l*.32,w*.45,.5,1.1,'#73b39e'],['ammo',w*.24,h*.65,0,.4,.6,1.4,'#dbb96b'],['breech',0,h+geo.gunY,geo.turretOffsetZ+.5,.5,.35,.7,'#7bacd1'],['turret',0,h,geo.turretOffsetZ,1.3,.15,1.3,'#ab88d6'],['crew',-.4,h*.7,l*.18,.35,.6,.35,'#9cb8b6'],['tracks',-w*.43,.7,0,.4,.6,l*.8,'#b1bf8b']]){
-    const material=mat(c,{emissive:c,emissiveIntensity:.5,transparent:true,opacity:.85});
-    moduleMeshes[name]=box(internals,material,x,y,z,sx,sy,sz);
-  }
-  box(internals,moduleMeshes.tracks.material,w*.43,.7,0,.4,.6,l*.8);
   internals.visible=false;
-  return {group:ground,hull,turret,internals,moduleMeshes,skinMaterials,originalColors:new Map(skinMaterials.map(m=>[m,m.color.clone()])),width:w,length:l,height:h+(maus?1.75:btr?.85:1.55),muzzleZ:geo.mantletZ+geo.barrelLength,gunY:geo.gunY,turretBaseY:h,turretOffsetZ:geo.turretOffsetZ,dead:false,xray:false,barrels:secondary?[gun,secondary]:[gun],barrelPivots:secondary?[gun,secondaryPivot]:[gun],barrelBaseZ:secondary?[geo.mantletZ,0]:[geo.mantletZ],recoil:secondary?[0,0]:[0],wheels};
+  return {group:ground,hull,turret,internals,skinMaterials,originalColors:new Map(skinMaterials.map(m=>[m,m.color.clone()])),width:w,length:l,height:h+(maus?1.75:btr?.85:1.55),muzzleZ:geo.mantletZ+geo.barrelLength,gunY:geo.gunY,turretBaseY:h,turretOffsetZ:geo.turretOffsetZ,dead:false,xray:false,barrels:secondary?[gun,secondary]:[gun],barrelPivots:secondary?[gun,secondaryPivot]:[gun],barrelBaseZ:secondary?[geo.mantletZ,0]:[geo.mantletZ],recoil:secondary?[0,0]:[0],wheels};
 }
 
 function makeBmpt() {
@@ -9087,21 +9403,8 @@ function makeBmpt() {
     cyl(barrel, steel, 0, 0, 4.38, .075, .22, 'z'); cyl(barrel, rubber, 0, 0, 4.496, .04, .008, 'z');
     mergeStatic(barrel); turret.add(barrel); barrels.push(barrel);
   }
-  const moduleMeshes = {};
-  const module = (name, geo, x, y, z, sx, sy, sz, c) => {
-    const material = mat(c, { emissive: c, emissiveIntensity: .5, transparent: true, opacity: .85 });
-    const mesh = addMesh(internals, geo, material, x, y, z, sx, sy, sz);
-    moduleMeshes[name] = mesh;
-  };
-  module('engine', BOX(), 0, 1.14, -2.2, 1.9, .7, 1.2, '#73b39e');
-  module('ammo', BOX(), .68, 1.19, -.15, .5, .7, 1.4, '#dbb96b');
-  module('breech', BOX(), 0, 2.49, .55, .62, .3, .57, '#7bacd1');
-  module('turret', CYL(), 0, 1.74, -.15, .75, .15, .75, '#ab88d6');
-  module('crew', BALL(), -.63, 1.2, 1.43, .31, .42, .31, '#9cb8b6');
-  module('tracks', BOX(), -trackX, .72, 0, .4, .65, 5.5, '#b1bf8b');
-  addMesh(internals, BOX(), moduleMeshes.tracks.material, trackX, .72, 0, .4, .65, 5.5);
   internals.visible = false;
-  return { group: ground, hull, turret, internals, moduleMeshes, skinMaterials, originalColors: new Map(skinMaterials.map(m => [m, m.color.clone()])), width, length, height: 3.38, muzzleZ: 4.5, gunY: .78, turretBaseY, turretOffsetZ: -.15, dead: false, xray: false, barrels, recoil: [0, 0] };
+  return { group: ground, hull, turret, internals, skinMaterials, originalColors: new Map(skinMaterials.map(m => [m, m.color.clone()])), width, length, height: 3.38, muzzleZ: 4.5, gunY: .78, turretBaseY, turretOffsetZ: -.15, dead: false, xray: false, barrels, recoil: [0, 0] };
 }
 
 function groundTexture() {
@@ -10751,17 +11054,13 @@ class Renderer {
           (model.barrelPivots?.[i]||barrel).rotation.x=-(tank.gunPitch || 0);
         });
       }
-      const delta = model.turret.rotation.y - a;
-      model.moduleMeshes.breech.position.x = Math.sin(delta) * .65;
-      model.moduleMeshes.breech.position.z = offset + Math.cos(delta) * .65;
-      model.moduleMeshes.breech.rotation.y = delta;
       if (model.marker) { model.marker.visible = tank.alive; model.marker.rotation.y = this.clock * .5; }
       if (model.dead !== !tank.alive) {
         model.dead = !tank.alive;
         if(model.brush)model.brush.shade.value=tank.alive?1:.27;
         for (const material of model.skinMaterials) material.color.copy(model.originalColors.get(material)).multiplyScalar(tank.alive ? 1 : .27);
       }
-      this.setXray(model, xray && tank.isPlayer, tank.modules);
+      this.setXray(model, xray && tank.isPlayer, tank);
       if (tank.fire > 0 && Math.random() < dt * 7) this.spawnPuff(tank.x, y + 2.2, tank.z - 1, '#413d35', 1.1, 4.5, .45);
       if (!tank.alive && tank.respawnIn > 0 && Math.random() < dt * 4) this.spawnPuff(tank.x, y + 1.8, tank.z, '#363734', 1.3, 4, .5);
       if (tank.alive && Math.abs(tank.speed || 0) > 4 && Math.random() < dt * 3 && this.effects.length < 90) this.spawnPuff(tank.x - Math.sin(a) * 2.5, y + .4, tank.z - Math.cos(a) * 2.5, this.map.biome === 'winter' ? '#c6d3d1' : '#a89b76', .65, 1.6, .2);
@@ -10773,9 +11072,26 @@ class Renderer {
     }
   }
 
-  setXray(model, active, modules) {
+  // One mesh per tankLayout box: hull items in model.internals, turret items in
+  // a group riding on the turret. Built the first time the X-ray is shown.
+  buildInternals(model) {
+    const layout = tankLayout(model.layoutId || model.type);
+    model.turretInternals = new THREE.Group(); model.turret.add(model.turretInternals);
+    // BOX is a unit cube; CYL and BALL have radius 1 (and CYL height 1).
+    const make = (item, geo, colour, round = false) => {
+      const material = mat(colour, { emissive: colour, emissiveIntensity: .5, transparent: true, opacity: .85 });
+      return addMesh(item.turret ? model.turretInternals : model.internals, geo, material, item.x, item.y, item.z,
+        item.sx * (round ? .5 : 1), item.sy * (round === 'ball' ? .5 : 1), item.sz * (round ? .5 : 1));
+    };
+    model.partMeshes = Object.fromEntries(layout.parts.map(p => [p.id, p.kind === 'turretDrive' ? make(p, CYL(), '#78c9ad', 'cyl') : make(p, BOX(), '#78c9ad')]));
+    model.crewMeshes = layout.crew.map(c => make(c, BALL(), '#78c9ad', 'ball'));
+    model.turretInternals.visible = model.internals.visible;
+  }
+  setXray(model, active, tank) {
+    if (active && !model.partMeshes) this.buildInternals(model);
     if (model.xray !== active) {
       model.xray = active; model.internals.visible = active;
+      if (model.turretInternals) model.turretInternals.visible = active;
       for (const material of model.skinMaterials) {
         material.transparent = active;
         material.opacity = active ? .19 : 1;
@@ -10787,11 +11103,24 @@ class Renderer {
       // hides the barrel.
       for (const barrel of model.barrels || []) barrel.traverse(o => { if (o.isMesh) o.renderOrder = active ? 1 : 0; });
     }
-    if (active) for (const [name, mesh] of Object.entries(model.moduleMeshes)) {
-      const health = modules?.[name] ?? 100;
-      mesh.material.color.set(health > 65 ? '#78c9ad' : health > 25 ? '#ecc06c' : '#ef6a4d');
-      mesh.material.emissive.copy(mesh.material.color);
-    }
+    if (!active) return;
+    const paint = (mesh, health, dead) => {
+      const colour = dead ? '#4a2a26' : health > 65 ? '#78c9ad' : health > 25 ? '#ecc06c' : health > 0 ? '#ef6a4d' : '#a3271c';
+      if (mesh.userData.colour === colour) return;
+      mesh.userData.colour = colour;
+      mesh.material.color.set(colour); mesh.material.emissive.copy(mesh.material.color);
+      mesh.material.emissiveIntensity = dead ? .15 : .5;
+    };
+    for (const [id, mesh] of Object.entries(model.partMeshes)) paint(mesh, tank?.parts?.[id] ?? 100, false);
+    // A crew box shows whoever sits in it now: a living member by health, a
+    // body when only the dead remain, nothing once its occupant moved away.
+    model.crewMeshes.forEach((mesh, i) => {
+      const crew = tank?.crew;
+      if (!crew) { mesh.visible = true; paint(mesh, 100, false); return; }
+      const living = crew.find(c => c.hp > 0 && c.at === i), body = crew.some(c => c.hp <= 0 && c.at === i);
+      mesh.visible = !!(living || body);
+      if (mesh.visible) paint(mesh, living?.hp ?? 0, !living);
+    });
   }
 
   // The gunner looks through a stable optic in the turret. The visible center
@@ -11262,7 +11591,18 @@ class Renderer {
       for(const side of [-1,1])for(let i=0;i<5;i++)this.spawnPuff(x+side*4,y+2+i*.3,z,'#e7a1ad',7,3.5,.95);
       this.spawnPuff(x,y+17,z,'#f4b6c2',5,3.5,.95);
     }
-    if (event.type === 'kill') {
+    if (event.type === 'kill' && event.reason === 'Výbuch munice') {
+      // Ammunition detonation: a huge fireball, a column of fire, a thick
+      // plume of smoke and a shower of burning fragments.
+      const r = Math.random;
+      this.spawnGlow(x, y + 1.5, z, 18, .9, '#ffb347');
+      this.spawnGlow(x, y + 2.5, z, 11, 1.3, '#ff6a24');
+      for (let i = 0; i < 7; i++) this.spawnGlow(x + (r() - .5) * 1.5, y + 2 + i * 1.7, z + (r() - .5) * 1.5, 7 - i * .7, .7 + i * .14, i % 2 ? '#ff8a33' : '#ffc070');
+      for (let i = 0; i < 20; i++) this.spawnPuff(x + (r() - .5) * 4, y + 1 + r() * 10, z + (r() - .5) * 4, i % 3 ? '#2f2e29' : '#5a5547', 2.4 + r() * 2.4, 6 + r() * 4, .8, false, 260);
+      for (let i = 0; i < 45; i++) this.spawnSpark(x + (r() - .5) * 2, y + 1.5 + r() * 2, z + (r() - .5) * 2);
+      this.flash.position.set(x, y + 3, z);
+      this.flash.intensity = 70;
+    } else if (event.type === 'kill') {
       this.spawnGlow(x, y + 1, z, 6, .45, '#ff9d43');
       for (let i = 0; i < 8; i++) this.spawnPuff(x + (Math.random() - .5) * 3, y + Math.random() * 2, z + (Math.random() - .5) * 3, i % 2 ? '#494840' : '#6f6b59', 1.9, 4 + Math.random() * 2, .7);
       this.flash.position.set(x, y + 2, z);
@@ -11795,6 +12135,12 @@ class AudioEngine {
         this.noise(bus, { volume: 0.75, duration: 0.43, cutoff: 2350 });
         this.noise(bus, { volume: 0.12, duration: 0.9, cutoff: 450, start: 0.06 });
       }
+    } else if (type === 'kill' && event.reason === 'Výbuch munice') {
+      // Ammunition detonation: a deeper, longer blast with crackling cook-off.
+      this.tone(bus, { frequency: 58, endFrequency: 18, duration: 2.1, volume: 1 });
+      this.noise(bus, { volume: 1, duration: 2.2, cutoff: 1300 });
+      this.noise(bus, { volume: 0.35, duration: 1.6, cutoff: 3600, highpass: 400, start: 0.25 });
+      this.noise(bus, { volume: 0.2, duration: 0.5, cutoff: 5000, highpass: 900, start: 0.9 });
     } else if (type === 'kill') {
       this.tone(bus, { frequency: 74, endFrequency: 24, duration: 1.2, volume: 0.8 });
       this.noise(bus, { volume: 0.8, duration: 1.35, cutoff: 1600 });
@@ -12139,7 +12485,8 @@ const {AccountUI} = MODULES["account-ui.js"];
 const {ONLINE_CONFIG} = MODULES["online-config.js"];
 const {WorkshopEditor} = MODULES["workshop.js"];
 const {NATIONS,TANKS,MAPS,getTank,getMap,createBattleMap,releaseBattleMap,terrainAt,terrainHeight} = MODULES["data.js"];
-const {Game} = MODULES["simulation.js"];
+const {Game,SWAP_TIME,loadRate} = MODULES["simulation.js"];
+const {weaponGeometry} = MODULES["ballistics.js"];
 const {CAMOUFLAGES,SKINS,ACCESSORIES,normalizeAppearance,normalizeAppearances,
  importTankImage,importWorkshopModel,workshopItems,normalizeCosmetics,DECAL_SURFACES} = MODULES["appearance.js"];
 const {ZombieGame,ZOMBIE_UPGRADES} = MODULES["zombies.js"];
@@ -12631,7 +12978,6 @@ function startBattle(){
   $('#zombie-hud').hidden=game.mode!=='zombies';
   $('#nuke-button').hidden=game.mode==='zombies';
   $('.battle-score').hidden=game.mode==='zombies';
-  $('#battle-tank-name').textContent=fullName(getTank(progress.selected));
   $('#battle-objective').style.opacity='1';
   setTimeout(()=>{$('#battle-objective').style.opacity='0'},8500);
   lastTime=performance.now();
@@ -12737,10 +13083,136 @@ function onGameEvent(e){
     flashTimer=setTimeout(()=>$('#damage-flash').style.opacity='0',100);
   }
 }
-const moduleNames={crew:'Posádka',engine:'Motor',tracks:'Pásy',turret:'Věž',breech:'Závěr',ammo:'Munice'};
-const modulePanel=$('#module-bars');
-modulePanel.innerHTML=Object.values(moduleNames).map(name=>`<div class="module-bar-row"><span>${name}</span><div><i></i></div></div>`).join('');
-const moduleBars=Object.keys(moduleNames).map((key,i)=>[key,{element:modulePanel.children[i].querySelector('i')}]);
+// X-ray circle in the bottom-left corner: the player's tank seen from above,
+// turned so the top of the circle is where the camera looks. Following the
+// aim keeps the turret pointing up while the hull turns under it; free look
+// (C) turns both. Parts and crew are coloured by their own health.
+// Line icons on a 24×24 grid, used both on the canvas (Path2D) and as SVG:
+// a steering wheel for the driver, a crosshair for the gunner, a shell for the
+// loader, binoculars for the commander and a radio mast for the radio operator.
+const iconCircle=(x,y,r)=>`M${x-r} ${y}a${r} ${r} 0 1 0 ${2*r} 0a${r} ${r} 0 1 0 ${-2*r} 0`;
+const XRAY_ICONS={
+  driver:iconCircle(12,12,9)+iconCircle(12,12,2)+'M3 12h7M14 12h7M12 14v7',
+  gunner:iconCircle(12,12,6.5)+'M12 2v6M12 16v6M2 12h6M16 12h6',
+  loader:'M9 21h6V10c0-3-1.4-5.4-3-7-1.6 1.6-3 4-3 7zM9 16.5h6',
+  commander:iconCircle(7,16,4)+iconCircle(17,16,4)+'M4.5 13 6 6h3l.5 6M19.5 13 18 6h-3l-.5 6M10.5 14.5h3',
+  radio:'M12 10v11M8.5 21h7'+iconCircle(12,8,1.6)+'M8.6 4.6a5 5 0 0 0 0 6.8M15.4 4.6a5 5 0 0 1 0 6.8M5.7 2.2a8.8 8.8 0 0 0 0 11.6M18.3 2.2a8.8 8.8 0 0 1 0 11.6',
+  crew:iconCircle(12,7,4)+'M5 21v-1.5A4.5 4.5 0 0 1 9.5 15h5a4.5 4.5 0 0 1 4.5 4.5V21',
+  smoke:'M7 19h10a4 4 0 0 0 .6-7.96A5.5 5.5 0 0 0 7.1 10.1 4.5 4.5 0 0 0 7 19z',
+  repair:'M7 10h3V7L6.5 3.5a6 6 0 0 1 8 8l6 6a2 2 0 0 1-3 3l-6-6a6 6 0 0 1-8-8L7 10',
+};
+const XRAY_PATHS=Object.fromEntries(Object.entries(XRAY_ICONS).map(([k,d])=>[k,new Path2D(d)]));
+const xrayIcon=name=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${XRAY_ICONS[name]}"/></svg>`;
+const XRAY_SEAT_NAMES={driver:'Řidič',gunner:'Střelec',loader:'Nabíječ',commander:'Velitel',radio:'Radista'};
+const XRAY_KIND_COLORS={engine:'#6fae98',transmission:'#7d9fa6',fuel:'#b58f5c',ammo:'#d6b46a',breech:'#7aa8cf',turretDrive:'#a58bd0',track:'#8f9f78'};
+const XRAY_SMOKES=5,XRAY_RING=132,XRAY_CX=146,XRAY_CY=146,NUKE_ICON_POINTS=15;
+const xrayCanvas=$('#xray-canvas'),xrayCtx=xrayCanvas.getContext('2d');
+const xrayHealth=hp=>hp<=0?'#d4463a':hp<=35?'#e5774e':hp<=70?'#e2ad60':null;
+const xrayAt=(deg,radius=XRAY_RING)=>{const a=deg*Math.PI/180;return `left:${(XRAY_CX+radius*Math.sin(a)).toFixed(1)}px;top:${(XRAY_CY-radius*Math.cos(a)).toFixed(1)}px`;};
+// The layout box a crew member is heading for while changing seats: the box
+// of the dead crewman whose seat he takes, else that seat's own box.
+function xrayTargetBox(layout,crew,member){
+  const seat=member.moving.seat,body=crew.find(c=>c!==member&&c.hp<=0&&c.seat===seat);
+  return body?body.at:layout.crew.findIndex(c=>c.role===seat);
+}
+function drawXray(p,heading){
+  const layout=MODULES["data.js"].tankLayout?.(p.type);
+  const css=xrayCanvas.clientWidth;if(!layout||!css)return;
+  const dpr=Math.min(2,window.devicePixelRatio||1),size=Math.round(css*dpr),r=size/2,g=xrayCtx;
+  if(xrayCanvas.width!==size)xrayCanvas.width=xrayCanvas.height=size;
+  g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,size,size);
+  // A faint wedge marks the view direction; two rings and a cross give scale.
+  g.fillStyle='#d9b47324';g.beginPath();g.moveTo(r,r);g.arc(r,r,r,-Math.PI/2-.38,-Math.PI/2+.38);g.closePath();g.fill();
+  g.strokeStyle='#b0c29c22';g.lineWidth=dpr;g.beginPath();
+  for(const k of [.36,.7]){g.moveTo(r+r*k,r);g.arc(r,r,r*k,0,Math.PI*2);}
+  g.moveTo(r,size*.05);g.lineTo(r,size*.95);g.moveTo(size*.05,r);g.lineTo(size*.95,r);g.stroke();
+  // The outline spans the tracks too: they sit on the hit box, a bit wider than the hull.
+  const geo=weaponGeometry(p.type),W=layout.parts.reduce((w,b)=>b.turret?w:Math.max(w,2*Math.abs(b.x)+b.sx),layout.width),Lg=layout.length,s=size*.78/Math.max(Lg,W*1.45);
+  // Tank-local (x right, z forward) to canvas pixels for a frame turned by d
+  // from the camera heading. Local +x lands on the viewer's left when d = 0,
+  // as in the 3D scene.
+  const frame=(d,ox=r,oy=r)=>{const c=Math.cos(d)*s,n=Math.sin(d)*s;return (x,z)=>[ox-c*x-n*z,oy+n*x-c*z];};
+  const hull=frame((p.angle||0)-heading),pivot=hull(0,layout.turretOffsetZ||0);
+  const turret=frame((p.turretAngle??p.angle??0)-heading,pivot[0],pivot[1]);
+  const box=(map,x,z,sx,sz)=>{g.beginPath();[[-1,-1],[1,-1],[1,1],[-1,1]].forEach(([u,v],i)=>{const q=map(x+u*sx/2,z+v*sz/2);i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]);});g.closePath();};
+  const dead=!p.alive,line=w=>{g.lineWidth=w*dpr;};
+  box(hull,0,0,W,Lg);g.fillStyle=dead?'#2a2a2650':'#56634a55';g.fill();g.strokeStyle='#c8d4b8aa';line(1.2);g.stroke();
+  const part=(map,item)=>{
+    const hp=p.parts?.[item.id]??100,warn=xrayHealth(hp);
+    box(map,item.x,item.z,item.sx,item.sz);
+    g.fillStyle=(warn||XRAY_KIND_COLORS[item.kind]||'#8fa47c')+(warn?'e6':'99');g.fill();
+    g.strokeStyle=warn||'#0d1a1199';line(warn?1.2:.8);g.stroke();
+  };
+  // One dot per crew member in the box he sits in (c.at), with his seat's
+  // icon. A body is drawn only while nobody living has taken its box; a
+  // member changing seats blinks in the box he is climbing into.
+  const crew=p.crew||layout.crew.map((c,i)=>({role:c.role,seat:c.role,hp:100,at:i}));
+  const dots=[];
+  for(const m of crew){
+    const moving=m.hp>0&&m.moving,at=moving?xrayTargetBox(layout,crew,m):m.at;
+    if(m.hp<=0&&crew.some(o=>o.hp>0&&(o.moving?xrayTargetBox(layout,crew,o):o.at)===m.at))continue;
+    if(layout.crew[at])dots.push({m,box:layout.crew[at],moving});
+  }
+  const crewDot=({m,box,moving},map)=>{
+    if(moving&&Math.floor(performance.now()/350)%2)return;
+    const [x,y]=map(box.x,box.z),rad=Math.max(8*dpr,.32*s),hp=m.hp,icon=XRAY_PATHS[moving?m.moving.seat:m.seat];
+    g.beginPath();g.arc(x,y,rad,0,Math.PI*2);g.fillStyle=hp<=0?'#5a211b':moving?'#f0c27a':xrayHealth(hp)||'#9fd18a';g.fill();
+    g.strokeStyle=hp<=0?'#d4463a':'#0d1a11';line(1);g.stroke();
+    if(icon){
+      const k=rad*1.4/24;g.save();g.translate(x-12*k,y-12*k);g.scale(k,k);
+      g.strokeStyle=hp<=0?'#b5645a':'#10200f';g.lineWidth=2.4;g.lineCap=g.lineJoin='round';g.stroke(icon);g.restore();
+    }
+    // A dead crewman is crossed out.
+    if(hp<=0){g.beginPath();g.moveTo(x-rad*.75,y+rad*.75);g.lineTo(x+rad*.75,y-rad*.75);g.strokeStyle='#ef6a5c';line(1.8);g.stroke();}
+  };
+  for(const item of layout.parts)if(!item.turret)part(hull,item);
+  for(const d of dots)if(!d.box.turret)crewDot(d,hull);
+  const tw=geo.turretWidth||W*.6,tl=geo.turretLength||tw*1.1;
+  box(turret,0,0,tw,tl);g.fillStyle=dead?'#2a2a2640':'#77856a40';g.fill();g.strokeStyle='#dfe9d4cc';line(1.2);g.stroke();
+  box(turret,0,(geo.mantletZ||1)+(geo.barrelLength||3)/2,Math.max(.16,2.4*dpr/s),geo.barrelLength||3);g.fillStyle='#dfe9d4cc';g.fill();
+  for(const item of layout.parts)if(item.turret)part(turret,item);
+  for(const d of dots)if(d.box.turret)crewDot(d,turret);
+}
+// Icons around the circle: one chip per crew member (his seat's icon; dead
+// ones crossed out, a seat change blinking) under a person icon, and smoke
+// pips under a smoke cloud.
+// Same rule as Game._startRepair: a mechanical module under 85 or a fire.
+const needsRepair=p=>p.fire>0||['engine','tracks','turret','breech'].some(k=>(p.modules?.[k]??100)<85);
+// Progress circles under the crosshair, refreshed every frame so they fill
+// smoothly: one per crewman climbing into a new seat (that seat's icon
+// inside), one for a repair. Repairs can be lengthened by hits, so the circle
+// spans the longest repair time seen since it started.
+const ACTION_RING_R=23,ACTION_RING_LEN=2*Math.PI*ACTION_RING_R;
+const actionRow=$('#action-rings .action-ring-row'),repairNeeded=$('#repair-needed');
+let actionKey='',repairSpan=0,reloadSpan=0;
+function updateActionRings(p,time,show){
+  const rings=[];
+  if(show){
+    (p.crew||[]).forEach((c,i)=>{if(c.hp>0&&c.moving)rings.push({key:'swap'+i+c.moving.seat,icon:c.moving.seat,fill:1-(c.moving.until-time)/SWAP_TIME});});
+    if(p.repair>0){repairSpan=Math.max(repairSpan,p.repair,p._repairTotal||0);rings.push({key:'repair',icon:'repair',fill:1-p.repair/repairSpan,repair:true});}
+  }
+  if(!(p.repair>0))repairSpan=0;
+  const key=rings.map(r=>r.key).join();
+  if(key!==actionKey){
+    actionKey=key;
+    actionRow.innerHTML=rings.map(r=>`<div class="action-ring${r.repair?' repair':''}" title="${translate(r.repair?'OPRAVA':XRAY_SEAT_NAMES[r.icon]||'')}"><svg viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="27" r="${ACTION_RING_R}"/><circle cx="27" cy="27" r="${ACTION_RING_R}" stroke-width="4" stroke-dasharray="${ACTION_RING_LEN.toFixed(2)}"/></svg><i>${xrayIcon(r.icon)}</i></div>`).join('');
+  }
+  rings.forEach((r,i)=>actionRow.children[i].querySelector('circle+circle').style.strokeDashoffset=(ACTION_RING_LEN*(1-Math.max(0,Math.min(1,r.fill)))).toFixed(2));
+  const needed=show&&!(p.repair>0)&&needsRepair(p);
+  if(repairNeeded.hidden===needed)repairNeeded.hidden=!needed;
+}
+function updateXrayRing(p){
+  const crew=p.crew||[],n=crew.length;
+  const step=15,mid=212,crewHtml=crew.map((c,i)=>{
+    const seat=c.hp>0&&c.moving?c.moving.seat:c.seat,cls=c.hp<=0?' dead':c.moving?' moving':c.hp<60?' wounded':'';
+    return `<span class="xray-crew-chip${cls}" style="${xrayAt(mid+(i-(n-1)/2)*step)}" title="${translate(XRAY_SEAT_NAMES[seat]||'')}">${xrayIcon(seat)}</span>`;
+  }).join('')+(n?`<span class="xray-icon" style="${xrayAt(mid+((n-1)/2+1.3)*step)}">${xrayIcon('crew')}</span>`:'');
+  const crewRing=$('#xray-crew');if(crewRing.dataset.html!==crewHtml){crewRing.innerHTML=crewHtml;crewRing.dataset.html=crewHtml;}
+  const left=Math.max(0,Math.min(XRAY_SMOKES,p.smokes??XRAY_SMOKES)),cooling=left>0&&(p.smokeCooldown||0)>0;
+  const smokeHtml=Array.from({length:XRAY_SMOKES},(_,i)=>`<i class="xray-smoke-pip${i>=left?' used':cooling&&i===left-1?' next':''}" style="${xrayAt(95+(i-(XRAY_SMOKES-1)/2)*11)}"></i>`).join('')+`<span class="xray-icon" style="${xrayAt(62)}">${xrayIcon('smoke')}</span>`;
+  const smokeRing=$('#xray-smoke');if(smokeRing.dataset.html!==smokeHtml){smokeRing.innerHTML=smokeHtml;smokeRing.dataset.html=smokeHtml;}
+  $('#xray-speed').textContent=Math.round((p.drone?p.drone.speed||0:p.speed||0)*3.6);
+}
 // Reload fills for smoke, the Maus 75 mm and BMPT missiles, run every frame.
 // Each button keeps its end time locally so the fill stays smooth even when
 // cooldowns only arrive in coarse network snapshots. A cooldown that jumps up
@@ -12759,6 +13231,7 @@ function updateReloadFill(btn,cd,now){
 function updateReloadFills(now){
   const p=game?.player;if(!p||paused)return;
   updateReloadFill($('#smoke-button'),(p.smokes??5)>0&&p.alive?Math.max(0,p.smokeCooldown||0):0,now);
+  updateReloadFill($('#xray-smoke'),(p.smokes??5)>0&&p.alive?Math.max(0,p.smokeCooldown||0):0,now);
   updateReloadFill($('#secondary-button'),p.type==='maus'&&p.alive?Math.max(0,p.secondaryReload||0):0,now);
   updateReloadFill($('#missile-button'),p.type==='bmpt'&&p.alive&&(p.missiles??0)>0?Math.max(0,p.missileReload||0):0,now);
 }
@@ -12772,12 +13245,13 @@ function updateHUD(){
     $('#zombie-hud').innerHTML='<strong>☣ VLNA '+game.wave+'</strong><span>'+game.zombies.filter(z=>z.alive).length+' ZBÝVÁ · '+game.credits+' ŠROTU</span>'+(game.upgrades.auto?'<small>AUTO KULOMET AKTIVNÍ</small>':'');
   }
   const n=game.nuke,nb=$('#nuke-button');
+  // The nuke icon shows from 15 points on (or while any nuke is under way).
+  nb.hidden=game.mode==='zombies'||(n.state==='locked'&&!n.ready&&(game.killStreak||0)<NUKE_ICON_POINTS);
   nb.disabled=!n.ready||!game.player.alive;
   nb.textContent=n.state==='incoming'?(n.team===0?'☢ ÚDER ZA ':'☢ NEPŘÍTEL · ÚDER ZA ')+Math.ceil(n.timer)+' s':n.state==='detonated'?'☢ JADERNÝ ÚDER':n.ready?'[N] ☢ VYPUSTIT NUKE':'☢ BODY '+Math.min(game.killStreak,n.required)+' / '+n.required;
   $('#mg-status').textContent=game.player.developer?'30 mm 2A42':game.player.mgOverheated?'KULOMET · CHLADÍ SE':'KULOMET';
   $('#mg-heat').style.width=(game.player.developer?0:(game.player.mgHeat||0)*100)+'%';
   const p=game.player,t=getTank(p.type);
-  $('#battle-tank-name').textContent=p.drone?'FPV DRON':p.developer?'DEV MAUS':fullName(t);
   $('#friendly-score').textContent=game.mode==='deathmatch'?game.teamKills[0]+' / '+game.killLimit:Math.ceil(Math.max(0,game.tickets[0]));
   $('#enemy-score').textContent=game.mode==='deathmatch'?game.teamKills[1]+' / '+game.killLimit:Math.ceil(Math.max(0,game.tickets[1]));
   $('#friendly-bar').style.transform=`scaleX(${Math.min(1,Math.max(0,game.mode==='deathmatch'?game.teamKills[0]:game.tickets[0])/game.initialTickets)})`;
@@ -12796,20 +13270,15 @@ function updateHUD(){
   $('#cruise-status').hidden=!cruise.direction;
   $('#cruise-status').textContent=translate(cruise.direction>0?'TEMPOMAT VPŘED · W/S ZRUŠÍ':'TEMPOMAT VZAD · W/S ZRUŠÍ');
   $('#speed-value').textContent=Math.round((p.drone?p.drone.speed||0:p.speed)*3.6);
-  for(const [key,bar] of moduleBars){
-    const health=p.modules[key];
-    if(bar.health===health)continue;
-    bar.health=health;
-    bar.element.style.width=Math.max(0,health)+'%';
-    bar.element.style.background=health>50?'#93b87d':health>0?'#e2ad60':'#df715d';
-  }
-  [['.engine-block','engine'],['.turret-block','turret'],['.gun-block','breech'],['.ammo-block','ammo'],['.track','tracks']].forEach(([selector,k])=>$$(selector).forEach(el=>{
-    el.classList.toggle('module-damaged',p.modules[k]<55);
-    el.classList.toggle('module-destroyed',p.modules[k]<=0);
-  }));
-  $('#reload-bar').style.width=`${Math.max(0,Math.min(1,1-p.reload/t.reload))*100}%`;
+  updateXrayRing(p);
+  // p.reload is loading work left at the normal rate; without a loader it
+  // drains at half speed, so the seconds shown divide by the current rate.
+  // The bar spans the reload since the shot (a damaged breech lengthens it).
+  if(p.reload>reloadSpan+.05||!(p.reload>0))reloadSpan=Math.max(p.reload,0);
+  const rate=loadRate(p);
+  $('#reload-bar').style.width=`${reloadSpan>0?Math.max(0,Math.min(1,1-p.reload/reloadSpan))*100:100}%`;
   $('#reload-label').textContent=p.modules.breech<=0?'ZÁVĚR POŠKOZEN':p.reload>0?'NABÍJÍM':'PŘIPRAVENO';
-  $('#reload-count').textContent=p.reload>0?p.reload.toFixed(1):'●';
+  $('#reload-count').textContent=p.reload>0?(rate>0?(p.reload/rate).toFixed(1):'—'):'●';
   $('#reticle').classList.toggle('reloading',p.reload>0||p.modules.breech<=0);
   $('#repair-button').textContent=p.repair>0?`OPRAVA ${Math.ceil(p.repair)} s`:'[F] Opravit';
   const smokesLeft=p.smokes??5,smokeCd=smokesLeft>0?Math.max(0,p.smokeCooldown||0):0,smokeBtn=$('#smoke-button');
@@ -13461,7 +13930,9 @@ function loop(now){
       const info=$('#reticle>span');
       const sightText=translate(game.player.drone?'FPV DRON':(gun?.limited?'MEZ NÁMĚRU · ':gun?.blocked?'PŘEKÁŽKA · ':'')+'NÁSTŘEL '+(game.player.sightRange||0)+' m');
       if(info.textContent!==sightText)info.textContent=sightText;
-      $('.turret-block').style.transform='rotate('+(-(game.player.turretAngle-game.player.angle)*180/Math.PI)+'deg)';
+      // The chase camera sits at +cameraYaw from the tank and looks back past it.
+      drawXray(game.player,(renderer.cameraYaw||0)+Math.PI);
+      updateActionRings(game.player,game.time,game.player.alive&&!paused&&!cinematic);
       scopeOverlay.hidden=!scoped;
       const place=scoped?drawScope(rect,parseFloat(reticle.style.left),parseFloat(reticle.style.top),!reticle.hidden):null;
       info.style.left=place?place.left:'';info.style.top=place?place.top:'';
@@ -13625,7 +14096,6 @@ function enterMultiplayer(gameInstance,room){
  $('#nuke-button').hidden=false;
  $('.battle-score').hidden=false;
  $('#battle-map-label').textContent=game.map.name.toUpperCase();
- $('#battle-tank-name').textContent=fullName(getTank(game.player.type));
  $('#battle-objective').textContent='ONLINE · OBSAĎ A UDRŽ ZÓNY';
  $('#battle-objective').style.opacity='1';
  setTimeout(()=>$('#battle-objective').style.opacity='0',6000);
